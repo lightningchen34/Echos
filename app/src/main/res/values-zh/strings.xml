@@ -1,0 +1,6 @@
+<resources>
+    <string name="mainactivaty_text_news">新闻</string>
+    <string name="mainactivaty_text_community">社区</string>
+    <string name="mainactivaty_text_rss">订阅</string>
+
+</resources>
