@@ -1,4 +1,4 @@
-package com.chen91apps.echos;
+package com.chen91apps.echos.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,17 +7,14 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
+import com.chen91apps.echos.R;
+import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.google.android.material.tabs.TabLayout;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -43,6 +40,8 @@ public class PageFragment extends Fragment {
     private ArrayList<Fragment> listFrames;
 
     private OnFragmentInteractionListener mListener;
+
+    private Fragment currentFragment;
 
     public PageFragment() {
         // Required empty public constructor
@@ -126,7 +125,7 @@ public class PageFragment extends Fragment {
     {
         super.onStart();
 
-        System.out.println("Start");
+        currentFragment = null;
 
         TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
 
@@ -158,12 +157,18 @@ public class PageFragment extends Fragment {
     {
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
 
-        if (init)
+        if (currentFragment != null)
         {
-            fragmentTransaction.add(R.id.newslist_framelayout, listFrames.get(index), listFrames.get(index).getTag());
+            fragmentTransaction.hide(currentFragment);
+        }
+
+        currentFragment = listFrames.get(index);
+        if (currentFragment.isAdded())
+        {
+            fragmentTransaction.show(currentFragment);
         } else
         {
-            fragmentTransaction.replace(R.id.newslist_framelayout, listFrames.get(index), listFrames.get(index).getTag());
+            fragmentTransaction.add(R.id.newslist_framelayout, currentFragment, currentFragment.getTag());
         }
         fragmentTransaction.commit();
     }

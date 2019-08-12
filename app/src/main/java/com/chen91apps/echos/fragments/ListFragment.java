@@ -1,6 +1,9 @@
-package com.chen91apps.echos;
+package com.chen91apps.echos.fragments;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,7 +12,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.chen91apps.echos.R;
+import com.chen91apps.echos.utils.listitem.ListItemAdapter;
+import com.chen91apps.echos.utils.listitem.ListItemInfo;
+import com.chen91apps.echos.views.MyListView;
+
+import java.util.LinkedList;
 
 
 /**
@@ -20,7 +29,7 @@ import android.widget.TextView;
  * Use the {@link ListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements MyListView.MyListViewPullListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM_URL = "param_url";
@@ -70,8 +79,31 @@ public class ListFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        TextView tv = (TextView) getView().findViewById(R.id.test_textview);
-        tv.setText(param_URL);
+        MyListView lv = (MyListView) getView().findViewById(R.id.mylistview);
+        lv.setPullListener(this);
+
+        LinkedList<ListItemInfo> data = new LinkedList<>();
+
+        if (param_URL == "4") {
+            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+        } else
+        {
+            data.add(new ListItemInfo("暂无", "更新时间：1970-1-1", BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher)));
+        }
+
+        ListItemAdapter adapter = new ListItemAdapter(data, getContext());
+        lv.setAdapter(adapter);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -96,6 +128,16 @@ public class ListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void toRefreshListView() {
+        // TODO
+    }
+
+    @Override
+    public void toUpdateListView() {
+        // TODO
     }
 
     /**

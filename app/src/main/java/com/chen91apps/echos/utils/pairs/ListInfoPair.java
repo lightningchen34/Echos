@@ -1,8 +1,6 @@
-package com.chen91apps.echos;
+package com.chen91apps.echos.utils.pairs;
 
-import java.net.URL;
-
-class ListInfoPair
+public class ListInfoPair
 {
     public final static int TYPE_LIST = 0;
     public final static int TYPE_MANAGER = 1;
@@ -11,10 +9,10 @@ class ListInfoPair
     public String url;
     public int type;
 
-    ListInfoPair(String title, String url, int type)
+    public ListInfoPair(String title, String url, int type)
     {
         this.title = title;
         this.url = url;
         this.type = type;
     }
-};
+}

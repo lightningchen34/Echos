@@ -16,6 +16,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import android.view.MenuItem;
 
+import com.chen91apps.echos.fragments.ListFragment;
+import com.chen91apps.echos.fragments.PageFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
