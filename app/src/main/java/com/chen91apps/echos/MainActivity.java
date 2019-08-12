@@ -6,16 +6,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.util.DisplayMetrics;
 import android.util.Pair;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
@@ -30,19 +25,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PageFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
 
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
     private ArrayList<Pair<String, String>> tabText;
+
+    private PageFragment currentFragment = null;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -96,6 +91,8 @@ public class MainActivity extends AppCompatActivity
 
     private void initPages()
     {
+        System.out.println("Init Fragment");
+
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         pages = new ArrayList<PageFragment>();
@@ -103,16 +100,11 @@ public class MainActivity extends AppCompatActivity
         {
             pages.add(PageFragment.newInstance(text.second, ""));
         }
-
-        fragmentTransaction.add(R.id.main_framelayout, pages.get(0), pages.get(0).getTag());
-        fragmentTransaction.commit();
-
-        System.out.println("Set Fragment");
+        showFragment(0);
     }
 
     private void initTabs()
     {
-
         TabLayout tabLayout = findViewById(R.id.main_tablayout);
         for (Pair<String, String> text : tabText)
         {
@@ -123,7 +115,7 @@ public class MainActivity extends AppCompatActivity
             public void onTabSelected(TabLayout.Tab tab) {
                 System.out.println(tab.getPosition());
                 int index = tab.getPosition();
-                replaceFragment(index);
+                showFragment(index);
             }
 
             @Override
@@ -140,11 +132,21 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void replaceFragment(int index)
+    private void showFragment(int index)
     {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.main_framelayout, pages.get(index), pages.get(index).getTag());
+        if (currentFragment != null)
+        {
+            fragmentTransaction.hide(currentFragment);
+        }
+        currentFragment = pages.get(index);
+        if (currentFragment.isAdded()) {
+            fragmentTransaction.show(currentFragment);
+        } else
+        {
+            fragmentTransaction.add(R.id.main_framelayout, currentFragment, currentFragment.getTag());
+        }
         fragmentTransaction.commit();
     }
 
@@ -185,6 +187,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPageFragmentInteraction(Uri uri) {
+        // TODO
+    }
+
+    @Override
+    public void onListFragmentInteraction(Uri uri) {
         // TODO
     }
 }

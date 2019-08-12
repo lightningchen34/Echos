@@ -11,7 +11,13 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
+import com.google.android.material.tabs.TabLayout;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -73,25 +79,35 @@ public class PageFragment extends Fragment {
 
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
-            listTexts.add(new ListInfoPair("推荐", "", "list"));
-            listTexts.add(new ListInfoPair("北京", "", "list"));
-            listTexts.add(new ListInfoPair("体育", "", "list"));
-            listTexts.add(new ListInfoPair("娱乐", "", "list"));
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
-            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "1", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("推荐", "2", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("北京", "3", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("体育", "4", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("娱乐", "5", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("经济", "6", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("科技", "7", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("民生", "8", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("教育", "9", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("政治", "10", ListInfoPair.TYPE_LIST));
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
-            // COMMUNITY
-            // TODO
+            listTexts.add(new ListInfoPair("板块", "11", ListInfoPair.TYPE_MANAGER));
+            listTexts.add(new ListInfoPair("关注", "12", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("推荐", "13", ListInfoPair.TYPE_LIST));
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss))
         {
-            // RSS
-            // TODO
+            listTexts.add(new ListInfoPair("推荐", "14", ListInfoPair.TYPE_LIST));
+        }
+
+        for (ListInfoPair info : listTexts)
+        {
+            if (info.type == ListInfoPair.TYPE_LIST)
+            {
+                listFrames.add(ListFragment.newInstance(info.url));
+            } else
+            {
+                listFrames.add(ListFragment.newInstance(info.url));
+            }
         }
     }
 
@@ -101,9 +117,8 @@ public class PageFragment extends Fragment {
         // Inflate the layout for this fragment
 
         super.onActivityCreated(savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_page, container, false);
 
-        return view;
+        return inflater.inflate(R.layout.fragment_page, container, false);
     }
 
     @Override
@@ -111,7 +126,46 @@ public class PageFragment extends Fragment {
     {
         super.onStart();
 
-        // FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        System.out.println("Start");
+
+        TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
+
+        for (ListInfoPair info : listTexts) {
+            tabLayout.addTab(tabLayout.newTab().setText(info.title));
+        }
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                showPage(tab.getPosition(), false);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // TODO
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // TODO
+            }
+        });
+
+        showPage(0, true);
+    }
+
+    private void showPage(int index, boolean init)
+    {
+        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+
+        if (init)
+        {
+            fragmentTransaction.add(R.id.newslist_framelayout, listFrames.get(index), listFrames.get(index).getTag());
+        } else
+        {
+            fragmentTransaction.replace(R.id.newslist_framelayout, listFrames.get(index), listFrames.get(index).getTag());
+        }
+        fragmentTransaction.commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

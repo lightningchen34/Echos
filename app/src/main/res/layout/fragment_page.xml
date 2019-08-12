@@ -31,54 +31,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:tabBackground="@android:color/transparent"
-                    app:tabRippleColor="@android:color/transparent"
-                    
-                    >
+                    app:tabRippleColor="@android:color/transparent" >
 
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="新闻" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="推荐" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="北京" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="娱乐" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="体育" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="经济" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="民生" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="科技" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="教育" />
                 </com.google.android.material.tabs.TabLayout>
 
             </HorizontalScrollView>
@@ -96,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?attr/separator_color"/>
-        
+
         <FrameLayout
             android:id="@+id/newslist_framelayout"
             android:layout_width="match_parent"
