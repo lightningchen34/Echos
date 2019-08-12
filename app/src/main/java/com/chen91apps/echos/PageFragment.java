@@ -4,20 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.android.material.tabs.TabLayout;
+import java.util.ArrayList;
 
 
 /**
@@ -31,12 +26,15 @@ import com.google.android.material.tabs.TabLayout;
 public class PageFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM_TYPE = "param_type";
+    private static final String ARG_PARAM_UNDEFINED = "param_undefined";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String paramType;
+    private String paramUndefined;
+
+    private ArrayList<ListInfoPair> listTexts;
+    private ArrayList<Fragment> listFrames;
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,16 +46,16 @@ public class PageFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param paramType Parameter 1.
+     * @param paramUndefined Parameter 2.
      * @return A new instance of fragment PageFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PageFragment newInstance(String param1, String param2) {
+    public static PageFragment newInstance(String paramType, String paramUndefined) {
         PageFragment fragment = new PageFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM_TYPE, paramType);
+        args.putString(ARG_PARAM_UNDEFINED, paramUndefined);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,8 +64,34 @@ public class PageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            paramType = getArguments().getString(ARG_PARAM_TYPE);
+            paramUndefined = getArguments().getString(ARG_PARAM_UNDEFINED);
+        }
+
+        listTexts = new ArrayList<ListInfoPair>();
+        listFrames = new ArrayList<Fragment>();
+
+        if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
+        {
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("推荐", "", "list"));
+            listTexts.add(new ListInfoPair("北京", "", "list"));
+            listTexts.add(new ListInfoPair("体育", "", "list"));
+            listTexts.add(new ListInfoPair("娱乐", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+            listTexts.add(new ListInfoPair("新闻", "", "list"));
+        } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
+        {
+            // COMMUNITY
+            // TODO
+        } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss))
+        {
+            // RSS
+            // TODO
         }
     }
 
@@ -87,17 +111,7 @@ public class PageFragment extends Fragment {
     {
         super.onStart();
 
-        ListView lv = getActivity().findViewById(R.id.listView);
-
-        String[] text = {"Hello 1", "Hello 2", "Hello 3", "Hello 4", "Hello 5", "Hello 6", "Hello 7", "Hello 8", "Hello 9", "Hello A", "Hello B", "Hello C", "Hello D", "Hello E", "Hello F"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, text);
-
-        lv.setAdapter(adapter);
-
-        TabLayout tabLayout = getActivity().findViewById(R.id.subtablayout);
-        LinearLayout layout = (LinearLayout) tabLayout.getChildAt(0);
-        layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-        layout.setDividerDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider_line));
+        // FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

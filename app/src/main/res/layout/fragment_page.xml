@@ -95,16 +95,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#888888"/>
+            android:background="?attr/separator_color"/>
         
         <FrameLayout
+            android:id="@+id/newslist_framelayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <ListView
-                android:id="@+id/listView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </FrameLayout>
 
     </LinearLayout>
