@@ -18,10 +18,12 @@
             android:orientation="horizontal">
 
             <HorizontalScrollView
+                android:id="@+id/page_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingRight="0dp"
+                android:paddingLeft="0dp"
                 android:scrollbars="none"
                 android:fadingEdge="none"
                 android:overScrollMode="never">
@@ -31,7 +33,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:tabBackground="@android:color/transparent"
-                    app:tabRippleColor="@android:color/transparent" >
+                    app:tabRippleColor="@android:color/transparent"
+                    app:tabMode="scrollable"
+                    app:tabPaddingStart="0dp"
+                    app:tabPaddingEnd="0dp">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hesssssssssllo"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Heo"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Heoo"/>
 
                 </com.google.android.material.tabs.TabLayout>
 
@@ -55,6 +75,11 @@
             android:id="@+id/newslist_framelayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/page_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </FrameLayout>
 
     </LinearLayout>

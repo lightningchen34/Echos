@@ -12,6 +12,7 @@
         <item name="text_color">#ff000000</item>
         <item name="edge_color">#FF232323</item>
         <item name="highlight_color">@color/colorPrimary</item>
+        <item name="undertint_color">#FF585858</item>
         
         <item name="separator_color">#aaaaaa</item>
     </style>

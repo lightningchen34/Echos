@@ -4,15 +4,21 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
+import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -42,6 +48,8 @@ public class PageFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private Fragment currentFragment;
+    private TabLayout tabLayout;
+    private HorizontalScrollView scrollView;
 
     public PageFragment() {
         // Required empty public constructor
@@ -87,7 +95,7 @@ public class PageFragment extends Fragment {
             listTexts.add(new ListInfoPair("科技", "7", ListInfoPair.TYPE_LIST));
             listTexts.add(new ListInfoPair("民生", "8", ListInfoPair.TYPE_LIST));
             listTexts.add(new ListInfoPair("教育", "9", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("政治", "10", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("新时代", "10", ListInfoPair.TYPE_LIST));
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
             listTexts.add(new ListInfoPair("板块", "11", ListInfoPair.TYPE_MANAGER));
@@ -127,50 +135,69 @@ public class PageFragment extends Fragment {
 
         currentFragment = null;
 
-        TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
+        tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
+        scrollView = (HorizontalScrollView) getView().findViewById(R.id.page_scrollview);
 
-        for (ListInfoPair info : listTexts) {
-            tabLayout.addTab(tabLayout.newTab().setText(info.title));
+        ViewPager viewpager = getView().findViewById(R.id.page_viewpager);
+        viewpager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return listFrames.get(position);
+            }
+
+            @Override
+            public int getCount() {
+                return listFrames.size();
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                super.destroyItem(container, position, object);
+            }
+
+            @Nullable
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return listTexts.get(position).title;
+            }
+        });
+
+        tabLayout.setupWithViewPager(viewpager);
+
+        for (int i = 0; i < tabLayout.getTabCount(); ++i)
+        {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            TabViewHelper.setTextTabActive(tab, listTexts.get(i), tab.isSelected());
         }
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                showPage(tab.getPosition(), false);
+                int index = tab.getPosition();
+                TabViewHelper.setTextTabActive(tab, listTexts.get(index), true);
+
+                ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+                int pos = 0;
+                for (int i = 0; i < index; ++i)
+                {
+                    View temp = vg.getChildAt(i);
+                    if (temp != null)
+                        pos += temp.getWidth();
+                }
+                scrollView.smoothScrollTo(pos - 75, 0);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // TODO
+                int index = tab.getPosition();
+                TabViewHelper.setTextTabActive(tab, listTexts.get(index), false);
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                // TODO
+                onTabSelected(tab);
             }
         });
-
-        showPage(0, true);
-    }
-
-    private void showPage(int index, boolean init)
-    {
-        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-
-        if (currentFragment != null)
-        {
-            fragmentTransaction.hide(currentFragment);
-        }
-
-        currentFragment = listFrames.get(index);
-        if (currentFragment.isAdded())
-        {
-            fragmentTransaction.show(currentFragment);
-        } else
-        {
-            fragmentTransaction.add(R.id.newslist_framelayout, currentFragment, currentFragment.getTag());
-        }
-        fragmentTransaction.commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -195,6 +222,11 @@ public class PageFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void reselectPage()
+    {
+        tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).select();
     }
 
     /**

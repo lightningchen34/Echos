@@ -7,9 +7,10 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.util.DisplayMetrics;
-import android.util.Pair;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -18,6 +19,9 @@ import android.view.MenuItem;
 
 import com.chen91apps.echos.fragments.ListFragment;
 import com.chen91apps.echos.fragments.PageFragment;
+import com.chen91apps.echos.utils.ThemeColors;
+import com.chen91apps.echos.utils.pairs.TabIconPair;
+import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -25,8 +29,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +45,7 @@ public class MainActivity extends AppCompatActivity
 
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
-    private ArrayList<Pair<String, String>> tabText;
+    private ArrayList<TabIconPair> tabInfo;
 
     private PageFragment currentFragment = null;
 
@@ -54,13 +62,13 @@ public class MainActivity extends AppCompatActivity
         // this.setTheme(R.style.Mytheme_Night);
         setContentView(R.layout.activity_main);
 
-        tabText = new ArrayList<Pair<String, String>>();
-        tabText.add(new Pair<String, String>(getString(R.string.mainactivaty_text_news), getString(R.string.mainactivaty_tag_news)));
-        tabText.add(new Pair<String, String>(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community)));
-        tabText.add(new Pair<String, String>(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss)));
+        tabInfo = new ArrayList<>();
+        tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_news), getString(R.string.mainactivaty_tag_news), R.drawable.ic_home_selected, R.drawable.ic_home));
+        tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community), R.drawable.ic_community_selected, R.drawable.ic_community));
+        tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss), R.drawable.ic_rss_selected, R.drawable.ic_rss));
 
-        initTabs();
         initPages();
+        initTabs();
 
         initNavigationView();
         initSearchText();
@@ -95,61 +103,67 @@ public class MainActivity extends AppCompatActivity
     {
         System.out.println("Init Fragment");
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
         pages = new ArrayList<PageFragment>();
-        for (Pair<String, String> text : tabText)
+        for (TabIconPair info : tabInfo)
         {
-            pages.add(PageFragment.newInstance(text.second, ""));
+            pages.add(PageFragment.newInstance(info.getTag(), ""));
         }
-        showFragment(0);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return pages.get(position);
+            }
+
+            @Override
+            public int getCount() {
+                return pages.size();
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                super.destroyItem(container, position, object);
+            }
+
+            @Nullable
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return tabInfo.get(position).getText();
+            }
+        });
+
+        TabLayout tabLayout = findViewById(R.id.main_tablayout);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void initTabs()
     {
         TabLayout tabLayout = findViewById(R.id.main_tablayout);
-        for (Pair<String, String> text : tabText)
+        for (int i = 0; i < tabLayout.getTabCount(); ++i)
         {
-            tabLayout.addTab(tabLayout.newTab().setText(text.first).setTag(text.second));
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            TabViewHelper.setIconTabActive(tab, tabInfo.get(i), tab.isSelected());
         }
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                System.out.println(tab.getPosition());
                 int index = tab.getPosition();
-                showFragment(index);
+                TabViewHelper.setIconTabActive(tab, tabInfo.get(index), true);
+                pages.get(index).reselectPage();
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                System.out.println("Unselect Tab");
-
+                int index = tab.getPosition();
+                TabViewHelper.setIconTabActive(tab, tabInfo.get(index), false);
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                System.out.println("Reselect Tab");
-
+                // TODO
             }
         });
-    }
-
-    private void showFragment(int index)
-    {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        if (currentFragment != null)
-        {
-            fragmentTransaction.hide(currentFragment);
-        }
-        currentFragment = pages.get(index);
-        if (currentFragment.isAdded()) {
-            fragmentTransaction.show(currentFragment);
-        } else
-        {
-            fragmentTransaction.add(R.id.main_framelayout, currentFragment, currentFragment.getTag());
-        }
-        fragmentTransaction.commit();
     }
 
     @Override

@@ -17,8 +17,15 @@
         <FrameLayout
             android:id="@+id/main_framelayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/main_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.viewpager.widget.ViewPager>
 
         </FrameLayout>
 
@@ -30,10 +37,11 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/main_tablayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            app:tabPaddingStart="-1dp"
+            app:tabPaddingEnd="-1dp"
             app:tabIndicatorColor="?attr/highlight_color"
-            app:tabTextColor="?attr/edge_color"
-            app:tabSelectedTextColor="?attr/highlight_color">
+            app:tabMode="fixed">
         </com.google.android.material.tabs.TabLayout>
 
     </LinearLayout>
