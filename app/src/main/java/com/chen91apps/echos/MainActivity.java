@@ -15,14 +15,10 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
-import android.view.MenuItem;
-
 import com.chen91apps.echos.fragments.ListFragment;
 import com.chen91apps.echos.fragments.PageFragment;
-import com.chen91apps.echos.utils.ThemeColors;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -31,21 +27,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
+        implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
 
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
     private ArrayList<TabIconPair> tabInfo;
+
+    private int[] drawer_list_indexes;
 
     private PageFragment currentFragment = null;
 
@@ -70,19 +70,71 @@ public class MainActivity extends AppCompatActivity
         initPages();
         initTabs();
 
-        initNavigationView();
+        initDrawer();
         initSearchText();
     }
 
-    private void initNavigationView()
+    private void initDrawer()
     {
         Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        navigationView.setNavigationItemSelectedListener(this);
+
+        ListView drawerListView = (ListView) findViewById(R.id.drawer_listview);
+
+        drawer_list_indexes = new int[] {
+                R.string.menu_profile,
+                R.string.menu_vip,
+                R.string.menu_history,
+                R.string.menu_favorites,
+                R.string.menu_settings,
+                R.string.menu_share
+        };
+
+        String[] data = new String[drawer_list_indexes.length];
+        for (int i = 0; i < drawer_list_indexes.length; ++i)
+            data[i] = getString(drawer_list_indexes[i]);
+
+        drawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data));
+
+        drawerListView.setOnItemClickListener(new ListView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "个人中心", Toast.LENGTH_LONG).show();
+                } else if (i == 1)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "会员", Toast.LENGTH_LONG).show();
+                } else if (i == 2)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "历史记录", Toast.LENGTH_LONG).show();
+                } else if (i == 3)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "收藏夹", Toast.LENGTH_LONG).show();
+                } else if (i == 4)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "设置", Toast.LENGTH_LONG).show();
+                } else if (i == 5)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "分享", Toast.LENGTH_LONG).show();
+                } else
+                {
+                    // TODO
+                }
+            }
+        });
+        
+
     }
 
     private void initSearchText()
@@ -174,31 +226,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override

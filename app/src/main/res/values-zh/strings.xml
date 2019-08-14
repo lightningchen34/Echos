@@ -1,6 +1,14 @@
 <resources>
+
     <string name="mainactivaty_text_news">新闻</string>
     <string name="mainactivaty_text_community">社区</string>
     <string name="mainactivaty_text_rss">订阅</string>
+
+    <string name="menu_profile">个人中心</string>
+    <string name="menu_vip">会员中心</string>
+    <string name="menu_history">最近浏览</string>
+    <string name="menu_favorites">我的收藏</string>
+    <string name="menu_settings">设置</string>
+    <string name="menu_share">分享</string>
 
 </resources>
