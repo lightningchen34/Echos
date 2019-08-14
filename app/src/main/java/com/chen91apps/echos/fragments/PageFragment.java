@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +48,16 @@ public class PageFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Fragment currentFragment;
     private TabLayout tabLayout;
     private HorizontalScrollView scrollView;
+
+    private int scrollViewPos;
+
+    private Runnable scrollRunnable = new Runnable() {
+        public void run() {
+            scrollView.smoothScrollTo(scrollViewPos - 75, 0);
+        }
+    };
 
     public PageFragment() {
         // Required empty public constructor
@@ -131,9 +139,7 @@ public class PageFragment extends Fragment {
     @Override
     public void onStart()
     {
-        super.onStart();
-
-        currentFragment = null;
+        System.out.println("Start");
 
         tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
         scrollView = (HorizontalScrollView) getView().findViewById(R.id.page_scrollview);
@@ -184,7 +190,10 @@ public class PageFragment extends Fragment {
                     if (temp != null)
                         pos += temp.getWidth();
                 }
-                scrollView.smoothScrollTo(pos - 75, 0);
+                scrollViewPos = pos - 75;
+
+                Handler handler = new Handler();
+                handler.post(scrollRunnable);
             }
 
             @Override
@@ -198,6 +207,22 @@ public class PageFragment extends Fragment {
                 onTabSelected(tab);
             }
         });
+        super.onStart();
+    }
+
+    @Override
+    public void onDestroy() {
+        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+        for (Fragment fragment : listFrames)
+        {
+            if (fragment.isAdded())
+            {
+                fragmentTransaction.remove(fragment);
+            }
+        }
+        fragmentTransaction.commitAllowingStateLoss();
+        System.out.println("destroy");
+        super.onDestroy();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -226,7 +251,11 @@ public class PageFragment extends Fragment {
 
     public void reselectPage()
     {
-        tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).select();
+        if (this.isAdded()) {
+            System.out.print("select");
+            System.out.println(tabLayout.getSelectedTabPosition());
+            tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).select();
+        }
     }
 
     /**
