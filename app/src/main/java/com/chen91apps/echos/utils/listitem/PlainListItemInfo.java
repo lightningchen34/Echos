@@ -5,12 +5,10 @@ import android.widget.TextView;
 
 import com.chen91apps.echos.R;
 
-public class PlainListItemInfo extends BaseListItemInfo {
+public class PlainListItemInfo extends ListItemInfo {
 
     private String title;
     private String subtitle;
-
-    private ViewHolder vh;
 
     public PlainListItemInfo(String title, String subtitle)
     {
@@ -20,22 +18,25 @@ public class PlainListItemInfo extends BaseListItemInfo {
     }
 
     @Override
-    public void setup(View view) {
-        vh = new ViewHolder();
-        vh.title = (TextView) view.findViewById(R.id.mylistview_item_title);
-        vh.subtitle = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
-        view.setTag(this);
+    protected ListItemInfo.ViewHolder getViewHolder(View view) {
+        return new ViewHolder(view);
     }
 
-    @Override
-    public void show() {
-        vh.title.setText(title);
-        vh.subtitle.setText(subtitle);
-    }
-
-    private class ViewHolder
+    private class ViewHolder extends ListItemInfo.ViewHolder
     {
-        TextView title;
-        TextView subtitle;
+        TextView titleView;
+        TextView subtitleView;
+
+        public ViewHolder(View view) {
+            titleView = (TextView) view.findViewById(R.id.mylistview_item_title);
+            subtitleView = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
+            view.setTag(this);
+        }
+
+        @Override
+        public void show() {
+            titleView.setText(title);
+            subtitleView.setText(subtitle);
+        }
     }
 }

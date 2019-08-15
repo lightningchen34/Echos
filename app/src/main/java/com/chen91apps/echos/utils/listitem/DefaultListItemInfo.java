@@ -6,13 +6,11 @@ import android.widget.TextView;
 
 import com.chen91apps.echos.R;
 
-public class DefaultListItemInfo extends BaseListItemInfo {
+public class DefaultListItemInfo extends ListItemInfo {
 
     private String title;
     private String subtitle;
     private String imageUrl;
-
-    private ViewHolder vh;
 
     public DefaultListItemInfo(String title, String subtitle, String imageUrl)
     {
@@ -23,25 +21,28 @@ public class DefaultListItemInfo extends BaseListItemInfo {
     }
 
     @Override
-    public void setup(View view) {
-        vh = new ViewHolder();
-        vh.title = (TextView) view.findViewById(R.id.mylistview_item_title);
-        vh.subtitle = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
-        vh.image = (ImageView) view.findViewById(R.id.mylistview_item_image);
-        view.setTag(this);
+    protected ListItemInfo.ViewHolder getViewHolder(View view) {
+        return new ViewHolder(view);
     }
 
-    @Override
-    public void show() {
-        com.chen91apps.echos.utils.ImageLoader.load(vh.image, "thumbnail", imageUrl);
-        vh.title.setText(title);
-        vh.subtitle.setText(subtitle);
-    }
-
-    private class ViewHolder
+    private class ViewHolder extends ListItemInfo.ViewHolder
     {
-        TextView title;
-        TextView subtitle;
-        ImageView image;
+        TextView titleView;
+        TextView subtitleView;
+        ImageView imageView;
+
+        public ViewHolder(View view) {
+            titleView = (TextView) view.findViewById(R.id.mylistview_item_title);
+            subtitleView = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
+            imageView = (ImageView) view.findViewById(R.id.mylistview_item_image);
+            view.setTag(this);
+        }
+
+        @Override
+        public void show() {
+            titleView.setText(title);
+            subtitleView.setText(subtitle);
+            com.chen91apps.echos.utils.ImageLoader.load(imageView, "thumbnail", imageUrl);
+        }
     }
 }

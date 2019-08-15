@@ -14,9 +14,8 @@ import com.chen91apps.echos.R;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
-import com.chen91apps.echos.utils.listitem.BaseListItemInfo;
+import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
-import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
@@ -98,7 +97,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     };
 
-    BaseListItemInfo getinfo(Random random)
+    ListItemInfo getinfo(Random random)
     {
         int type = random.nextInt(3);
         System.out.println(type);
@@ -121,7 +120,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         MyListView lv = (MyListView) getView().findViewById(R.id.mylistview);
         lv.setPullListener(this);
 
-        LinkedList<BaseListItemInfo> data = new LinkedList<>();
+        LinkedList<ListItemInfo> data = new LinkedList<>();
 
         Random random = new Random();
 

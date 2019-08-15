@@ -9,16 +9,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chen91apps.echos.R;
-
 import java.util.LinkedList;
 
 public class ListItemAdapter extends BaseAdapter {
 
-    private LinkedList<BaseListItemInfo> data;
+    private LinkedList<ListItemInfo> data;
     private Context context;
 
-    public ListItemAdapter(LinkedList<BaseListItemInfo> data, Context context)
+    public ListItemAdapter(LinkedList<ListItemInfo> data, Context context)
     {
         this.data = data;
         this.context = context;
@@ -45,7 +43,7 @@ public class ListItemAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(data.get(i).getLayoutId(), viewGroup, false);
             data.get(i).setup(view);
         }
-        ((BaseListItemInfo) view.getTag()).show();
+        ((ListItemInfo.ViewHolder) view.getTag()).show();
         return view;
     }
 
