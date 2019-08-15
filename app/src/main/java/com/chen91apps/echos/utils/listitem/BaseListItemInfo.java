@@ -1,11 +1,25 @@
 package com.chen91apps.echos.utils.listitem;
 
-public class ListItemInfo {
-    private String title;
-    private String subtitle;
-    private String imageURL;
+import android.view.View;
+import android.widget.ImageView;
 
-    public ListItemInfo(String title, String subtitle, String imageURL)
+public abstract class BaseListItemInfo {
+    private int layoutId;
+
+    public BaseListItemInfo(int layoutId)
+    {
+        this.layoutId = layoutId;
+    }
+
+    public int getLayoutId() {
+        return layoutId;
+    }
+
+    public abstract void setup(View view);
+    public abstract void show();
+
+    /*
+    public BaseListItemInfo(String title, String subtitle, String imageURL)
     {
         this.title = title;
         this.subtitle = subtitle;
@@ -31,4 +45,6 @@ public class ListItemInfo {
     {
         this.imageURL = imageURL;
     }
+    */
+
 }

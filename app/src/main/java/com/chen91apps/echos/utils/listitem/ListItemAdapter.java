@@ -15,10 +15,10 @@ import java.util.LinkedList;
 
 public class ListItemAdapter extends BaseAdapter {
 
-    private LinkedList<ListItemInfo> data;
+    private LinkedList<BaseListItemInfo> data;
     private Context context;
 
-    public ListItemAdapter(LinkedList<ListItemInfo> data, Context context)
+    public ListItemAdapter(LinkedList<BaseListItemInfo> data, Context context)
     {
         this.data = data;
         this.context = context;
@@ -41,23 +41,11 @@ public class ListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder vh;
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.mylistview_item, viewGroup, false);
-
-            vh = new ViewHolder();
-            vh.titleView = (TextView) view.findViewById(R.id.mylistview_item_title);
-            vh.subtitleView = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
-            vh.imageView = (ImageView) view.findViewById(R.id.mylistview_item_image);
-            view.setTag(vh);
-        } else
-        {
-            vh = (ViewHolder) view.getTag();
+            view = LayoutInflater.from(context).inflate(data.get(i).getLayoutId(), viewGroup, false);
+            data.get(i).setup(view);
         }
-        com.chen91apps.echos.utils.ImageLoader.load(vh.imageView, "thumbnail", data.get(i).getImageURL());
-        vh.titleView.setText(data.get(i).getTitle());
-        vh.subtitleView.setText(data.get(i).getSubtitle());
-
+        ((BaseListItemInfo) view.getTag()).show();
         return view;
     }
 

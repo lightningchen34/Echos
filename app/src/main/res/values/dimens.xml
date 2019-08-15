@@ -15,4 +15,9 @@
     <dimen name="mylistview_item_titlesize">18dp</dimen>
     <dimen name="mylistview_item_subtitlesize">12dp</dimen>
 
+    <dimen name="mylistview_imageitem_height">180dp</dimen>
+    <dimen name="mylistview_imageitem_spacing">10dp</dimen>
+    <dimen name="mylistview_imageitem_image_width">100dp</dimen>
+
+
 </resources>
