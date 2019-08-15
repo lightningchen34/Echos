@@ -2,6 +2,8 @@ package com.chen91apps.echos;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,14 +17,12 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
-import android.view.MenuItem;
-
 import com.chen91apps.echos.fragments.ListFragment;
 import com.chen91apps.echos.fragments.PageFragment;
-import com.chen91apps.echos.utils.ThemeColors;
+import com.chen91apps.echos.utils.ACache;
+import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -35,19 +35,42 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
+        implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
 
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
     private ArrayList<TabIconPair> tabInfo;
 
-    private PageFragment currentFragment = null;
+    private int[] drawer_list_indexes;
+
+    public static ACache acache;
+
+    protected void setStatusBarFullTransparent() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -58,9 +81,14 @@ public class MainActivity extends AppCompatActivity
         // config.locale = Locale.CHINA;
         resources.updateConfiguration(config, dm);
 
+        setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
+
+        acache = ACache.get(this);
+
         super.onCreate(savedInstanceState);
-        // this.setTheme(R.style.Mytheme_Night);
         setContentView(R.layout.activity_main);
+
+        setStatusBarFullTransparent();
 
         tabInfo = new ArrayList<>();
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_news), getString(R.string.mainactivaty_tag_news), R.drawable.ic_home_selected, R.drawable.ic_home));
@@ -70,19 +98,108 @@ public class MainActivity extends AppCompatActivity
         initPages();
         initTabs();
 
-        initNavigationView();
+        initDrawer();
         initSearchText();
     }
 
-    private void initNavigationView()
+    @Override
+    public void recreate() {
+        System.out.println("recreate");
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        for (Fragment fragment : pages)
+        {
+            if (fragment.isAdded())
+            {
+                fragmentTransaction.remove(fragment);
+            }
+        }
+        fragmentTransaction.commitAllowingStateLoss();
+        super.recreate();
+    }
+
+    private void initDrawer()
     {
+        ImageView background = (ImageView) findViewById(R.id.drawer_background);
+        background.setImageResource(Configure.day_or_night ? R.mipmap.back : R.mipmap.back2);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        navigationView.setNavigationItemSelectedListener(this);
+
+        ListView drawerListView = (ListView) findViewById(R.id.drawer_listview);
+
+        drawer_list_indexes = new int[] {
+                R.string.menu_profile,
+                R.string.menu_vip,
+                R.string.menu_theme,
+                R.string.menu_post,
+                R.string.menu_comments,
+                R.string.menu_history,
+                R.string.menu_favorites,
+                R.string.menu_feedback
+        };
+
+        String[] data = new String[drawer_list_indexes.length];
+        for (int i = 0; i < drawer_list_indexes.length; ++i)
+            data[i] = getString(drawer_list_indexes[i]);
+
+        drawerListView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, data));
+
+        drawerListView.setOnItemClickListener(new ListView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "我的信息", Toast.LENGTH_LONG).show();
+                } else if (i == 1)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "我的会员", Toast.LENGTH_LONG).show();
+                } else if (i == 2)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "个性换肤", Toast.LENGTH_LONG).show();
+                } else if (i == 3)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "我的发帖", Toast.LENGTH_LONG).show();
+                } else if (i == 4)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "我的回帖", Toast.LENGTH_LONG).show();
+                } else if (i == 5)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "我的阅历", Toast.LENGTH_LONG).show();
+                } else if (i == 6)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "我的收藏", Toast.LENGTH_LONG).show();
+                } else if (i == 7)
+                {
+                    // TODO
+                    Toast.makeText(view.getContext(), "意见反馈", Toast.LENGTH_LONG).show();
+                } else
+                {
+                    // TODO
+                }
+            }
+        });
+        
+        final TextView dnMode = (TextView) findViewById(R.id.drawer_dnmode);
+        final TextView settings = (TextView) findViewById(R.id.drawer_settings);
+
+        dnMode.setOnClickListener((View view) -> {
+            Configure.day_or_night = !Configure.day_or_night;
+                recreate();
+            });
+        dnMode.setText(Configure.day_or_night ? R.string.menu_night_mode : R.string.menu_day_mode);
+        settings.setText(R.string.menu_settings);
+
     }
 
     private void initSearchText()
@@ -174,31 +291,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override

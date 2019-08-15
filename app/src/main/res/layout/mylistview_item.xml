@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/mylistview_item_height"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -17,6 +18,7 @@
             android:layout_weight="1"
             android:padding="@dimen/mylistview_item_padding"
             android:textSize="@dimen/mylistview_item_titlesize"
+            android:textColor="?attr/text_color"
             android:text="这是一个标题这是一个标题这是一个标题这是一个标题"/>
 
         <TextView
@@ -26,20 +28,22 @@
             android:layout_weight="2"
             android:paddingLeft="@dimen/mylistview_item_padding"
             android:paddingBottom="@dimen/mylistview_item_padding"
+            android:textColor="?attr/text_color"
+            android:textSize="@dimen/mylistview_item_subtitlesize"
             android:text="some descriptions here"/>
 
     </LinearLayout>
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/mylistview_item_height"
         android:padding="@dimen/mylistview_item_padding"
-        android:layout_weight="3">
+        android:layout_gravity="center">
 
         <ImageView
             android:id="@+id/mylistview_item_image"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/mylistview_item_image_width"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:scaleType="centerCrop"

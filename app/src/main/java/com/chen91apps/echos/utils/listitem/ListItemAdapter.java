@@ -1,7 +1,7 @@
 package com.chen91apps.echos.utils.listitem;
 
 import android.content.Context;
-import android.text.Layout;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,15 +41,41 @@ public class ListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = LayoutInflater.from(context).inflate(R.layout.mylistview_item, viewGroup, false);
-        TextView titleView = (TextView) view.findViewById(R.id.mylistview_item_title);
-        TextView subtitleView = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
-        ImageView imageView = (ImageView) view.findViewById(R.id.mylistview_item_image);
+        ViewHolder vh;
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.mylistview_item, viewGroup, false);
 
-        imageView.setImageBitmap(data.get(i).getImage());
-        titleView.setText(data.get(i).getTitle());
-        subtitleView.setText(data.get(i).getSubtitle());
+            vh = new ViewHolder();
+            vh.titleView = (TextView) view.findViewById(R.id.mylistview_item_title);
+            vh.subtitleView = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
+            vh.imageView = (ImageView) view.findViewById(R.id.mylistview_item_image);
+            view.setTag(vh);
+        } else
+        {
+            vh = (ViewHolder) view.getTag();
+        }
+        com.chen91apps.echos.utils.ImageLoader.load(vh.imageView, "thumbnail", data.get(i).getImageURL());
+        vh.titleView.setText(data.get(i).getTitle());
+        vh.subtitleView.setText(data.get(i).getSubtitle());
 
         return view;
+    }
+
+    Bitmap getBitmap()
+    {
+        return null;
+    }
+
+    class ViewHolder
+    {
+        public TextView titleView;
+        public TextView subtitleView;
+        public ImageView imageView;
+    }
+
+    class ImageLoader
+    {
+        private ImageView imageView;
+        // private
     }
 }

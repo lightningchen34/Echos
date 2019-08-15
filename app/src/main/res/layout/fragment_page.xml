@@ -35,6 +35,7 @@
                     app:tabBackground="@android:color/transparent"
                     app:tabRippleColor="@android:color/transparent"
                     app:tabMode="scrollable"
+                    app:tabIndicatorColor="?attr/highlight_color"
                     app:tabPaddingStart="0dp"
                     app:tabPaddingEnd="0dp">
 

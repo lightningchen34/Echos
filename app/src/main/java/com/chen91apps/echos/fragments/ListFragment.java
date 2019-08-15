@@ -19,6 +19,7 @@ import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 
 /**
@@ -84,22 +85,23 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
         LinkedList<ListItemInfo> data = new LinkedList<>();
 
+        Random random = new Random();
         if (param_URL == "4") {
-            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
-            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", BitmapFactory.decodeResource(getResources(), R.mipmap.test)));
+            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
+            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
         } else
         {
-            data.add(new ListItemInfo("暂无", "更新时间：1970-1-1", BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher)));
+            data.add(new ListItemInfo("暂无", "更新时间：1970-1-1", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
         }
 
         ListItemAdapter adapter = new ListItemAdapter(data, getContext());

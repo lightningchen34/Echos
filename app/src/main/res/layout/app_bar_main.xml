@@ -29,12 +29,12 @@
                     android:layout_marginTop="@dimen/toolbar_searchtext_margin_top"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:drawableRight="@drawable/ic_search_black"
+                    android:drawableRight="@drawable/ic_search"
                     android:background="@drawable/search_textview_boarder"
                     android:text="腾讯 QQ | 微信 | Bilibili"
                     android:gravity="left|center"
                     android:singleLine="true"
-                    android:textColor="?attr/text_color"/>
+                    android:textColor="?attr/edge_color"/>
 
             </LinearLayout>
 
