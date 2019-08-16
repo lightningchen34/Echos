@@ -17,4 +17,8 @@
     <string name="menu_night_mode">夜间模式</string>
     <string name="menu_settings">设置</string>
 
+    <string name="settings_category_user">账户设置</string>
+    <string name="settings_category_settings">基本设置</string>
+    <string name="settings_category_about">关于 Echos</string>
+
 </resources>

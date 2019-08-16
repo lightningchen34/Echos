@@ -1,11 +1,11 @@
 <resources>
 
-    <style name="Mytheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Mytheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorSecondary</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="windowActionBar">false</item>
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
         
         <item name="background_color">#ffffffff</item>
@@ -14,7 +14,7 @@
         <item name="highlight_color">@color/colorPrimary</item>
         <item name="undertint_color">#FF585858</item>
         
-        <item name="separator_color">#aaaaaa</item>
+        <item name="separator_color">#dddddd</item>
     </style>
 
     <style name="Mytheme.Night" parent="Mytheme">

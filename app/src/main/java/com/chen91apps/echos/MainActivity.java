@@ -1,5 +1,7 @@
 package com.chen91apps.echos;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -9,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -197,6 +200,12 @@ public class MainActivity extends AppCompatActivity
             Configure.day_or_night = !Configure.day_or_night;
                 recreate();
             });
+        settings.setOnClickListener((View view) -> {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(this, SettingsActivity.class));
+            startActivity(intent);
+            drawer.closeDrawer(GravityCompat.START);
+        });
         dnMode.setText(Configure.day_or_night ? R.string.menu_night_mode : R.string.menu_day_mode);
         settings.setText(R.string.menu_settings);
 

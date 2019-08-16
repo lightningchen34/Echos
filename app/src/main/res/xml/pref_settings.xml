@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="">
+
+    <PreferenceCategory
+        android:title="@string/settings_category_user"
+        android:layout="@layout/pref_category">
+       <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+           android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_category_settings"
+        android:layout="@layout/pref_category">
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_category_about"
+        android:layout="@layout/pref_category">
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+        <CheckBoxPreference
+            android:key="checkbox_preference"
+            android:summary="这是一个开关按钮"
+            android:layout="@layout/pref_item"
+            android:title="开关偏好" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
