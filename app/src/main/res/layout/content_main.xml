@@ -41,6 +41,8 @@
             app:tabPaddingStart="-1dp"
             app:tabPaddingEnd="-1dp"
             app:tabIndicatorColor="?attr/highlight_color"
+
+            app:tabRippleColor="@android:color/transparent"
             app:tabMode="fixed">
         </com.google.android.material.tabs.TabLayout>
 

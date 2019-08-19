@@ -9,8 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chen91apps.echos.R;
-
 import java.util.LinkedList;
 
 public class ListItemAdapter extends BaseAdapter {
@@ -41,23 +39,11 @@ public class ListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder vh;
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.mylistview_item, viewGroup, false);
-
-            vh = new ViewHolder();
-            vh.titleView = (TextView) view.findViewById(R.id.mylistview_item_title);
-            vh.subtitleView = (TextView) view.findViewById(R.id.mylistview_item_subtitle);
-            vh.imageView = (ImageView) view.findViewById(R.id.mylistview_item_image);
-            view.setTag(vh);
-        } else
-        {
-            vh = (ViewHolder) view.getTag();
+            view = LayoutInflater.from(context).inflate(data.get(i).getLayoutId(), viewGroup, false);
+            data.get(i).setup(view);
         }
-        com.chen91apps.echos.utils.ImageLoader.load(vh.imageView, "thumbnail", data.get(i).getImageURL());
-        vh.titleView.setText(data.get(i).getTitle());
-        vh.subtitleView.setText(data.get(i).getSubtitle());
-
+        ((ListItemInfo.ViewHolder) view.getTag()).show();
         return view;
     }
 

@@ -1,9 +1,6 @@
 package com.chen91apps.echos.fragments;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -14,8 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
+import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
+import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
@@ -76,6 +76,43 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
+    String getUrl(Random random)
+    {
+        return "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg";
+    }
+
+    String[] strings = {
+            "【催泪MAD】时间女孩时崎狂三",
+            "时崎狂三战斗曲——狂三告诉你，牺牲自己为了大局才是正义！【MAD】",
+            "【约会大作战/时崎狂三】你不是一人在战斗，你不会永远孤独",
+            "【约会大作战】时崎狂三第一季出场合集片段！！",
+            "大家好我是练习说骚话，时长两年半的时间女孩时崎狂三。",
+            "【时崎狂三/泪燃/悲愿】除了灵力，什么都可以给你哦，士道桑",
+            "【时崎狂三】终有一日能和士道再次相遇",
+            "【MMD】你看起来真的很美味~时崎狂三",
+            "亲，你的时崎狂三到了，请查收",
+            "【高甜预警/时崎狂三ⅹ五河士道】有点甜",
+            "约会大作战 时崎狂三 三三这么可爱不可能是狐狸精！",
+            "为了你轮回204次又何妨！盘点时崎狂三拯救士道的那些片段"
+
+    };
+
+    ListItemInfo getinfo(Random random)
+    {
+        int type = random.nextInt(3);
+        System.out.println(type);
+        if (type == 0)
+        {
+            return new PlainListItemInfo(strings[random.nextInt(strings.length)], "更新时间：1970-1-1");
+        } else if (type == 1)
+        {
+            return new DefaultListItemInfo(strings[random.nextInt(strings.length)], "更新时间：2019-8-12", getUrl(random));
+        } else
+        {
+            return new ImageListItemInfo(strings[random.nextInt(strings.length)], getUrl(random), getUrl(random), getUrl(random));
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -86,23 +123,9 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         LinkedList<ListItemInfo> data = new LinkedList<>();
 
         Random random = new Random();
-        if (param_URL == "4") {
-            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("世界杯巡礼之菲律宾：球风硬朗的亚洲劲旅", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("马丁-路德-金日部分赛程出炉", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("百大球员第56：扎克-拉文，扣篮王的超级火力", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("[深度]雷霆新赛季可能的四套首发阵容", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("西决之王！2000年后科比7次分区决赛全部获胜", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-            data.add(new ListItemInfo("官方：虎扑招聘中国篮球运营实习生", "更新时间：2019-8-12", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-        } else
-        {
-            data.add(new ListItemInfo("暂无", "更新时间：1970-1-1", "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg"));
-        }
+
+        for (int i = 0; i < 10; ++i)
+            data.add(getinfo(random));
 
         ListItemAdapter adapter = new ListItemAdapter(data, getContext());
         lv.setAdapter(adapter);

@@ -1,34 +1,34 @@
 package com.chen91apps.echos.utils.listitem;
 
-public class ListItemInfo {
-    private String title;
-    private String subtitle;
-    private String imageURL;
+import android.view.View;
 
-    public ListItemInfo(String title, String subtitle, String imageURL)
+public abstract class ListItemInfo {
+    private int layoutId;
+    private ViewHolder viewHolder;
+
+    public ListItemInfo(int layoutId)
     {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.imageURL = imageURL;
+        this.layoutId = layoutId;
     }
 
-    public String getTitle()
-    {
-        return title;
+    public int getLayoutId() {
+        return this.layoutId;
     }
 
-    public String getSubtitle()
+    protected abstract ViewHolder getViewHolder(View view);
+
+    public void setup(View view)
     {
-        return subtitle;
+        this.viewHolder = getViewHolder(view);
     }
 
-    public String getImageURL()
+    public ViewHolder getViewHolder()
     {
-        return imageURL;
+        return this.viewHolder;
     }
 
-    public void setImageURL(String imageURL)
+    public abstract class ViewHolder
     {
-        this.imageURL = imageURL;
+        public abstract void show();
     }
 }
