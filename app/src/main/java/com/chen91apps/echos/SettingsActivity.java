@@ -26,6 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_goback);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
         getFragmentManager().beginTransaction().replace(R.id.settings, new SettingsFragment()).commit();
     }

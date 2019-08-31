@@ -20,6 +20,9 @@
     <string name="menu_night_mode">Night Mode</string>
     <string name="menu_settings">Settings</string>
 
+    <string name="text_login">Login</string>
+    <string name="text_user">User</string>
+
     <string name="mainactivaty_text_news">News</string>
     <string name="mainactivaty_text_community">Community</string>
     <string name="mainactivaty_text_rss">RSS</string>

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -24,6 +25,7 @@ import com.chen91apps.echos.fragments.ListFragment;
 import com.chen91apps.echos.fragments.PageFragment;
 import com.chen91apps.echos.utils.ACache;
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.User;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
 
         acache = ACache.get(this);
+        User.user.init();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -135,12 +138,10 @@ public class MainActivity extends AppCompatActivity
 
         drawer_list_indexes = new int[] {
                 R.string.menu_profile,
-                R.string.menu_vip,
-                R.string.menu_theme,
                 R.string.menu_post,
                 R.string.menu_comments,
-                R.string.menu_history,
                 R.string.menu_favorites,
+                R.string.menu_history,
                 R.string.menu_feedback
         };
 
@@ -150,46 +151,82 @@ public class MainActivity extends AppCompatActivity
 
         drawerListView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, data));
 
-        drawerListView.setOnItemClickListener(new ListView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0)
+        drawerListView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            if (i == 0)
+            {
+                if (User.user.checkLogin())
                 {
-                    // TODO
-                    Toast.makeText(view.getContext(), "我的信息", Toast.LENGTH_LONG).show();
-                } else if (i == 1)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "我的会员", Toast.LENGTH_LONG).show();
-                } else if (i == 2)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "个性换肤", Toast.LENGTH_LONG).show();
-                } else if (i == 3)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "我的发帖", Toast.LENGTH_LONG).show();
-                } else if (i == 4)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "我的回帖", Toast.LENGTH_LONG).show();
-                } else if (i == 5)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "我的阅历", Toast.LENGTH_LONG).show();
-                } else if (i == 6)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "我的收藏", Toast.LENGTH_LONG).show();
-                } else if (i == 7)
-                {
-                    // TODO
-                    Toast.makeText(view.getContext(), "意见反馈", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, UserInfoActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
                 } else
                 {
-                    // TODO
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
                 }
+            } else if (i == 1)
+            {
+                if (User.user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, PostActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 2)
+            {
+                if (User.user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, CommentsActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 3)
+            {
+                if (User.user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, FavoritesActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 4)
+            {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, HistoryActivity.class));
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+            } else if (i == 5)
+            {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, FeedbackActivity.class));
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+            } else
+            {
+                //
             }
         });
         
@@ -198,8 +235,8 @@ public class MainActivity extends AppCompatActivity
 
         dnMode.setOnClickListener((View view) -> {
             Configure.day_or_night = !Configure.day_or_night;
-                recreate();
-            });
+            recreate();
+        });
         settings.setOnClickListener((View view) -> {
             Intent intent = new Intent();
             intent.setComponent(new ComponentName(this, SettingsActivity.class));
