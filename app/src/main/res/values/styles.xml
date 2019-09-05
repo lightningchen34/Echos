@@ -9,6 +9,7 @@
         <item name="windowNoTitle">true</item>
         
         <item name="background_color">#ffffffff</item>
+        <item name="background2_color">#ffdddddd</item>
         <item name="text_color">#ff000000</item>
         <item name="edge_color">#FFFFFFFF</item>
         <item name="highlight_color">@color/colorPrimary</item>
@@ -22,6 +23,7 @@
         <item name="colorPrimaryDark">@color/colorSecondaryDark</item>
 
         <item name="background_color">#ff333338</item>
+        <item name="background2_color">#ff222222</item>
         <item name="text_color">#ffBBBBBB</item>
         <item name="edge_color">#ffDDDDDD</item>
         <item name="highlight_color">#ffffffff</item>

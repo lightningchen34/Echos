@@ -32,7 +32,7 @@ public class User {
     public boolean checkLogin() {
         if (cookie == null)
         {
-            return false;
+            return true;
         }
         // TODO
         return false;

@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community), R.drawable.ic_community_selected, R.drawable.ic_community));
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss), R.drawable.ic_rss_selected, R.drawable.ic_rss));
 
-        initPages();
-        initTabs();
+        // initPages();
+        // initTabs();
 
         initDrawer();
         initSearchText();
@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void recreate() {
+        /*
         System.out.println("recreate");
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         for (Fragment fragment : pages)
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         fragmentTransaction.commitAllowingStateLoss();
+        */
         super.recreate();
     }
 
@@ -214,10 +216,19 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (i == 4)
             {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName(this, HistoryActivity.class));
-                startActivity(intent);
-                drawer.closeDrawer(GravityCompat.START);
+                if (User.user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, HistoryActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
             } else if (i == 5)
             {
                 Intent intent = new Intent();

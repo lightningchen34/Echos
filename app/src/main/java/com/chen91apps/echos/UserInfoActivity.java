@@ -20,7 +20,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
     public void initToolBar()
     {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.userinfo_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_goback);
