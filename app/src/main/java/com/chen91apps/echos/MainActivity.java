@@ -92,8 +92,11 @@ public class MainActivity extends AppCompatActivity
 
     private void RequestNews()
     {
+        SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = dp.format(new Date());                             //current time get from here
+
         System.out.println("requesting news");
-        Call<News> call = service.getNews(20,"2019-07-01","2019-07-03","特朗普","科技");
+        Call<News> call = service.getNews(20,"2019-07-01",currentTime,"特朗普","科技");
         call.enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
@@ -146,8 +149,8 @@ public class MainActivity extends AppCompatActivity
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community), R.drawable.ic_community_selected, R.drawable.ic_community));
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss), R.drawable.ic_rss_selected, R.drawable.ic_rss));
 
-        initPages();
-        initTabs();
+        // initPages();
+        // initTabs();
 
         initDrawer();
         initSearchText();
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void recreate() {
+        /*
         System.out.println("recreate");
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         for (Fragment fragment : pages)
@@ -165,6 +169,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         fragmentTransaction.commitAllowingStateLoss();
+        */
         super.recreate();
     }
 
@@ -274,10 +279,19 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (i == 5)
             {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName(this, FeedbackActivity.class));
-                startActivity(intent);
-                drawer.closeDrawer(GravityCompat.START);
+                if (User.user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, FeedbackActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
             } else
             {
                 //
