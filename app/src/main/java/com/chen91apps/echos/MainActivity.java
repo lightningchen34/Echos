@@ -26,9 +26,12 @@ import com.chen91apps.echos.fragments.PageFragment;
 import com.chen91apps.echos.utils.ACache;
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.User;
+import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
+import com.chen91apps.echos.utils.retrofit.RetrofitService;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -51,7 +54,15 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
         implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
@@ -77,9 +88,43 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private RetrofitService service;
+
+    private void RequestNews()
+    {
+        System.out.println("requesting news");
+        Call<News> call = service.getNews(20,"2019-07-01","2019-07-03","特朗普","科技");
+        call.enqueue(new Callback<News>() {
+            @Override
+            public void onResponse(Call<News> call, Response<News> response) {
+                if(response.body().getPageSize() > 0)
+                {
+                    System.out.println(response.body().getPageSize()+"pieces of news is found");
+                    response.body().getData().get(0).print();
+                }
+                else
+                {
+                    System.out.println("没有新闻");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<News> call, Throwable t) {
+                System.out.println("访问失败");
+            }
+        });
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api2.newsminer.net/svc/news/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        service = retrofit.create(RetrofitService.class);
+        RequestNews();
+
         Resources resources = getResources();
         Configuration config = resources.getConfiguration();
         DisplayMetrics dm = resources.getDisplayMetrics();
@@ -101,8 +146,8 @@ public class MainActivity extends AppCompatActivity
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community), R.drawable.ic_community_selected, R.drawable.ic_community));
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss), R.drawable.ic_rss_selected, R.drawable.ic_rss));
 
-        // initPages();
-        // initTabs();
+        initPages();
+        initTabs();
 
         initDrawer();
         initSearchText();
@@ -110,7 +155,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void recreate() {
-        /*
         System.out.println("recreate");
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         for (Fragment fragment : pages)
@@ -121,7 +165,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
         fragmentTransaction.commitAllowingStateLoss();
-        */
         super.recreate();
     }
 
