@@ -16,11 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
+import android.widget.TextView;
 
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -94,35 +97,27 @@ public class PageFragment extends Fragment {
 
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
-            listTexts.add(new ListInfoPair("新闻", "1", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("推荐", "2", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("北京", "3", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("体育", "4", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("娱乐", "5", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("经济", "6", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("科技", "7", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("民生", "8", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("教育", "9", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("新时代", "10", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("新闻", "1", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("推荐", "2", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("北京", "3", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("体育", "4", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("娱乐", "5", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("经济", "6", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("科技", "7", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("民生", "8", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("教育", "9", ListInfoPair.TYPE_NEWS));
+            listTexts.add(new ListInfoPair("新时代", "10", ListInfoPair.TYPE_NEWS));
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
-            listTexts.add(new ListInfoPair("板块", "11", ListInfoPair.TYPE_MANAGER));
-            listTexts.add(new ListInfoPair("关注", "12", ListInfoPair.TYPE_LIST));
-            listTexts.add(new ListInfoPair("推荐", "13", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("社区", "13", ListInfoPair.TYPE_COMMUNITY));
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss))
         {
-            listTexts.add(new ListInfoPair("推荐", "14", ListInfoPair.TYPE_LIST));
+            listTexts.add(new ListInfoPair("推荐", "14", ListInfoPair.TYPE_RSS));
         }
 
         for (ListInfoPair info : listTexts)
         {
-            if (info.type == ListInfoPair.TYPE_LIST)
-            {
-                listFrames.add(ListFragment.newInstance(info.url));
-            } else
-            {
-                listFrames.add(ListFragment.newInstance(info.url));
-            }
+            listFrames.add(ListFragment.newInstance(info.url, info.type));
         }
     }
 
@@ -139,11 +134,32 @@ public class PageFragment extends Fragment {
     @Override
     public void onStart()
     {
-        System.out.println("Start");
-
         tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
         scrollView = (HorizontalScrollView) getView().findViewById(R.id.page_scrollview);
 
+        initPages();
+        initTabs();
+        initChannelManager();
+
+        super.onStart();
+    }
+
+    public void initChannelManager()
+    {
+        TextView tv = (TextView) getView().findViewById(R.id.channel_manager_label);
+        if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
+        {
+            // TODO
+        } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
+        {
+            tv.setVisibility(View.INVISIBLE);
+        } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss)) {
+            // TODO
+        }
+    }
+
+    public void initPages()
+    {
         ViewPager viewpager = getView().findViewById(R.id.page_viewpager);
         viewpager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
@@ -167,8 +183,11 @@ public class PageFragment extends Fragment {
                 return listTexts.get(position).title;
             }
         });
-
         tabLayout.setupWithViewPager(viewpager);
+    }
+
+    public void initTabs()
+    {
 
         for (int i = 0; i < tabLayout.getTabCount(); ++i)
         {
@@ -207,7 +226,6 @@ public class PageFragment extends Fragment {
                 onTabSelected(tab);
             }
         });
-        super.onStart();
     }
 
     @Override
@@ -221,7 +239,6 @@ public class PageFragment extends Fragment {
             }
         }
         fragmentTransaction.commitAllowingStateLoss();
-        System.out.println("destroy");
         super.onDestroy();
     }
 
@@ -252,8 +269,6 @@ public class PageFragment extends Fragment {
     public void reselectPage()
     {
         if (this.isAdded()) {
-            System.out.print("select");
-            System.out.println(tabLayout.getSelectedTabPosition());
             tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).select();
         }
     }

@@ -34,9 +34,11 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM_URL = "param_url";
+    private static final String ARG_PARAM_TYPE = "param_type";
 
     // TODO: Rename and change types of parameters
     private String param_URL;
+    private int param_TYPE;
 
     private OnFragmentInteractionListener mListener;
 
@@ -52,10 +54,11 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
      * @return A new instance of fragment ListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListFragment newInstance(String paramUrl) {
+    public static ListFragment newInstance(String paramUrl, int paramType) {
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM_URL, paramUrl);
+        args.putInt(ARG_PARAM_TYPE, paramType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +68,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             param_URL = getArguments().getString(ARG_PARAM_URL);
+            param_TYPE = getArguments().getInt(ARG_PARAM_TYPE);
         }
     }
 
@@ -100,7 +104,6 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     ListItemInfo getinfo(Random random)
     {
         int type = random.nextInt(3);
-        System.out.println(type);
         if (type == 0)
         {
             return new PlainListItemInfo(strings[random.nextInt(strings.length)], "更新时间：1970-1-1");
