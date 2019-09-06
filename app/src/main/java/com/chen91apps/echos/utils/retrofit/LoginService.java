@@ -1,0 +1,11 @@
+package com.chen91apps.echos.utils.retrofit;
+
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
+
+public interface LoginService
+{
+    @GET("login.php")
+    Call<String> login(@Query("username") String username, @Query("password") String password);
+}

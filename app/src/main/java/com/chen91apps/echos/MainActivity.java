@@ -28,10 +28,17 @@ import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.User;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
+import com.chen91apps.echos.utils.retrofit.EchosService;
+import com.chen91apps.echos.utils.retrofit.LoginService;
 import com.chen91apps.echos.utils.retrofit.RetrofitService;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -54,10 +61,12 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -121,14 +130,61 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void loginTest(LoginService loginService, EchosService echosService)
+    {
+        Call<String> call = loginService.login("lightning", "233666");
+        Call<String> ecall = echosService.get("user");
+
+        Callback<String> ecb = new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                System.out.println(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                System.out.println("Failed");
+                t.printStackTrace();
+            }
+        };
+
+        Callback<String> cb = new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                System.out.println(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                System.out.println("Fail");
+            }
+        };
+
+        // call.enqueue(cb);
+        ecall.enqueue(ecb);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ClearableCookieJar cookie = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(cookie)
+                .build();
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api2.newsminer.net/svc/news/")
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        service = retrofit.create(RetrofitService.class);
-        RequestNews();
+                .client(okHttpClient)
+                .baseUrl("http://echos.lightning34.cn/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        LoginService loginService = retrofit.create(LoginService.class);
+        EchosService echosService = retrofit.create(EchosService.class);
+        loginTest(loginService, echosService);
+        // RequestNews();
 
         Resources resources = getResources();
         Configuration config = resources.getConfiguration();
