@@ -6,15 +6,6 @@ import android.os.Bundle;
 import com.chen91apps.echos.fragments.ImageFragment;
 import com.chen91apps.echos.fragments.VideoFragment;
 import com.chen91apps.echos.utils.Configure;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -27,6 +18,8 @@ import androidx.viewpager.widget.ViewPager;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import cn.jzvd.JZVideoPlayer;
 
 public class ViewActivity extends AppCompatActivity implements ImageFragment.OnFragmentInteractionListener, VideoFragment.OnFragmentInteractionListener {
 
@@ -89,7 +82,7 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
         viewContent.setText(str);
 
         listFrames = new ArrayList<>();
-        listFrames.add(VideoFragment.newInstance("https://vjs.zencdn.net/v/oceans.mp4", ""));
+        listFrames.add(VideoFragment.newInstance("http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4", ""));
         listFrames.add(ImageFragment.newInstance("", ""));
         listFrames.add(ImageFragment.newInstance("", ""));
         listFrames.add(ImageFragment.newInstance("", ""));
@@ -111,7 +104,14 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if (JZVideoPlayer.backPress())
+        {
+            return;
+        }
+        super.onBackPressed();
+    }
 
     @Override
     protected void onStop() {

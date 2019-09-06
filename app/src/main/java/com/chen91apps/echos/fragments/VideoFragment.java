@@ -11,15 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chen91apps.echos.R;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+
+import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.JZVideoPlayerStandard;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -116,42 +110,17 @@ public class VideoFragment extends Fragment {
         mListener = null;
     }
 
-    private ExoPlayer player;
-    private boolean playWhenReady;
-    private int currentWindow;
-    private long playbackPosition;
+    private JZVideoPlayer videoPlayer;
 
     private void initializePlayer() {
-        PlayerView playerView = (PlayerView) this.getView().findViewById(R.id.view_video);
-
-        player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(this.getContext()),
-                new DefaultTrackSelector(), new DefaultLoadControl());
-
-        player.setPlayWhenReady(playWhenReady);
-        player.seekTo(currentWindow, playbackPosition);
-
-        Uri uri = Uri.parse(mParam1);
-        MediaSource mediaSource = buildMediaSource(uri);
-        player.prepare(mediaSource, true, false);
-
-        playerView.setPlayer(player);
-    }
-
-    private MediaSource buildMediaSource(Uri uri) {
-        return new ExtractorMediaSource.Factory(
-                new DefaultHttpDataSourceFactory("exoplayer-codelab")).
-                createMediaSource(uri);
+        // TODO
+        videoPlayer = (JZVideoPlayer) getView().findViewById(R.id.view_video);
+        videoPlayer.setUp(mParam1, JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "");
     }
 
     private void releasePlayer() {
-        if (player != null) {
-            playbackPosition = player.getCurrentPosition();
-            currentWindow = player.getCurrentWindowIndex();
-            playWhenReady = player.getPlayWhenReady();
-            player.release();
-            player = null;
-        }
+        // TODO
+        videoPlayer.release();
     }
 
     /**

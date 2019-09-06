@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.utils.ImageLoader;
 
 public class DefaultListItemInfo extends ListItemInfo {
 
@@ -42,7 +43,7 @@ public class DefaultListItemInfo extends ListItemInfo {
         public void show() {
             titleView.setText(title);
             subtitleView.setText(subtitle);
-            com.chen91apps.echos.utils.ImageLoader.load(imageView, "thumbnail", imageUrl);
+            ImageLoader.imageLoader.load(imageUrl, imageView);
         }
     }
 }

@@ -9,8 +9,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.utils.ImageLoader;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +63,14 @@ public class ImageFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        ImageView imageView = (ImageView) getView().findViewById(R.id.image_in_fragment);
+        ImageLoader.loadImage(mParam1, imageView);
     }
 
     @Override

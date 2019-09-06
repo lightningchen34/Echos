@@ -25,6 +25,7 @@ import com.chen91apps.echos.fragments.ListFragment;
 import com.chen91apps.echos.fragments.PageFragment;
 import com.chen91apps.echos.utils.ACache;
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.ImageLoader;
 import com.chen91apps.echos.utils.User;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
@@ -175,6 +176,8 @@ public class MainActivity extends AppCompatActivity
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
+
+        ImageLoader.imageLoader.setContext(this);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
