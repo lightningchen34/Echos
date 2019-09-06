@@ -1,6 +1,8 @@
 package com.chen91apps.echos.fragments;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,8 +11,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.ViewActivity;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
@@ -132,6 +136,12 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
         ListItemAdapter adapter = new ListItemAdapter(data, getContext());
         lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
+            startActivity(intent);
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
