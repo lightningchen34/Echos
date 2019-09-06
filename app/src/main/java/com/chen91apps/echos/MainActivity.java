@@ -131,9 +131,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void loginTest(LoginService loginService, EchosService echosService)
+    private void loginTest(EchosService echosService)
     {
-        Call<String> call = loginService.login("lightning", "233666");
+        Call<String> call = echosService.login("lightning", "233666");
         Call<String> ecall = echosService.get("user");
 
         Callback<String> ecb = new Callback<String>() {
@@ -184,9 +184,9 @@ public class MainActivity extends AppCompatActivity
                 .baseUrl("http://echos.lightning34.cn/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        LoginService loginService = retrofit.create(LoginService.class);
         EchosService echosService = retrofit.create(EchosService.class);
-        loginTest(loginService, echosService);
+        // loginTest(loginService, echosService);
+        User.user.init(echosService);
         // RequestNews();
 
         Resources resources = getResources();
@@ -195,10 +195,15 @@ public class MainActivity extends AppCompatActivity
         // config.locale = Locale.CHINA;
         resources.updateConfiguration(config, dm);
 
-        setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
-
         acache = ACache.get(this);
-        User.user.init();
+        Configure.day_or_night = (Boolean) acache.getAsObject("day_or_night");
+        if (Configure.day_or_night == null)
+        {
+            Configure.day_or_night = true;
+            acache.put("day_or_night", Configure.day_or_night);
+        }
+
+        setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -217,6 +222,21 @@ public class MainActivity extends AppCompatActivity
 
         initDrawer();
         initSearchText();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        System.out.println("save");
+        outState.putInt("tabPosition", tabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        System.out.println("restore");
+        int tabPosition = savedInstanceState.getInt("tabPosition");
+        tabLayout.getTabAt(tabPosition).select();
     }
 
     @Override
@@ -358,12 +378,13 @@ public class MainActivity extends AppCompatActivity
                 //
             }
         });
-        
+
         final TextView dnMode = (TextView) findViewById(R.id.drawer_dnmode);
         final TextView settings = (TextView) findViewById(R.id.drawer_settings);
 
         dnMode.setOnClickListener((View view) -> {
             Configure.day_or_night = !Configure.day_or_night;
+            acache.put("day_or_night", Configure.day_or_night);
             recreate();
         });
         settings.setOnClickListener((View view) -> {
@@ -375,6 +396,34 @@ public class MainActivity extends AppCompatActivity
         dnMode.setText(Configure.day_or_night ? R.string.menu_night_mode : R.string.menu_day_mode);
         settings.setText(R.string.menu_settings);
 
+        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                final TextView username = (TextView) findViewById(R.id.username_textview);
+                if (User.user.checkLogin())
+                {
+                    username.setText(User.user.getInfo().nickname);
+                } else
+                {
+                    username.setText("未登录");
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     private void initSearchText()
@@ -424,13 +473,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        viewPager.setOffscreenPageLimit(3);
+
         TabLayout tabLayout = findViewById(R.id.main_tablayout);
         tabLayout.setupWithViewPager(viewPager);
+
     }
+
+    private TabLayout tabLayout;
 
     private void initTabs()
     {
-        TabLayout tabLayout = findViewById(R.id.main_tablayout);
+        tabLayout = findViewById(R.id.main_tablayout);
         for (int i = 0; i < tabLayout.getTabCount(); ++i)
         {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
@@ -441,7 +495,6 @@ public class MainActivity extends AppCompatActivity
             public void onTabSelected(TabLayout.Tab tab) {
                 int index = tab.getPosition();
                 TabViewHelper.setIconTabActive(tab, tabInfo.get(index), true);
-                pages.get(index).reselectPage();
             }
 
             @Override
