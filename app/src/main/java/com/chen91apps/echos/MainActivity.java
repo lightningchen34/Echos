@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity
 
     public static ACache acache;
 
+    private boolean show = true;
+
     protected void setStatusBarFullTransparent() {
         if (Build.VERSION.SDK_INT >= 21) {
             Window window = getWindow();
@@ -149,8 +151,10 @@ public class MainActivity extends AppCompatActivity
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community), R.drawable.ic_community_selected, R.drawable.ic_community));
         tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss), R.drawable.ic_rss_selected, R.drawable.ic_rss));
 
-        // initPages();
-        // initTabs();
+        if (show) {
+            initPages();
+            initTabs();
+        }
 
         initDrawer();
         initSearchText();
@@ -158,18 +162,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void recreate() {
-        /*
-        System.out.println("recreate");
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for (Fragment fragment : pages)
-        {
-            if (fragment.isAdded())
-            {
-                fragmentTransaction.remove(fragment);
+        if (show) {
+            System.out.println("recreate");
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            for (Fragment fragment : pages) {
+                if (fragment.isAdded()) {
+                    fragmentTransaction.remove(fragment);
+                }
             }
+            fragmentTransaction.commitAllowingStateLoss();
         }
-        fragmentTransaction.commitAllowingStateLoss();
-        */
         super.recreate();
     }
 
@@ -319,13 +321,12 @@ public class MainActivity extends AppCompatActivity
     private void initSearchText()
     {
         searchTextView = (TextView) findViewById(R.id.search_textview);
-        searchTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getId() == searchTextView.getId())
-                {
-                    Toast.makeText(view.getContext(), "Go to SearchActivity", Toast.LENGTH_SHORT).show();
-                }
+        searchTextView.setOnClickListener((View view) -> {
+            if (view.getId() == searchTextView.getId())
+            {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, SearchActivity.class));
+                startActivity(intent);
             }
         });
     }

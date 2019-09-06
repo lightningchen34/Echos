@@ -6,7 +6,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.chen91apps.echos"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -34,6 +34,7 @@ android {
                             'src/main/res/groups/fragments',
                             'src/main/res/groups/activities',
                             'src/main/res/groups/preference',
+                            'src/main/res/groups/channel',
                             'src/main/res/groups',
                             'src/main/res'
                     ]

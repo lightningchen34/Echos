@@ -1,6 +1,9 @@
 package com.chen91apps.echos.fragments;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
+import com.chen91apps.echos.ChannelActivity;
+import com.chen91apps.echos.NewPostActivity;
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
@@ -150,9 +155,20 @@ public class PageFragment extends Fragment {
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
             // TODO
+            tv.setOnClickListener((View v) -> {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this.getContext(), ChannelActivity.class));
+                startActivity(intent);
+            });
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
-            tv.setVisibility(View.INVISIBLE);
+            tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0);
+            tv.setOnClickListener((View v) -> {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this.getContext(), NewPostActivity.class));
+                startActivity(intent);
+            });
+
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss)) {
             // TODO
         }
