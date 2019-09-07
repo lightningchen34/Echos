@@ -68,6 +68,7 @@
                 android:layout_height="wrap_content"
                 android:text="左右滑动查看更多图片/视频"
                 android:textSize="10dp"
+                android:textColor="?attr/undertint_color"
                 android:gravity="center"
                 android:paddingBottom="5dp"/>
 

@@ -101,6 +101,12 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             viewCategory.setText(news.getCategory());
             viewTime.setText(news.getPublishTime());
             viewUrl.setText(news.getUrl());
+
+            viewUrl.setOnClickListener((View v) -> {
+                Uri uri = Uri.parse(news.getUrl());
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            });
+
             if (news.getOrganizations().size() > 0)
             {
                 viewSrc.setText(news.getOrganizations().get(0).getMention());

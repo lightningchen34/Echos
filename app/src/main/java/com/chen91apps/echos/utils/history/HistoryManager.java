@@ -41,7 +41,12 @@ public class HistoryManager {
         {
             String str = MainActivity.acache.getAsString("history_" + index);
             HistoryBean bean = new Gson().fromJson(str, new TypeToken<HistoryBean>(){}.getType());
-            return bean;
+            if (bean == null) return null;
+            String x = MainActivity.acache.getAsString("history_key_" + bean.getContent().getKey());
+            if (x != null && x.equals(index + ""))
+                return bean;
+            else
+                return null;
         }
     }
 
@@ -56,6 +61,7 @@ public class HistoryManager {
         bean.setId(getHistoryCount());
         String str = new Gson().toJson(bean);
         MainActivity.acache.put("history_" + getHistoryCount(), str);
+        MainActivity.acache.put("history_key_" + bean.getContent().getKey(), getHistoryCount() + "");
     }
 
     public static void clearHistory()
@@ -72,7 +78,9 @@ public class HistoryManager {
         {
             if (begin - i > 0)
             {
-                ret.add(getHistory(begin - i));
+                HistoryBean bean = getHistory(begin - i);
+                if (bean != null)
+                    ret.add(bean);
             } else
             {
                 break;

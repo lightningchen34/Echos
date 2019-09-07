@@ -85,7 +85,7 @@ public class SearchActivity extends AppCompatActivity {
         final LinkedList<String> list = new LinkedList<>();
         list.addAll(ScoreManager.getList());
         ListView listView = (ListView) findViewById(R.id.list_search);
-        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list));
+        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.listview_item_text, list));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

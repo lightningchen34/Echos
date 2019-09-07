@@ -4,10 +4,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.articles.ArticlePack;
+import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.articles.Post;
 import com.chen91apps.echos.utils.history.HistoryManager;
@@ -16,6 +22,8 @@ import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +56,32 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
         listView.setAdapter(adapter);
         bufBeans = HistoryManager.getHistoryList(0);
         getHistoryInfo(bufBeans);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i <= 0) return;
+                if (i > data.size()) return;
+                Object obj = data.get(i - 1).getContent();
+
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
+
+                if (obj instanceof News.DataBean)
+                {
+                    intent.putExtra("type", ListInfoPair.TYPE_NEWS);
+                    intent.putExtra("content", new Gson().toJson((News.DataBean) obj));
+                } else if (obj instanceof Post.DataBean)
+                {
+                    intent.putExtra("type", ListInfoPair.TYPE_COMMUNITY);
+                    intent.putExtra("content", new Gson().toJson((Post.DataBean) obj));
+                } else
+                {
+                    //
+                }
+                startActivity(intent);
+            }
+        });
     }
 
     void getHistoryInfo(List<HistoryManager.HistoryBean> bufBeans)
