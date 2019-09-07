@@ -29,6 +29,9 @@ public interface EchosService
     @GET("follow.php")
     Call<Favourite> getFavorite(@Query("begin") int begin);
 
-    @GET
+    @GET("mypost.php")
     Call<Post> getMyPost(@Query("mypost") int begin);
+
+    @GET("check_follow.php")
+    Call<Favourite> checkFavrite(@Query("key") String key);
 }

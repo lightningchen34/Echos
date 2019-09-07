@@ -46,7 +46,7 @@ public class PostActivity extends AppCompatActivity implements MyListView.MyList
         data = new LinkedList<>();
         adapter = new ListItemAdapter(data,mContext);
         listView.setAdapter(adapter);
-        Call<Post> call = MainActivity.echosService.getPost(0);
+        Call<Post> call = MainActivity.echosService.getMyPost(0);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -65,7 +65,7 @@ public class PostActivity extends AppCompatActivity implements MyListView.MyList
 
     public void toRefreshListView()
     {
-        Call<Post> call = MainActivity.echosService.getPost(0);
+        Call<Post> call = MainActivity.echosService.getMyPost(0);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -87,7 +87,7 @@ public class PostActivity extends AppCompatActivity implements MyListView.MyList
 
     public void toUpdateListView()
     {
-        Call<Post> call = MainActivity.echosService.getPost(lastFavourite_id);
+        Call<Post> call = MainActivity.echosService.getMyPost(lastFavourite_id);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
