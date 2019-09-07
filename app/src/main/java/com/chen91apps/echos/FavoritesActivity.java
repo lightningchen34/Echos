@@ -44,6 +44,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
             public void run() {
                 getRefreshData();
                 adpter.notifyDataSetChanged();
+                adpter.notifyDataSetInvalidated();
                 testview.refreshFinish();
             }
         },5000);
@@ -68,7 +69,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
 
         mContext = FavoritesActivity.this;
         testinfo = new LinkedList<>();
-        for(int i=0;i<3;i++)
+        for(int i=0;i<10;i++)
             testinfo.add(new PlainListItemInfo(" titile is here!"," look at the subtitle"));
         adpter = new ListItemAdapter(testinfo,this);
         testview.setAdapter(adpter);

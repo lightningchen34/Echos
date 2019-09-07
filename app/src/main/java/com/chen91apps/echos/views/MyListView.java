@@ -37,7 +37,6 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         switch(ev.getAction())
         {
             case MotionEvent.ACTION_DOWN:
-                System.out.println("found touch down");
                 if(firstVisibleItem == 0)
                 {
                     this.canPull = true;
@@ -45,18 +44,18 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                System.out.println("found touch move");
                 if(canPull)
                 {
                     touchMove(ev);
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                System.out.println("found touch up");
                 canPull = false;
                 if(curState == RELEASE)
                 {
                     curState = RELEASING;
+
+                    paddingTop(0);
                     refreshHeaderByState();
                     myListener.toRefreshListView();
                 }
@@ -93,6 +92,11 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
             curState = NORMAL;
             refreshHeaderByState();
         }
+
+        if(space<0)
+        {
+            System.out.println("this is a slide down");
+        }
         return;
     }
 
@@ -111,7 +115,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
                 tv.setText("this is the release state");
                 break;
             case RELEASING:
-                tv.setText("this si the releasing state");
+                tv.setText("this is the releasing state");
                 break;
         }
         return;
@@ -158,6 +162,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     final private int RELEASE = 2;
     final private int RELEASING = 3;
     int headerHeight;
+    int footerHeight;
 
     boolean canPull = false;
     private MyListViewPullListener myListener;
@@ -175,6 +180,9 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     private void init(Context context)
     {
         headerView = View.inflate(getContext(), R.layout.mylistview_item_header,null);
+        footerView = View.inflate(getContext(),R.layout.mylistview_item_footer,null);
+        footerHeight = footerView.getMeasuredHeight();
+        footerView.setPadding(0,-footerHeight,0,0);
 
         notifyView(headerView);
         headerHeight = headerView.getMeasuredHeight();
@@ -182,6 +190,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
 
         this.setOnScrollListener(this);
         this.addHeaderView(headerView);
+        this.addFooterView(footerView);
     }
 
     @Override

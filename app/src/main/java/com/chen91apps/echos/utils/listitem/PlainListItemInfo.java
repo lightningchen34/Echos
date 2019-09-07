@@ -38,5 +38,10 @@ public class PlainListItemInfo extends ListItemInfo {
             titleView.setText(title);
             subtitleView.setText(subtitle);
         }
+
+        public void Display()
+        {
+            System.out.println(title+" "+subtitle);
+        }
     }
 }
