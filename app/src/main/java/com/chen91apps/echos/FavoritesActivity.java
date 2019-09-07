@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
@@ -18,6 +19,11 @@ import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FavoritesActivity extends AppCompatActivity implements MyListView.MyListViewPullListener {
 
@@ -28,66 +34,97 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
         setContentView(R.layout.activity_favorites);
         initToolBar();
 
-        initTestInfo();
+        initListInfo();
     }
 
-    MyListView testview;
-    LinkedList<ListItemInfo> testinfo;
+    MyListView listView;
+    LinkedList<ListItemInfo> data;
     Context mContext;
     ListItemAdapter adpter;
+    private int lastFavourite_id;
 
     public void toRefreshListView()
     {
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
+        Call<Favourite> call = MainActivity.echosService.getFavorite(0);
+        call.enqueue(new Callback<Favourite>() {
             @Override
-            public void run() {
-                getRefreshData();
-                adpter.notifyDataSetChanged();
-                testview.refreshFinish();
+            public void onResponse(Call<Favourite> call, Response<Favourite> response) {
+                if(response.body().getState() == 1)
+                {
+                    data.clear();
+                    getFavoriteInfo(response.body().getData());
+                }
+                else
+                    System.out.println("ç¨æ·æ²¡æç»é");
+                listView.refreshFinish();
             }
-        },5000);
+            @Override
+            public void onFailure(Call<Favourite> call, Throwable t) {
+                System.out.println("è«åå¶å¦çå¤±è´¥äº");
+            }
+        });
     }
 
     public void toUpdateListView()
     {
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
+        Call<Favourite> call = MainActivity.echosService.getFavorite(lastFavourite_id);
+        call.enqueue(new Callback<Favourite>() {
             @Override
-            public void run() {
-                getUpdateData();
-                adpter.notifyDataSetChanged();
-                testview.refreshFinish();
+            public void onResponse(Call<Favourite> call, Response<Favourite> response) {
+                if(response.body().getState() == 1)
+                {
+                    getFavoriteInfo(response.body().getData());
+                }
+                else
+                    System.out.println("ç¨æ·æ²¡æç»é");
+                listView.refreshFinish();
             }
-        },5000);
+            @Override
+            public void onFailure(Call<Favourite> call, Throwable t) {
+                System.out.println("è«åå¶å¦çå¤±è´¥äº");
+            }
+        });
     }
 
-
-    private void getRefreshData()
+    public void initListInfo()
     {
-        System.out.println("now in getrefreshdata");
-        testinfo.addFirst(new PlainListItemInfo("new refresh titile is here!","new title look at the subtitle", null));
-    }
-
-    private void getUpdateData()
-    {
-        System.out.println("now in getUpdateData");
-        for(int i=0;i<3;i++)
-            testinfo.add(new PlainListItemInfo("footer news here","this is the subtitle", null));
-    }
-
-    public void initTestInfo()
-    {
-        testview = (MyListView) findViewById(R.id.list_myfavorites);
-        testview.setPullListener(this);
-
+        listView = (MyListView) findViewById(R.id.list_myfavorites);
+        listView.setPullListener(this);
         mContext = FavoritesActivity.this;
-        testinfo = new LinkedList<>();
-        for(int i=0;i<2;i++)
-            testinfo.add(new PlainListItemInfo(" titile is here!"," look at the subtitle", null));
-        adpter = new ListItemAdapter(testinfo,this);
-        testview.setAdapter(adpter);
+        data = new LinkedList<>();
+        adpter = new ListItemAdapter(data,mContext);
+        listView.setAdapter(adpter);
+        Call<Favourite> call = MainActivity.echosService.getFavorite(0);
+        call.enqueue(new Callback<Favourite>() {
+            @Override
+            public void onResponse(Call<Favourite> call, Response<Favourite> response) {
+                if(response.body().getState() == 1)
+                {
+                    getFavoriteInfo(response.body().getData());
+                }
+                else
+                    System.out.println("ç¨æ·æ²¡æç»é");
+                listView.refreshFinish();
+            }
+            @Override
+            public void onFailure(Call<Favourite> call, Throwable t) {
+                System.out.println("è«åå¶å¦çå¤±è´¥äº");
+            }
+        });
+    }
 
+    private void getFavoriteInfo(List<Favourite.DataBean> stream)
+    {
+        for(int i=0;i<stream.size()&&i<20;i++) {
+            System.out.println(stream.get(i).getNote()+" this is the Note");
+            data.add(new PlainListItemInfo(""+stream.get(i).getNote(), "" + stream.get(i).getCreate_time(), stream.get(i)));
+        }
+        System.out.println("init is over");
+        if(stream.size()>0)
+            lastFavourite_id = stream.get(0).getFollow_id()-20;
+        else
+            lastFavourite_id = -1;
+        adpter.notifyDataSetChanged();
     }
 
     public void initToolBar()
