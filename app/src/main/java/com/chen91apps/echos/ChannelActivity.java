@@ -28,8 +28,6 @@ public class ChannelActivity extends AppCompatActivity implements ChannelAdapter
     private ChannelAdapter mAdapter;
     private String select[] = {"要闻", "体育", "新时代", "汽车", "时尚", "国际", "电影", "财经", "游戏", "科技", "房产", "政务", "图片", "独家"};
     private String recommend[] = {"娱乐", "军事", "文化", "视频", "股票", "动漫", "理财", "电竞", "数码", "星座", "教育", "美容", "旅游"};
-    private String city[] = {"重庆", "深圳", "汕头", "东莞", "佛山", "江门", "湛江", "惠州", "中山", "揭阳", "韶关", "茂名", "肇庆", "梅州", "汕尾", "河源", "云浮", "四川"};
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +64,8 @@ public class ChannelActivity extends AppCompatActivity implements ChannelAdapter
         for (String bean : recommend) {
             recommendList.add(new ChannelBean(bean, 1, R.layout.adapter_channel, true));
         }
-        List<ChannelBean> cityList = new ArrayList<>();
-        for (String bean : city) {
-            cityList.add(new ChannelBean(bean, 1, R.layout.adapter_channel, false));
-        }
-        // ChannelBean moreBean = new ChannelBean();
-        // moreBean.setLayoutId(R.layout.adapter_more_channel);
-        // moreBean.setSpanSize(4);
-        // cityList.add(moreBean);
         mList.addAll(recommendList);
-        mAdapter = new ChannelAdapter(this, mList, recommendList, cityList);
+        mAdapter = new ChannelAdapter(this, mList, recommendList);
         mAdapter.setFixSize(1);
         mAdapter.setSelectedSize(select.length);
         mAdapter.setRecommend(true);

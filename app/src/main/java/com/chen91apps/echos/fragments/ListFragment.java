@@ -13,16 +13,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.ViewActivity;
+import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
 import com.chen91apps.echos.views.MyListView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -49,6 +56,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     private OnFragmentInteractionListener mListener;
 
+    private LinkedList<News.DataBean> dataBeans;
+    private LinkedList<ListItemInfo> data;
     private ListItemAdapter adapter;
     private MyListView listview;
 
@@ -82,12 +91,20 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             param_TYPE = getArguments().getInt(ARG_PARAM_TYPE);
         }
 
-        LinkedList<ListItemInfo> data = new LinkedList<>();
+        data = new LinkedList<>();
 
-        Random random = new Random();
+        String saved = MainActivity.acache.getAsString("data_cache:" + param_URL);
+        if (saved != null)
+        {
+            Type type = new TypeToken<LinkedList<ListItemInfo>>(){}.getType();
+            Gson gson = new Gson();
+            data = gson.fromJson(saved, type);
+        } else {
+            Random random = new Random();
 
-        for (int i = 0; i < 10; ++i)
-            data.add(getinfo(random));
+            for (int i = 0; i < 10; ++i)
+                data.add(getinfo(random));
+        }
 
         adapter = new ListItemAdapter(data, getContext());
 
@@ -170,6 +187,19 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         savedPosition = listview.getFirstVisiblePosition();
         savedTop = (listview.getChildAt(0)).getTop();
         System.out.println("Pause" + param_URL + " " + savedPosition);
+
+        List<ListItemInfo> tmpdata;
+        if (data.size() > 20)
+        {
+            tmpdata = data.subList(0, 19);
+        } else
+        {
+            tmpdata = data;
+        }
+        // Gson gson = new Gson();
+        // String saved = gson.toJson(tmpdata);
+
+        // MainActivity.acache.put("data_cache:" + param_URL, saved);
     }
 
     @Override
