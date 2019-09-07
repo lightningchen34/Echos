@@ -12,11 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.ViewActivity;
 import com.chen91apps.echos.utils.articles.News;
+import com.chen91apps.echos.utils.articles.Post;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
@@ -41,6 +43,9 @@ import java.util.Random;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.Context.POWER_SERVICE;
+import static com.chen91apps.echos.MainActivity.echosService;
 
 
 /**
@@ -72,6 +77,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     private MyListView listview;
     private String currentTime;
     private String endTime;
+
+    private int lastPost_id;
 
     public ListFragment() {
         // Required empty public constructor
@@ -114,22 +121,41 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         }
         else
         {
-            SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            currentTime = dp.format(new Date());                             //current time get from here
-            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"",param_URL);
-            call.enqueue(new Callback<News>() {
-                @Override
-                public void onResponse(Call<News> call, Response<News> response) {
-                    if(response.body().getPageSize() > 0)
-                        getinfo(response.body().getData());
-                    else
-                        System.out.println("没有新闻");
-                }
-                @Override
-                public void onFailure(Call<News> call, Throwable t) {
-                    System.out.println("访问失败");
-                }
-            });
+            if(param_TYPE == ListInfoPair.TYPE_NEWS) {
+                SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                currentTime = dp.format(new Date());                             //current time get from here
+                Call<News> call = MainActivity.newsService.getNews(20, "2019-07-01", currentTime, "", param_URL);
+                call.enqueue(new Callback<News>() {
+                    @Override
+                    public void onResponse(Call<News> call, Response<News> response) {
+                        if (response.body().getPageSize() > 0)
+                            getinfo(response.body().getData());
+                        else
+                            System.out.println("没有新闻");
+                    }
+
+                    @Override
+                    public void onFailure(Call<News> call, Throwable t) {
+                        System.out.println("访问失败");
+                    }
+                });
+            }
+            else
+            {
+                Call<Post> call = MainActivity.echosService.getPost(0);
+                call.enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
+                        if(response.body().getData().size()>0)
+                            getPostInfo(response.body().getData());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+
+                    }
+                });
+            }
         }
 
         adapter = new ListItemAdapter(data, getContext());
@@ -151,27 +177,31 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     void getinfo(List<News.DataBean> stream)
     {
-        if(param_TYPE != ListInfoPair.TYPE_NEWS)
-            return;
-
-        String image,video;
+        String image, video;
         data.add(new PlainListItemInfo("调试" + param_URL, ""));
-        for(int i=0;i<stream.size();i++)
-        {
+        for (int i = 0; i < stream.size(); i++) {
             image = stream.get(i).getImage();
-            image = image.substring(1,image.length()-1);
-            if(image.length() == 0)
+            image = image.substring(1, image.length() - 1);
+            if (image.length() == 0)
                 data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime()));
-            else
-            {
+            else {
                 String imgurl[] = image.split(", ");
-                if(imgurl.length <= 2)
-                    data.add(new DefaultListItemInfo(stream.get(i).getTitle(),stream.get(i).getPublishTime(),imgurl[0]));
+                if (imgurl.length <= 2)
+                    data.add(new DefaultListItemInfo(stream.get(i).getTitle(), stream.get(i).getPublishTime(), imgurl[0]));
                 else
-                    data.add(new ImageListItemInfo(stream.get(i).getTitle(),imgurl[0],imgurl[1],imgurl[2]));
+                    data.add(new ImageListItemInfo(stream.get(i).getTitle(), imgurl[0], imgurl[1], imgurl[2]));
+
             }
+            endTime = stream.get(stream.size() - 1).getPublishTime();
+            adapter.notifyDataSetChanged();
         }
-        endTime = stream.get(stream.size()-1).getPublishTime();
+    }
+
+    void getPostInfo(List<Post.DataBean> stream)
+    {
+        for(int i=0;i<stream.size()&&i<20;i++)
+            data.add(new PlainListItemInfo(stream.get(i).getTitle(),"time : "+stream.get(i).getCreate_time()));
+        lastPost_id = stream.get(0).getPost_id()-20;
         adapter.notifyDataSetChanged();
     }
 
@@ -239,66 +269,117 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     @Override
     public void toRefreshListView() {
-        try {
-            SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd");
-            Date sDate = dp.parse(currentTime);
-            Calendar c = Calendar.getInstance();
-            c.setTime(sDate);
-            c.add(Calendar.DAY_OF_MONTH,1);
-            currentTime = dp.format(c.getTime());
-            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"",param_URL);
-            call.enqueue(new Callback<News>() {
-                @Override
-                public void onResponse(Call<News> call, Response<News> response) {
-                    if(response.body().getPageSize() > 0)
-                    {
-                        data.clear();
-                        getinfo(response.body().getData());
+        if(this.param_TYPE == ListInfoPair.TYPE_NEWS) {
+            try {
+                SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd");
+                Date sDate = dp.parse(currentTime);
+                Calendar c = Calendar.getInstance();
+                c.setTime(sDate);
+                c.add(Calendar.DAY_OF_MONTH, 1);
+                currentTime = dp.format(c.getTime());
+                Call<News> call = MainActivity.newsService.getNews(20, "2019-07-01", currentTime, "", param_URL);
+                call.enqueue(new Callback<News>() {
+                    @Override
+                    public void onResponse(Call<News> call, Response<News> response) {
+                        if (response.body().getPageSize() > 0) {
+                            data.clear();
+                            getinfo(response.body().getData());
+                        } else
+                            System.out.println("没有新闻");
                         listview.refreshFinish();
                     }
-                    else
-                        System.out.println("没有新闻");
-                }
+
+                    @Override
+                    public void onFailure(Call<News> call, Throwable t) {
+                        System.out.println("访问失败");
+                    }
+                });
+
+            } catch (ParseException e) {
+                System.out.println(e);
+            }
+        }
+
+        else
+        {
+            Call<Post> call = MainActivity.echosService.getPost(0);
+            call.enqueue(new Callback<Post>() {
                 @Override
-                public void onFailure(Call<News> call, Throwable t) {
-                    System.out.println("访问失败");
+                public void onResponse(Call<Post> call, Response<Post> response) {
+                    if(response.body().getData().size()>0) {
+                        data.clear();
+                        getPostInfo(response.body().getData());
+                    }
+                    else
+                        System.out.println("没有帖子");
+                    listview.refreshFinish();
+                }
+
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+                    System.out.println("加载帖子失败");
                 }
             });
-
         }
-        catch (ParseException e) { System.out.println(e); }
     }
 
     @Override
     public void toUpdateListView()
     {
-        System.out.println(endTime);
-        SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date sDate = new Date();
-        try{ sDate = dp.parse(endTime); } catch (ParseException e) {}
-        Calendar c = Calendar.getInstance();
-        c.setTime(sDate);
-        c.add(Calendar.SECOND,-1);
-        endTime = dp.format(c.getTime());
-        System.out.println(endTime);
+        if(this.param_TYPE == ListInfoPair.TYPE_NEWS) {
+            System.out.println(endTime);
+            SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date sDate = new Date();
+            try {
+                sDate = dp.parse(endTime);
+            } catch (ParseException e) {
+            }
+            Calendar c = Calendar.getInstance();
+            c.setTime(sDate);
+            c.add(Calendar.SECOND, -1);
+            endTime = dp.format(c.getTime());
+            System.out.println(endTime);
 
-        Call<News> call = MainActivity.newsService.getNews(10,"2019-07-01",endTime,"",param_URL);
-        call.enqueue(new Callback<News>() {
-            @Override
-            public void onResponse(Call<News> call, Response<News> response) {
-                if(response.body().getPageSize() > 0)
-                {
-                    getinfo(response.body().getData());
+            Call<News> call = MainActivity.newsService.getNews(10, "2019-07-01", endTime, "", param_URL);
+            call.enqueue(new Callback<News>() {
+                @Override
+                public void onResponse(Call<News> call, Response<News> response) {
+                    if (response.body().getPageSize() > 0) {
+                        getinfo(response.body().getData());
+                    } else
+                        System.out.println("没有新闻");
                     listview.refreshFinish();
                 }
-                else
-                    System.out.println("没有新闻");
-            }
-            @Override
-            public void onFailure(Call<News> call, Throwable t) {
-                System.out.println("访问失败");
-            }
-        });
+
+                @Override
+                public void onFailure(Call<News> call, Throwable t) {
+                    System.out.println("访问失败");
+                }
+            });
+        }
+        else
+        {
+            System.out.println(lastPost_id+" this is the lastPostID");
+            Call<Post> call = MainActivity.echosService.getPost(lastPost_id);
+            call.enqueue(new Callback<Post>() {
+                @Override
+                public void onResponse(Call<Post> call, Response<Post> response) {
+                    TextView tv = listview.findViewById(R.id.footer_textinfo);
+                    if(response.body().getData().size()>0) {
+                        System.out.println("now in get footer data");
+                        getPostInfo(response.body().getData());
+                        tv.setText("正在加载新内容");
+                    }
+                    else
+                        tv.setText("所有内容加载完毕");
+                    listview.refreshFinish();
+                }
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     /**

@@ -142,16 +142,16 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         switch(curState)
         {
             case NORMAL:
-                tv.setText("this is the normal state");
+                tv.setText("下拉加载更多信息");
                 break;
             case PULL:
-                tv.setText("this is the pull state");
+                tv.setText("下拉加载更多信息");
                 break;
             case RELEASE:
-                tv.setText("this is the release state");
+                tv.setText("松开加载更多信息");
                 break;
             case RELEASING:
-                tv.setText("this is the releasing state");
+                tv.setText("正在加载...");
                 break;
         }
     }
@@ -162,16 +162,16 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         switch(footer_curState)
         {
             case FOOT_NORMAL:
-                tv.setText("this is the normal state");
+                tv.setText("向上拉动加载更多信息");
                 break;
             case FOOT_PULL:
-                tv.setText("this is the pull state");
+                tv.setText("向上拉动加载更多信息");
                 break;
             case FOOT_RELEASE:
-                tv.setText("this is the release state");
+                tv.setText("松开加载更多信息");
                 break;
             case FOOT_RELEASING:
-                tv.setText("this is the releasing state");
+                tv.setText("正在加载...");
                 break;
         }
     }
@@ -184,7 +184,6 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         paddingBottom(-footerHeight);
         refreshFooterByState();
         refreshHeaderByState();
-        System.out.println("now the refresh is over");
     }
 
     private void notifyView(View view)

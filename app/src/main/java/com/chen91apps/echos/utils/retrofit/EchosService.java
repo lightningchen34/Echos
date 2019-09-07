@@ -1,5 +1,6 @@
 package com.chen91apps.echos.utils.retrofit;
 
+import com.chen91apps.echos.utils.articles.Post;
 import com.chen91apps.echos.utils.userinfos.LoginLog;
 import com.chen91apps.echos.utils.userinfos.UserInfo;
 
@@ -20,4 +21,7 @@ public interface EchosService
 
     @GET("index.php")
     Call<String> get(@Query("type") String type);
+
+    @GET("post.php")
+    Call<Post> getPost(@Query("begin") int begin);
 }
