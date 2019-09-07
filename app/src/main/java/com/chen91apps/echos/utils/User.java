@@ -1,5 +1,8 @@
 package com.chen91apps.echos.utils;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.utils.retrofit.EchosService;
 import com.chen91apps.echos.utils.retrofit.LoginService;
@@ -12,6 +15,7 @@ public class User {
     public static User user = new User();
 
     private String cookie;
+    private EchosService echosService;
 
     public class UserInfo
     {
@@ -35,6 +39,7 @@ public class User {
         System.out.println("cookie");
         System.out.println(cookie);
         */
+        this.echosService = echosService;
         Call<String> call = echosService.getUser();
         Callback<String> cb = new Callback<String>() {
             @Override
@@ -51,6 +56,24 @@ public class User {
                     info.username = str;
                     info.nickname = str;
                 }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                System.out.println("Fail");
+            }
+        };
+
+        call.enqueue(cb);
+    }
+
+    public void login(String username, String password, Context context)
+    {
+        Call<String> call = echosService.login(username, password);
+        Callback<String> cb = new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Toast.makeText(context, response.body(), Toast.LENGTH_LONG).show();
             }
 
             @Override
