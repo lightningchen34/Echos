@@ -124,7 +124,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         data = new LinkedList<>();
 
         String saved = MainActivity.acache.getAsString("list_cache_" + param_TYPE + ":::" + param_Text + ":::" + param_URL);
-        System.out.println("cache" + saved);
+        // System.out.println("cache" + saved);
         if (saved != null && saved.length() > 10)
         {
             Type type = new TypeToken<LinkedList<ArticlePack>>(){}.getType();
@@ -190,7 +190,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         adapter = new ListItemAdapter(data, getContext());
 
         savedPosition = savedTop = 0;
-        System.out.println("OnCreate");
+        // System.out.println("OnCreate");
     }
 
     @Override
@@ -200,7 +200,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         super.onActivityCreated(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         view.setId(this.hashCode());
-        System.out.println("id" + view.getId());
+        // System.out.println("id" + view.getId());
         return view;
     }
 
@@ -229,7 +229,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     void getPostInfo(List<Post.DataBean> stream)
     {
         for(int i=0;i<stream.size()&&i<20;i++)
-            data.add(new PlainListItemInfo(stream.get(i).getTitle(),"time : "+stream.get(i).getCreate_time(), stream.get(i)));
+            data.add(new PlainListItemInfo(stream.get(i).getTitle(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(), stream.get(i)));
         lastPost_id = stream.get(stream.size() - 1).getPost_id();
         if (adapter != null)
             adapter.notifyDataSetChanged();
@@ -377,7 +377,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     public void toUpdateListView()
     {
         if(this.param_TYPE == ListInfoPair.TYPE_NEWS) {
-            System.out.println(endTime);
+            // System.out.println(endTime);
             SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date sDate = new Date();
             try {
@@ -388,7 +388,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             c.setTime(sDate);
             c.add(Calendar.SECOND, -1);
             endTime = dp.format(c.getTime());
-            System.out.println(endTime);
+            // System.out.println(endTime);
 
             Call<News> call = MainActivity.newsService.getNews(10, "", endTime, param_Text, param_URL);
             call.enqueue(new Callback<News>() {
@@ -410,14 +410,14 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         }
         else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
         {
-            System.out.println(lastPost_id+" this is the lastPostID");
+            // System.out.println(lastPost_id+" this is the lastPostID");
             Call<Post> call = MainActivity.echosService.getPost(lastPost_id);
             call.enqueue(new Callback<Post>() {
                 @Override
                 public void onResponse(Call<Post> call, Response<Post> response) {
                     TextView tv = listview.findViewById(R.id.footer_textinfo);
                     if(response.body().getData().size()>0) {
-                        System.out.println("now in get footer data");
+                        // System.out.println("now in get footer data");
                         getPostInfo(response.body().getData());
                         tv.setText("正在加载新内容");
                     }

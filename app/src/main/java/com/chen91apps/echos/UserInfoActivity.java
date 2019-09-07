@@ -71,6 +71,7 @@ public class UserInfoActivity extends AppCompatActivity implements User.LogoutRe
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
         });
+        username.setOnClickListener(null);
     }
 
     public void initToolBar()

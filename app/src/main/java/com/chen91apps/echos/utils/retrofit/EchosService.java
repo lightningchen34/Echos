@@ -43,6 +43,12 @@ public interface EchosService
     @GET("delfollow.php")
     Call<Favourite> delFavorite(@Query("key") String key);
 
+    @GET("addpost.php")
+    Call<Post> addPost(@Query("title") String title, @Query("content") String content);
+
+    @GET("addfeedback.php")
+    Call<String> addFeedback(@Query("content") String content);
+
     @GET("rss.php")
     Call<RSSData> rss(@Query("url") String url);
 }

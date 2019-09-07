@@ -218,14 +218,14 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             if (!followed)
             {
                 Call<Favourite> call = MainActivity.echosService.addFavorite(title, key, saveContent);
-                System.out.println(saveContent.length());
+                // System.out.println(saveContent.length());
                 call.enqueue(new Callback<Favourite>() {
                     @Override
                     public void onResponse(Call<Favourite> call, Response<Favourite> response) {
-                        System.out.println(response.message());
+                        // System.out.println(response.message());
                         Favourite f = response.body();
                         if (f == null) return;
-                        System.out.println("add"+f.getState());
+                        // System.out.println("add"+f.getState());
                         if (f.getData() != null && f.getData().size() > 0)
                         {
                             followed = true;
@@ -245,11 +245,11 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             } else
             {
                 Call<Favourite> call = MainActivity.echosService.delFavorite(key);
-                System.out.println(saveContent.length());
+                // System.out.println(saveContent.length());
                 call.enqueue(new Callback<Favourite>() {
                     @Override
                     public void onResponse(Call<Favourite> call, Response<Favourite> response) {
-                        System.out.println(response.message());
+                        // System.out.println(response.message());
                         Favourite f = response.body();
                         if (f == null) return;
                         if (f.getState() == 1)

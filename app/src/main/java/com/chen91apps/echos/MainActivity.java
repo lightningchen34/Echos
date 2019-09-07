@@ -76,6 +76,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity
         implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener, User.OnLoginStateChanged {
 
+    public static MainActivity main = null;
+
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
     private ArrayList<TabIconPair> tabInfo;
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        main = this;
         ClearableCookieJar cookie = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(cookie)

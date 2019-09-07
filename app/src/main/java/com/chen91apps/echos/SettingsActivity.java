@@ -1,8 +1,11 @@
 package com.chen91apps.echos;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +20,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceFragment;
 
+import com.bumptech.glide.Glide;
 import com.chen91apps.echos.utils.Configure;
 
 import org.w3c.dom.Text;
+
+import cn.jzvd.JZMediaManager;
+import cn.jzvd.JZUserAction;
+import cn.jzvd.JZUtils;
+import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.JZVideoPlayerManager;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -63,11 +73,17 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         TextView clearBuffer = (TextView)findViewById(R.id.setting_clearbuffer);
-        clearBuffer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        clearBuffer.setOnClickListener((View v) -> {
 
-            }
+            Glide.get(MainActivity.main).clearMemory();
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    MainActivity.acache.clear();
+                    Glide.get(MainActivity.main).clearDiskCache();
+                }
+            };
+            thread.start();
         });
     }
 }
