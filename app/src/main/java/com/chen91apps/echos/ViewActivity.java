@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.chen91apps.echos.fragments.ImageFragment;
 import com.chen91apps.echos.fragments.VideoFragment;
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.ScoreManager;
 import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.News;
@@ -104,6 +105,12 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             {
                 viewSrc.setText(news.getOrganizations().get(0).getMention());
             }
+
+            for (News.DataBean.KeywordsBean kb : news.getKeywords())
+            {
+                ScoreManager.addScore(kb.getWord(), (float) kb.getScore());
+            }
+
 
             listFrames = new ArrayList<>();
             if (news.getVideo() != null && news.getVideo().length() > 0)

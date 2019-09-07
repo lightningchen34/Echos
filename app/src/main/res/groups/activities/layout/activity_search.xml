@@ -37,10 +37,10 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.chen91apps.echos.views.MyListView
+    <ListView
         android:id="@+id/list_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.chen91apps.echos.views.MyListView>
+    </ListView>
 </LinearLayout>

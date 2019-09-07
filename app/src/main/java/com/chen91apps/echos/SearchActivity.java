@@ -9,12 +9,18 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.ScoreManager;
 import com.chen91apps.echos.utils.ThemeColors;
+
+import java.util.LinkedList;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -26,6 +32,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         initToolBar();
+        initListView();
     }
 
     @Override
@@ -58,11 +65,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (searchable) {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(searchView.getContext(), SearchResultActivity.class));
-                    intent.putExtra("search_value", query);
-                    intent.putExtra("search_type", "");
-                    startActivity(intent);
+                    search(query);
                     System.out.println(query);
                     searchable = false;
                     return true;
@@ -75,5 +78,29 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    void initListView()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        list.addAll(ScoreManager.getList());
+        ListView listView = (ListView) findViewById(R.id.list_search);
+        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // System.out.println(list.get(i));
+                search(list.get(i));
+            }
+        });
+    }
+
+    void search(String text)
+    {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(this, SearchResultActivity.class));
+        intent.putExtra("search_value", text);
+        intent.putExtra("search_type", "");
+        startActivity(intent);
     }
 }

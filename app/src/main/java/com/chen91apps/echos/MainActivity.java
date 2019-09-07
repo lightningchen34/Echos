@@ -23,6 +23,7 @@ import com.chen91apps.echos.fragments.PageFragment;
 import com.chen91apps.echos.utils.ACache;
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.ImageLoader;
+import com.chen91apps.echos.utils.ScoreManager;
 import com.chen91apps.echos.utils.User;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
@@ -58,6 +59,11 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -80,6 +86,8 @@ public class MainActivity extends AppCompatActivity
     public static User user;
     public static RetrofitService newsService;
     public static EchosService echosService;
+
+    private Timer timer;
 
     private boolean show = true;
 
@@ -142,6 +150,9 @@ public class MainActivity extends AppCompatActivity
         resources.updateConfiguration(config, dm);
 
         acache = ACache.get(this);
+
+        ScoreManager.init();
+
         Configure.day_or_night = (Boolean) acache.getAsObject("day_or_night");
         if (Configure.day_or_night == null)
         {
@@ -170,6 +181,16 @@ public class MainActivity extends AppCompatActivity
         initSearchText();
 
         user = new User(echosService, this);
+
+        // updateSearchView();
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateSearchView();
+            }
+        }, 0, 5000);
     }
 
     @Override
@@ -437,6 +458,31 @@ public class MainActivity extends AppCompatActivity
                 // TODO
             }
         });
+    }
+
+    private void updateSearchView()
+    {
+        final Random random = new Random();
+        TextView t = (TextView) findViewById(R.id.search_textview);
+        List<String> list = ScoreManager.getList();
+        int size = list.size();
+        if (size < 3)
+        {
+            t.setText("搜索");
+        } else
+        {
+            int a = (random.nextInt() % size + size) % size;
+            int b = (random.nextInt() % size + size) % size;
+            int c = (random.nextInt() % size + size) % size;
+            int tmp;
+            while (b == a) b = (random.nextInt() % size + size) % size;
+            while (c == b || c == a) c = (random.nextInt() % size + size) % size;
+            if (a > b) {tmp = a; a = b; b = tmp;}
+            if (b > c) {tmp = b; b = c; c = tmp;}
+            if (a > b) {tmp = a; a = b; b = tmp;}
+            if (b > c) {tmp = b; b = c; c = tmp;}
+            t.setText(list.get(a) + " | " + list.get(b) + " | " + list.get(c));
+        }
     }
 
     @Override
