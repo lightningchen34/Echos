@@ -204,7 +204,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     void getPostInfo(List<Post.DataBean> stream)
     {
         for(int i=0;i<stream.size()&&i<20;i++)
-            data.add(new PlainListItemInfo(stream.get(i).getTitle(),"time : "+stream.get(i).getCreate_time(), stream.get(i)));
+            data.add(new PlainListItemInfo(stream.get(i).getTitle(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(), stream.get(i)));
         lastPost_id = stream.get(0).getPost_id()-20;
         adapter.notifyDataSetChanged();
     }
