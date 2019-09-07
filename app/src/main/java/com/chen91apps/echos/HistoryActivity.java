@@ -36,7 +36,7 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
     LinkedList<ListItemInfo> data;
     Context mContext;
     ListItemAdapter adapter;
-    private int lastFavourite_id;
+    private int lastHistory_id;
     List<HistoryManager.HistoryBean> bufBeans;
 
     void initListInfo()
@@ -47,6 +47,11 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
         adapter = new ListItemAdapter(data,mContext);
         listView.setAdapter(adapter);
         bufBeans = HistoryManager.getHistoryList(0);
+        getHistoryInfo(bufBeans);
+    }
+
+    void getHistoryInfo(List<HistoryManager.HistoryBean> bufBeans)
+    {
         for(int i=0;i<bufBeans.size();i++)
         {
             if(bufBeans.get(i).getType() == ListInfoPair.TYPE_NEWS)
@@ -60,17 +65,30 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
                 data.add(new PlainListItemInfo(bufPost.getTitle(),bufPost.getAuthor()+" 发布于 "+bufPost.getCreate_time(),bufPost));
             }
         }
+        if(bufBeans.size() > 0)
+            lastHistory_id = bufBeans.get(bufBeans.size()-1).getId();
+        else
+            lastHistory_id = 0;
         adapter.notifyDataSetChanged();
     }
 
     public void toRefreshListView()
     {
-
+        bufBeans = HistoryManager.getHistoryList(0);
+        data.clear();
+        getHistoryInfo(bufBeans);
+        listView.refreshFinish();
     }
 
     public void toUpdateListView()
     {
-
+        if(lastHistory_id == 1){
+            listView.refreshFinish();
+            return;
+        }
+        bufBeans = HistoryManager.getHistoryList(lastHistory_id-1);
+        getHistoryInfo(bufBeans);
+        listView.refreshFinish();
     }
 
     public void initToolBar()
