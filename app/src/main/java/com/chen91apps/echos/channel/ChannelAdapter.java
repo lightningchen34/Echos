@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chen91apps.echos.ChannelActivity;
 import com.chen91apps.echos.R;
 
 import java.util.Collections;
@@ -29,16 +28,12 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private int fixSize;           //已选频道中固定频道大小
     private boolean isRecommend;   //当前是否显示推荐频道
     private onItemRangeChangeListener onItemRangeChangeListener;
-    private int mLeft, mRight;    //蓝色线条距离屏幕左边的距离
-    private int mTabY;            //Tab距离parent的Y的距离
 
 
     public ChannelAdapter(Context mContext, List<ChannelBean> mList, List<ChannelBean> recommendList) {
         this.mContext = mContext;
         this.mList = mList;
         this.recommendList = recommendList;
-        mLeft = -1;
-        mRight = -1;
     }
 
     public void setOnItemRangeChangeListener(ChannelAdapter.onItemRangeChangeListener onItemRangeChangeListener) {
@@ -133,17 +128,14 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void setTab(final TabHolder holder) {
-        if (mLeft == -1) {
-            holder.recommend.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    Layout layout = holder.recommend.getLayout();
-                    mLeft = (int) (holder.recommend.getLeft() + layout.getPrimaryHorizontal(0)) - ChannelActivity.dip2px(mContext, 10);   //textView左边距离+第一个文字绘制的距离 设置了padding 所以要减掉
-                    holder.recommend.getViewTreeObserver().removeOnPreDrawListener(this);
-                    return true;
-                }
-            });
-        }
+        holder.recommend.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                Layout layout = holder.recommend.getLayout();
+                holder.recommend.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         holder.recommend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +152,6 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public boolean onPreDraw() {
                 //计算tab的Y，用于后面的动画 需要一直监听
-                mTabY = holder.itemView.getTop();
                 return true;
             }
         });
@@ -170,17 +161,12 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         int position = holder.getLayoutPosition();
         holder.delete.setVisibility(View.GONE);
         ChannelBean bean = mList.get(position);
-        if ((isRecommend && bean.isRecommend()) || (!isRecommend && !bean.isRecommend())) {
-            //移除的频道属于当前tab显示的频道，直接调用系统的移除动画
-            itemMove(position, selectedSize + 1);
-            notifyItemRangeChanged(selectedSize + 1, 1);
-            if (onItemRangeChangeListener != null) {
-                //如果设置了itemDecoration，必须调用recyclerView.invalidateItemDecorations(),否则间距会不对
-                onItemRangeChangeListener.refreshItemDecoration();
-            }
-        } else {
-            //不属于当前tab显示的频道
-            removeAnimation(holder.itemView, isRecommend ? mRight : mLeft, mTabY, position);
+        //移除的频道属于当前tab显示的频道，直接调用系统的移除动画
+        itemMove(position, selectedSize + 1);
+        notifyItemRangeChanged(selectedSize + 1, 1);
+        if (onItemRangeChangeListener != null) {
+            //如果设置了itemDecoration，必须调用recyclerView.invalidateItemDecorations(),否则间距会不对
+            onItemRangeChangeListener.refreshItemDecoration();
         }
         selectedSize--;
     }

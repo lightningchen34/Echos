@@ -488,6 +488,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("return");
+    }
+
+    @Override
     public void onPageFragmentInteraction(Uri uri) {
         // TODO
     }

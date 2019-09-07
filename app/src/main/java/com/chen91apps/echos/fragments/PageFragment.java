@@ -3,7 +3,6 @@ package com.chen91apps.echos.fragments;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
@@ -18,19 +18,20 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import com.chen91apps.echos.ChannelActivity;
 import com.chen91apps.echos.NewPostActivity;
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.channel.ChannelInfo;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -53,6 +54,7 @@ public class PageFragment extends Fragment {
 
     private ArrayList<ListInfoPair> listTexts;
     private ArrayList<Fragment> listFrames;
+    private FragmentStatePagerAdapter adapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -105,16 +107,7 @@ public class PageFragment extends Fragment {
 
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
-            listTexts.add(new ListInfoPair("新闻", "1", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("推荐", "2", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("北京", "3", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("体育", "4", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("娱乐", "5", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("经济", "6", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("科技", "7", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("民生", "8", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("教育", "9", ListInfoPair.TYPE_NEWS));
-            listTexts.add(new ListInfoPair("新时代", "10", ListInfoPair.TYPE_NEWS));
+            init_news_tabs();
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
             listTexts.add(new ListInfoPair("社区", "13", ListInfoPair.TYPE_COMMUNITY));
@@ -123,10 +116,7 @@ public class PageFragment extends Fragment {
             listTexts.add(new ListInfoPair("推荐", "14", ListInfoPair.TYPE_RSS));
         }
 
-        for (ListInfoPair info : listTexts)
-        {
-            listFrames.add(ListFragment.newInstance(info.url, info.type));
-        }
+        init_fragments();
     }
 
     @Override
@@ -164,7 +154,7 @@ public class PageFragment extends Fragment {
             tv.setOnClickListener((View v) -> {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(this.getContext(), ChannelActivity.class));
-                startActivity(intent);
+                startActivityForResult(intent, 301);
             });
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
@@ -172,7 +162,7 @@ public class PageFragment extends Fragment {
             tv.setOnClickListener((View v) -> {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(this.getContext(), NewPostActivity.class));
-                startActivity(intent);
+                startActivityForResult(intent, 302);
             });
 
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss)) {
@@ -180,9 +170,48 @@ public class PageFragment extends Fragment {
         }
     }
 
+    private void init_news_tabs()
+    {
+        listTexts.clear();
+        List<Integer> indexes = ChannelInfo.getIndexes();
+        System.out.println("init" + indexes.size());
+        for (Integer index : indexes)
+        {
+            listTexts.add(new ListInfoPair(ChannelInfo.getTitle(index), ChannelInfo.getString(index), ListInfoPair.TYPE_NEWS));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("resume");
+        if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
+        {
+            int position = tabLayout.getSelectedTabPosition();
+
+            init_news_tabs();
+            init_fragments();
+            adapter.notifyDataSetChanged();
+
+            if (position > listTexts.size())
+            {
+                tabLayout.getTabAt(0).select();
+            }
+        }
+    }
+
+    private void init_fragments()
+    {
+        listFrames.clear();
+        for (ListInfoPair info : listTexts)
+        {
+            listFrames.add(ListFragment.newInstance(info.url, info.type));
+        }
+    }
+
     public void initPages()
     {
-        viewpager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
+        adapter = new FragmentStatePagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return listFrames.get(position);
@@ -203,7 +232,8 @@ public class PageFragment extends Fragment {
             public CharSequence getPageTitle(int position) {
                 return listTexts.get(position).title;
             }
-        });
+        };
+        viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);
     }
 
@@ -239,7 +269,8 @@ public class PageFragment extends Fragment {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 int index = tab.getPosition();
-                TabViewHelper.setTextTabActive(tab, listTexts.get(index), false);
+                if (index < listTexts.size())
+                    TabViewHelper.setTextTabActive(tab, listTexts.get(index), false);
             }
 
             @Override

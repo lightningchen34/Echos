@@ -1,5 +1,11 @@
 package com.chen91apps.echos.channel;
 
+import com.chen91apps.echos.MainActivity;
+import com.chen91apps.echos.utils.listitem.ListItemInfo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,16 +41,38 @@ public class ChannelInfo {
         return info.categories.get(index);
     }
 
-    public static List<Integer> getIntList(List<String> list)
+    public static List<Integer> getIntList(List<ChannelBean> list, int size)
     {
         List<Integer> ret = new LinkedList<Integer>();
-        for (String s : list) {
-            for (int i = 0; i < info.categories.size(); ++i)
-                if (s.equals(getTitle(i)))
-                    ret.add(i);
+        for (int i = 1; i <= size; ++i) {
+            ChannelBean s = list.get(i);
+            for (int j = 0; j < info.categories.size(); ++j)
+                if (s.getName().equals(getTitle(j)))
+                    ret.add(j);
         }
         return ret;
     }
 
+    public static int size()
+    {
+        return info.categories.size();
+    }
 
+    public static List<Integer> getIndexes()
+    {
+        String str = MainActivity.acache.getAsString("channel_select");
+        Type type = new TypeToken<LinkedList<Integer>>(){}.getType();
+        List<Integer> indexes = new Gson().fromJson(str, type);
+        if (indexes == null)
+        {
+            indexes = new LinkedList<>();
+        }
+        return indexes;
+    }
+
+    public static void putIndexes(List<Integer> indexes)
+    {
+        String str = new Gson().toJson(indexes);
+        MainActivity.acache.put("channel_select", str);
+    }
 }

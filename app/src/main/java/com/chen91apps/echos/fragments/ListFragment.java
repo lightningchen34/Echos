@@ -185,7 +185,10 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     public void onPause() {
         super.onPause();
         savedPosition = listview.getFirstVisiblePosition();
-        savedTop = (listview.getChildAt(0)).getTop();
+        if (listview.getChildAt(0) != null)
+            savedTop = (listview.getChildAt(0)).getTop();
+        else
+            savedTop = 0;
         System.out.println("Pause" + param_URL + " " + savedPosition);
 
         List<ListItemInfo> tmpdata;

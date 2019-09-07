@@ -4,16 +4,15 @@ public class ChannelBean {
     private String name;
     private int spanSize;
     private int layoutId;
-    private boolean isRecommend;
 
     public ChannelBean() {
+        this.name = "";
     }
 
-    public ChannelBean(String name, int spanSize, int layoutId, boolean isRecommend) {
+    public ChannelBean(String name, int spanSize, int layoutId) {
         this.name = name;
         this.spanSize = spanSize;
         this.layoutId = layoutId;
-        this.isRecommend = isRecommend;
     }
 
     public String getName() {
@@ -38,13 +37,5 @@ public class ChannelBean {
 
     public void setLayoutId(int layoutId) {
         this.layoutId = layoutId;
-    }
-
-    public boolean isRecommend() {
-        return isRecommend;
-    }
-
-    public void setRecommend(boolean recommend) {
-        isRecommend = recommend;
     }
 }
