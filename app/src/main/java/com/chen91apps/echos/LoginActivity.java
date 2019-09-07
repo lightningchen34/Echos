@@ -35,6 +35,15 @@ public class LoginActivity extends AppCompatActivity implements User.LoginRespon
             MainActivity.user.login(edituser.getText().toString(), editpass.getText().toString(), this);
         });
 
+        Button buttonSignup = (Button) findViewById(R.id.button_signup);
+        buttonSignup.setOnClickListener((View v) -> {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(this, SignupActivity.class));
+            intent.putExtra("action", action);
+            startActivity(intent);
+            finish();
+        });
+
         myIntent = getIntent();
         action = myIntent.getStringExtra("action");
         System.out.println(action);

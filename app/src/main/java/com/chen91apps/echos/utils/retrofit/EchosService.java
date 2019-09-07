@@ -15,6 +15,9 @@ public interface EchosService
     @GET("user.php")
     Call<UserInfo> getUser();
 
+    @GET("signup.php")
+    Call<LoginLog> signup(@Query("username") String username, @Query("password") String password, @Query("nickname") String nickname);
+
     @GET("index.php")
     Call<String> get(@Query("type") String type);
 }

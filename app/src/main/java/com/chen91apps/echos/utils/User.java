@@ -111,6 +111,36 @@ public class User {
         call.enqueue(cb);
     }
 
+    public void signup(String username, String nickname, String password, SignupResponder signupResponder)
+    {
+        Call<LoginLog> call = echosService.signup(username, password, nickname);
+        Callback<LoginLog> cb = new Callback<LoginLog>() {
+            @Override
+            public void onResponse(Call<LoginLog> call, Response<LoginLog> response) {
+                LoginLog log = response.body();
+                info = log.getUser();
+                if (log.getState() == 1)
+                {
+                    loginStateChanged.OnLoginStateChanged(true);
+                    if (signupResponder != null)
+                        signupResponder.SignupResponder(true, log.getLog());
+                } else
+                {
+                    loginStateChanged.OnLoginStateChanged(false);
+                    if (signupResponder != null)
+                        signupResponder.SignupResponder(false, log.getLog());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginLog> call, Throwable t) {
+                System.out.println("Fail");
+            }
+        };
+
+        call.enqueue(cb);
+    }
+
     public boolean checkLogin() {
         return (info != null);
     }
@@ -133,5 +163,10 @@ public class User {
     public interface LogoutResponder
     {
         void LogoutResponder(boolean state);
+    }
+
+    public interface SignupResponder
+    {
+        void SignupResponder(boolean state, String log);
     }
 }
