@@ -146,7 +146,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         int type = random.nextInt(3);
         if (type == 0)
         {
-            return new PlainListItemInfo(strings[random.nextInt(strings.length)], "更新时间：1970-1-1");
+            return new PlainListItemInfo(strings[random.nextInt(strings.length)], param_URL);
         } else if (type == 1)
         {
             return new DefaultListItemInfo(strings[random.nextInt(strings.length)], "更新时间：2019-8-12", getUrl(random));

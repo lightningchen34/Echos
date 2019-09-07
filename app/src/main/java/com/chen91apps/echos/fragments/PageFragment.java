@@ -232,6 +232,11 @@ public class PageFragment extends Fragment {
             public CharSequence getPageTitle(int position) {
                 return listTexts.get(position).title;
             }
+
+            @Override
+            public int getItemPosition(@NonNull Object object) {
+                return POSITION_NONE;
+            }
         };
         viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);
