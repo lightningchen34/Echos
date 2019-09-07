@@ -1,6 +1,7 @@
 package com.chen91apps.echos.channel;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class ChannelInfo {
     public static ChannelInfo info = new ChannelInfo();
@@ -32,6 +33,17 @@ public class ChannelInfo {
     {
         if (index == 0) return "";
         return info.categories.get(index);
+    }
+
+    public static List<Integer> getIntList(List<String> list)
+    {
+        List<Integer> ret = new LinkedList<Integer>();
+        for (String s : list) {
+            for (int i = 0; i < info.categories.size(); ++i)
+                if (s.equals(getTitle(i)))
+                    ret.add(i);
+        }
+        return ret;
     }
 
 
