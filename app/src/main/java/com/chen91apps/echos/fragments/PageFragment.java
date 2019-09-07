@@ -181,9 +181,7 @@ public class PageFragment extends Fragment {
         {
             newsFrames = new ArrayList<>();
             for (int i = 0; i < ChannelInfo.size(); ++i)
-            {
                 newsFrames.add(ListFragment.newInstance(ChannelInfo.getString(i), ListInfoPair.TYPE_NEWS));
-            }
         }
 
         listTexts.clear();
