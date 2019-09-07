@@ -38,7 +38,7 @@ public class Favourite {
          */
 
         private int follow_id;
-        private int user;
+        private String user;
         private String note;
         private String content;
         private String create_time;
@@ -51,11 +51,11 @@ public class Favourite {
             this.follow_id = follow_id;
         }
 
-        public int getUser() {
+        public String getUser() {
             return user;
         }
 
-        public void setUser(int user) {
+        public void setUser(String user) {
             this.user = user;
         }
 

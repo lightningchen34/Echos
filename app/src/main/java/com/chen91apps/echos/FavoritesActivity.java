@@ -6,16 +6,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.ListView;
 
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
-import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
@@ -103,12 +99,12 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
                     getFavoriteInfo(response.body().getData());
                 }
                 else
-                    System.out.println("ç¨æ·æ²¡æç»é");
+                    System.out.println("to login");
                 listView.refreshFinish();
             }
             @Override
             public void onFailure(Call<Favourite> call, Throwable t) {
-                System.out.println("è«åå¶å¦çå¤±è´¥äº");
+                System.out.println("failed");
             }
         });
     }
