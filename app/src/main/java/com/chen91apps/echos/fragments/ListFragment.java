@@ -22,6 +22,7 @@ import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
+import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.retrofit.RetrofitService;
 import com.chen91apps.echos.views.MyListView;
 import com.google.gson.Gson;
@@ -58,7 +59,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     // TODO: Rename and change types of parameters
     private String param_URL;
-    private int param_TYPE;
+    private int param_TYPE;// = ListInfoPair.TYPE_NEWS;
 
     private int savedPosition;
     private int savedTop;
@@ -115,22 +116,15 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         {
             SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             currentTime = dp.format(new Date());                             //current time get from here
-
             Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"","");
             call.enqueue(new Callback<News>() {
                 @Override
                 public void onResponse(Call<News> call, Response<News> response) {
                     if(response.body().getPageSize() > 0)
-                    {
                         getinfo(response.body().getData());
-                    }
                     else
-                    {
                         System.out.println("没有新闻");
-                    }
-
                 }
-
                 @Override
                 public void onFailure(Call<News> call, Throwable t) {
                     System.out.println("访问失败");
@@ -159,6 +153,9 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     void getinfo(List<News.DataBean> stream)
     {
+        if(param_TYPE != ListInfoPair.TYPE_NEWS)
+            return;
+
         String image,video;
         data.add(new PlainListItemInfo("调试" + param_URL, ""));
         for(int i=0;i<stream.size();i++)
