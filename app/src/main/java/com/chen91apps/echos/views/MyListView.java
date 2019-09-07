@@ -43,9 +43,8 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
                     this.canPull = true;
                     startY = (int)ev.getY();
                 }
-                if(firstVisibleItem == getCount()-7)
+                if(firstVisibleItem <= getCount()-7)
                 {
-                    System.out.println("now in footer canpull setting");
                     this.footer_canPull = true;
                     startY = (int)ev.getY();
                 }
