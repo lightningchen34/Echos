@@ -116,7 +116,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         {
             SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             currentTime = dp.format(new Date());                             //current time get from here
-            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"","");
+            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"",param_URL);
             call.enqueue(new Callback<News>() {
                 @Override
                 public void onResponse(Call<News> call, Response<News> response) {
@@ -143,12 +143,10 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         super.onActivityCreated(savedInstanceState);
-        return inflater.inflate(R.layout.fragment_list, container, false);
-    }
-
-    String getUrl(Random random)
-    {
-        return "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg";
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        view.setId(this.hashCode());
+        System.out.println("id" + view.getId());
+        return view;
     }
 
     void getinfo(List<News.DataBean> stream)
@@ -248,7 +246,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             c.setTime(sDate);
             c.add(Calendar.DAY_OF_MONTH,1);
             currentTime = dp.format(c.getTime());
-            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"","");
+            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"",param_URL);
             call.enqueue(new Callback<News>() {
                 @Override
                 public void onResponse(Call<News> call, Response<News> response) {
@@ -284,7 +282,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         endTime = dp.format(c.getTime());
         System.out.println(endTime);
 
-        Call<News> call = MainActivity.newsService.getNews(10,"2019-07-01",endTime,"","");
+        Call<News> call = MainActivity.newsService.getNews(10,"2019-07-01",endTime,"",param_URL);
         call.enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {

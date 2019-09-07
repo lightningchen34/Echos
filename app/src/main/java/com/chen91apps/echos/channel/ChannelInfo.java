@@ -66,6 +66,11 @@ public class ChannelInfo {
         if (indexes == null)
         {
             indexes = new LinkedList<>();
+            indexes.add(0);
+            indexes.add(7);
+            indexes.add(1);
+            indexes.add(4);
+            indexes.add(9);
         }
         return indexes;
     }

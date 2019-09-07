@@ -237,7 +237,12 @@ public class PageFragment extends Fragment {
             @NonNull
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                return super.instantiateItem(container, position);
+                ListFragment fragment = (ListFragment) super.instantiateItem(container, position);
+                System.out.println(position);
+                if (fragment.hashCode() == listFrames.get(position).hashCode())
+                    return fragment;
+                else
+                    return listFrames.get(position);
             }
 
             @Override
@@ -260,6 +265,8 @@ public class PageFragment extends Fragment {
             public int getItemPosition(@NonNull Object object) {
                 return POSITION_NONE;
             }
+
+
         };
         viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);

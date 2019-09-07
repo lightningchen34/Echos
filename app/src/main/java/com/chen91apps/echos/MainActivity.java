@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     public static ACache acache;
     public static User user;
     public static RetrofitService newsService;
-
+    public static EchosService echosService;
 
     private boolean show = true;
 
@@ -93,37 +93,6 @@ public class MainActivity extends AppCompatActivity
         } else if (Build.VERSION.SDK_INT >= 19) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-    }
-
-    private RetrofitService service;
-
-    private void RequestNews()
-    {
-        SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String currentTime = dp.format(new Date());                             //current time get from here
-
-        System.out.println("requesting news");
-        Call<News> call = service.getNews(20,"2019-07-01",currentTime,"特朗普","科技");
-        call.enqueue(new Callback<News>() {
-            @Override
-            public void onResponse(Call<News> call, Response<News> response) {
-                if(response.body().getPageSize() > 0)
-                {
-                    System.out.println(response.body().getPageSize()+"pieces of news is found");
-                    response.body().getData().get(0).print();
-                }
-                else
-                {
-                    System.out.println("没有新闻");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<News> call, Throwable t) {
-                System.out.println("访问失败");
-            }
-        });
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -145,7 +114,7 @@ public class MainActivity extends AppCompatActivity
                 .baseUrl("http://echos.lightning34.cn/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        EchosService echosService = retrofit.create(EchosService.class);
+        echosService = retrofit.create(EchosService.class);
 
         Retrofit retrofitNews = new Retrofit.Builder()
                 .baseUrl("https://api2.newsminer.net/")
