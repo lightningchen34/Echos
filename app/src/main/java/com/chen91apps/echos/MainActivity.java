@@ -298,14 +298,14 @@ public class MainActivity extends AppCompatActivity
             } else if (i == 4)
             {
                 Intent intent = new Intent();
-                intent.setComponent(new ComponentName(this, LoginActivity.class));
+                intent.setComponent(new ComponentName(this, HistoryActivity.class));
                 intent.putExtra("action", "history");
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
             } else if (i == 5)
             {
                 Intent intent = new Intent();
-                intent.setComponent(new ComponentName(this, LoginActivity.class));
+                intent.setComponent(new ComponentName(this, FeedbackActivity.class));
                 intent.putExtra("action", "feedback");
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
