@@ -114,8 +114,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         else
         {
             SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            //currentTime = dp.format(new Date());                             //current time get from here
-            currentTime = "2019-08-01";
+            currentTime = dp.format(new Date());                             //current time get from here
 
             Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"","");
             call.enqueue(new Callback<News>() {
@@ -130,7 +129,6 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                         System.out.println("没有新闻");
                     }
 
-                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -159,38 +157,27 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         return "http://cloud.lightning34.cn/kurumi/" + String.valueOf(random.nextInt(9) + 1) + ".jpg";
     }
 
-    String[] strings = {
-            "【催泪MAD】时间女孩时崎狂三",
-            "时崎狂三战斗曲——狂三告诉你，牺牲自己为了大局才是正义！【MAD】",
-            "【约会大作战/时崎狂三】你不是一人在战斗，你不会永远孤独",
-            "【约会大作战】时崎狂三第一季出场合集片段！！",
-            "大家好我是练习说骚话，时长两年半的时间女孩时崎狂三。",
-            "【时崎狂三/泪燃/悲愿】除了灵力，什么都可以给你哦，士道桑",
-            "【时崎狂三】终有一日能和士道再次相遇",
-            "【MMD】你看起来真的很美味~时崎狂三",
-            "亲，你的时崎狂三到了，请查收",
-            "【高甜预警/时崎狂三ⅹ五河士道】有点甜",
-            "约会大作战 时崎狂三 三三这么可爱不可能是狐狸精！",
-            "为了你轮回204次又何妨！盘点时崎狂三拯救士道的那些片段"
-
-    };
-
     void getinfo(List<News.DataBean> stream)
     {
+        String image,video;
         data.add(new PlainListItemInfo("调试" + param_URL, ""));
         for(int i=0;i<stream.size();i++)
         {
-            data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime()));
+            image = stream.get(i).getImage();
+            image = image.substring(1,image.length()-1);
+            if(image.length() == 0)
+                data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime()));
+            else
+            {
+                String imgurl[] = image.split(", ");
+                if(imgurl.length <= 2)
+                    data.add(new DefaultListItemInfo(stream.get(i).getTitle(),stream.get(i).getPublishTime(),imgurl[0]));
+                else
+                    data.add(new ImageListItemInfo(stream.get(i).getTitle(),imgurl[0],imgurl[1],imgurl[2]));
+            }
         }
-        /*else if (type == 1)
-        {
-            return new DefaultListItemInfo(strings[random.nextInt(strings.length)], "更新时间：2019-8-12", getUrl(random));
-        } else
-        {
-            return new ImageListItemInfo(strings[random.nextInt(strings.length)], getUrl(random), getUrl(random), getUrl(random));
-        }
-        */
         endTime = stream.get(stream.size()-1).getPublishTime();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -236,10 +223,6 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         {
             tmpdata = data;
         }
-        // Gson gson = new Gson();
-        // String saved = gson.toJson(tmpdata);
-
-        // MainActivity.acache.put("data_cache:" + param_URL, saved);
     }
 
     @Override
@@ -277,12 +260,9 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                         data.clear();
                         getinfo(response.body().getData());
                         listview.refreshFinish();
-                        adapter.notifyDataSetChanged();
                     }
                     else
-                    {
                         System.out.println("没有新闻");
-                    }
                 }
                 @Override
                 public void onFailure(Call<News> call, Throwable t) {
@@ -291,10 +271,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             });
 
         }
-        catch (ParseException e)
-        {
-            System.out.println(e);
-        }
+        catch (ParseException e) { System.out.println(e); }
     }
 
     @Override
@@ -303,9 +280,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         System.out.println(endTime);
         SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date sDate = new Date();
-        try{
-            sDate = dp.parse(endTime);
-        } catch (ParseException e) {}
+        try{ sDate = dp.parse(endTime); } catch (ParseException e) {}
         Calendar c = Calendar.getInstance();
         c.setTime(sDate);
         c.add(Calendar.SECOND,-1);
@@ -320,12 +295,9 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 {
                     getinfo(response.body().getData());
                     listview.refreshFinish();
-                    adapter.notifyDataSetChanged();
                 }
                 else
-                {
                     System.out.println("没有新闻");
-                }
             }
             @Override
             public void onFailure(Call<News> call, Throwable t) {
