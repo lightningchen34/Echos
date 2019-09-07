@@ -37,15 +37,13 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         switch(ev.getAction())
         {
             case MotionEvent.ACTION_DOWN:
-                System.out.println(firstVisibleItem+" , "+(getCount()-1));
                 if(firstVisibleItem == 0)
                 {
                     this.canPull = true;
                     startY = (int)ev.getY();
                 }
-                if(firstVisibleItem == getCount()-7)
+                if(firstVisibleItem >= getCount()-visibleitems-1 && firstVisibleItem <= getCount()-visibleitems)
                 {
-                    System.out.println("now in footer canpull setting");
                     this.footer_canPull = true;
                     startY = (int)ev.getY();
                 }
@@ -63,9 +61,9 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
             case MotionEvent.ACTION_UP:
                 canPull = false;
                 footer_canPull = false;
-                if(footer_curState == RELEASE)
+                if(footer_curState == FOOT_RELEASE)
                 {
-                    footer_curState = RELEASING;
+                    footer_curState = FOOT_RELEASING;
                     paddingBottom(0);
                     refreshFooterByState();
                     myListener.toUpdateListView();
@@ -156,7 +154,6 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
                 tv.setText("this is the releasing state");
                 break;
         }
-        return;
     }
 
     private void refreshFooterByState()
@@ -182,11 +179,12 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     public void refreshFinish()
     {
         curState = NORMAL;
-        footer_curState = NORMAL;
+        footer_curState = FOOT_NORMAL;
         paddingTop(-headerHeight);
         paddingBottom(-footerHeight);
         refreshFooterByState();
         refreshHeaderByState();
+        System.out.println("now the refresh is over");
     }
 
     private void notifyView(View view)
@@ -224,6 +222,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
 
     private int scrollStates;
     private int firstVisibleItem;
+    private int visibleitems;
     private int startY;
 
     int curState = 0;
@@ -283,6 +282,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     public void onScroll(AbsListView absListView, int i, int i1, int i2)
     {
         this.firstVisibleItem = i;
+        this.visibleitems = i1;
     }
 
 
