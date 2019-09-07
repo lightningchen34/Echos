@@ -27,46 +27,5 @@ public class SettingsActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_goback);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-
-        getFragmentManager().beginTransaction().replace(R.id.settings, new SettingsFragment()).commit();
-    }
-
-    public static class SettingsFragment extends PreferenceFragment {
-
-
-        public SettingsFragment() {
-            // Required empty public constructor
-        }
-
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-        }
-
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            addPreferencesFromResource(R.xml.pref_settings);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View view = super.onCreateView(inflater, container, savedInstanceState);
-            return view;
-        }
-
-        @Override
-        public void onStart() {
-            super.onStart();
-
-            ListView v = getView().findViewById(android.R.id.list);
-            if (v != null)
-            {
-                System.out.println("right");
-            } else
-            {
-                System.out.println("wrong");
-            }
-        }
     }
 }
