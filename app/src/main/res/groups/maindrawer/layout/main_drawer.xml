@@ -39,8 +39,8 @@
                     android:id="@+id/username_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="28dp"
-                    android:text="Lightning"
+                    android:textSize="24dp"
+                    android:text="未登录"
                     android:textColor="#ffffffff"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 

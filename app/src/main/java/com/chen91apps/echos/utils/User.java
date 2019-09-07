@@ -5,62 +5,45 @@ import android.widget.Toast;
 
 import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.utils.retrofit.EchosService;
-import com.chen91apps.echos.utils.retrofit.LoginService;
+import com.chen91apps.echos.utils.userinfos.LoginLog;
+import com.chen91apps.echos.utils.userinfos.UserInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class User {
-    public static User user = new User();
-
-    private String cookie;
-    private EchosService echosService;
-
-    public class UserInfo
-    {
-        public String username;
-        public String nickname;
-        public int create_time;
-    }
 
     private UserInfo info;
+    private OnLoginStateChanged loginStateChanged;
+    private EchosService echosService;
 
-    private User()
+    public User(EchosService echosService, OnLoginStateChanged loginStateChanged)
     {
-        info = new UserInfo();
-        info.nickname = "...";
-        cookie = null;
+        this.echosService = echosService;
+        this.loginStateChanged = loginStateChanged;
+        this.info = null;
+        init();
     }
 
-    public void init(EchosService echosService)
+    public void init()
     {
-        /*
-        cookie = MainActivity.acache.getAsString("cookie");
-        System.out.println("cookie");
-        System.out.println(cookie);
-        */
-        this.echosService = echosService;
-        Call<String> call = echosService.getUser();
-        Callback<String> cb = new Callback<String>() {
+        Call<UserInfo> call = echosService.getUser();
+        Callback<UserInfo> cb = new Callback<UserInfo>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String str = response.body();
-                System.out.println(str);
-                System.out.println("go");
-                if (str == "error")
+            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                info = response.body();
+                if (info.getCreate_time() == -1)
                 {
-                    //
+                    loginStateChanged.OnLoginStateChanged(false);
                 } else
                 {
-                    info = new UserInfo();
-                    info.username = str;
-                    info.nickname = str;
+                    loginStateChanged.OnLoginStateChanged(true);
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<UserInfo> call, Throwable t) {
                 System.out.println("Fail");
             }
         };
@@ -68,17 +51,59 @@ public class User {
         call.enqueue(cb);
     }
 
-    public void login(String username, String password, Context context)
+    public void login(String username, String password, LoginResponder loginResponder)
     {
-        Call<String> call = echosService.login(username, password);
-        Callback<String> cb = new Callback<String>() {
+        Call<LoginLog> call = echosService.login(username, password);
+        Callback<LoginLog> cb = new Callback<LoginLog>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Toast.makeText(context, response.body(), Toast.LENGTH_LONG).show();
+            public void onResponse(Call<LoginLog> call, Response<LoginLog> response) {
+                LoginLog log = response.body();
+                info = log.getUser();
+                if (log.getState() == 1)
+                {
+                    loginStateChanged.OnLoginStateChanged(true);
+                    if (loginResponder != null)
+                        loginResponder.LoginResponder(true, log.getLog());
+                } else
+                {
+                    loginStateChanged.OnLoginStateChanged(false);
+                    if (loginResponder != null)
+                        loginResponder.LoginResponder(false, log.getLog());
+                }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<LoginLog> call, Throwable t) {
+                System.out.println("Fail");
+            }
+        };
+
+        call.enqueue(cb);
+    }
+
+    public void logout(LogoutResponder logoutResponder)
+    {
+        Call<LoginLog> call = echosService.login("", "");
+        Callback<LoginLog> cb = new Callback<LoginLog>() {
+            @Override
+            public void onResponse(Call<LoginLog> call, Response<LoginLog> response) {
+                LoginLog log = response.body();
+                info = log.getUser();
+                if (log.getState() == 1)
+                {
+                    loginStateChanged.OnLoginStateChanged(true);
+                    if (logoutResponder != null)
+                        logoutResponder.LogoutResponder(false);
+                } else
+                {
+                    loginStateChanged.OnLoginStateChanged(false);
+                    if (logoutResponder != null)
+                        logoutResponder.LogoutResponder(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginLog> call, Throwable t) {
                 System.out.println("Fail");
             }
         };
@@ -95,14 +120,18 @@ public class User {
         return info;
     }
 
-    public String getCookie()
+    public interface OnLoginStateChanged
     {
-        return cookie;
+        void OnLoginStateChanged(boolean state);
     }
 
-    public void setCookie(String cookie)
+    public interface LoginResponder
     {
-        this.cookie = cookie;
-        MainActivity.acache.put("cookie", this.cookie);
+        void LoginResponder(boolean state, String log);
+    }
+
+    public interface LogoutResponder
+    {
+        void LogoutResponder(boolean state);
     }
 }

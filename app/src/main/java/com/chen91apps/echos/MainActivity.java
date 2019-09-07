@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -30,7 +27,6 @@ import com.chen91apps.echos.utils.User;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.pairs.TabIconPair;
 import com.chen91apps.echos.utils.retrofit.EchosService;
-import com.chen91apps.echos.utils.retrofit.LoginService;
 import com.chen91apps.echos.utils.retrofit.RetrofitService;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
@@ -58,11 +54,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,7 +67,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
-        implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener {
+        implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener, User.OnLoginStateChanged {
 
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
@@ -84,6 +76,7 @@ public class MainActivity extends AppCompatActivity
     private int[] drawer_list_indexes;
 
     public static ACache acache;
+    public static User user;
 
     private boolean show = true;
 
@@ -131,40 +124,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void loginTest(EchosService echosService)
-    {
-        Call<String> call = echosService.login("lightning", "233666");
-        Call<String> ecall = echosService.get("user");
-
-        Callback<String> ecb = new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                System.out.println("Failed");
-                t.printStackTrace();
-            }
-        };
-
-        Callback<String> cb = new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                System.out.println("Fail");
-            }
-        };
-
-        // call.enqueue(cb);
-        ecall.enqueue(ecb);
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,8 +144,7 @@ public class MainActivity extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         EchosService echosService = retrofit.create(EchosService.class);
-        // loginTest(loginService, echosService);
-        User.user.init(echosService);
+
         // RequestNews();
 
         Resources resources = getResources();
@@ -222,6 +180,8 @@ public class MainActivity extends AppCompatActivity
 
         initDrawer();
         initSearchText();
+
+        user = new User(echosService, this);
     }
 
     @Override
@@ -285,7 +245,7 @@ public class MainActivity extends AppCompatActivity
         drawerListView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             if (i == 0)
             {
-                if (User.user.checkLogin())
+                if (user.checkLogin())
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, UserInfoActivity.class));
@@ -295,12 +255,13 @@ public class MainActivity extends AppCompatActivity
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "userinfo");
                     startActivity(intent);
                     drawer.closeDrawer(GravityCompat.START);
                 }
             } else if (i == 1)
             {
-                if (User.user.checkLogin())
+                if (user.checkLogin())
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, PostActivity.class));
@@ -310,12 +271,13 @@ public class MainActivity extends AppCompatActivity
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "post");
                     startActivity(intent);
                     drawer.closeDrawer(GravityCompat.START);
                 }
             } else if (i == 2)
             {
-                if (User.user.checkLogin())
+                if (user.checkLogin())
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, CommentsActivity.class));
@@ -325,12 +287,13 @@ public class MainActivity extends AppCompatActivity
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "comments");
                     startActivity(intent);
                     drawer.closeDrawer(GravityCompat.START);
                 }
             } else if (i == 3)
             {
-                if (User.user.checkLogin())
+                if (user.checkLogin())
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, FavoritesActivity.class));
@@ -340,12 +303,13 @@ public class MainActivity extends AppCompatActivity
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "favorites");
                     startActivity(intent);
                     drawer.closeDrawer(GravityCompat.START);
                 }
             } else if (i == 4)
             {
-                if (User.user.checkLogin())
+                if (user.checkLogin())
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, HistoryActivity.class));
@@ -355,12 +319,13 @@ public class MainActivity extends AppCompatActivity
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "history");
                     startActivity(intent);
                     drawer.closeDrawer(GravityCompat.START);
                 }
             } else if (i == 5)
             {
-                if (User.user.checkLogin())
+                if (user.checkLogin())
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, FeedbackActivity.class));
@@ -370,6 +335,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "feedback");
                     startActivity(intent);
                     drawer.closeDrawer(GravityCompat.START);
                 }
@@ -404,14 +370,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
-                final TextView username = (TextView) findViewById(R.id.username_textview);
-                if (User.user.checkLogin())
-                {
-                    username.setText(User.user.getInfo().nickname);
-                } else
-                {
-                    username.setText("未登录");
-                }
+                //
             }
 
             @Override
@@ -528,5 +487,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(Uri uri) {
         // TODO
+    }
+
+    @Override
+    public void OnLoginStateChanged(boolean state) {
+        final TextView username = (TextView) findViewById(R.id.username_textview);
+        if (state)
+        {
+            username.setText(user.getInfo().getNickname());
+        } else
+        {
+            username.setText("未登录");
+        }
     }
 }
