@@ -28,10 +28,10 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.chen91apps.echos.views.MyListView
-        android:id="@+id/list_search_result"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_search_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.chen91apps.echos.views.MyListView>
+    </androidx.viewpager.widget.ViewPager>
 </LinearLayout>

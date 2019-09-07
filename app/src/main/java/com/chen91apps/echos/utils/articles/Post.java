@@ -24,9 +24,18 @@ public class Post
          */
 
         private int post_id;
-        private int author;
+        private String author;
         private String title;
-        private int create_time;
+        private String create_time;
+        private String content;
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
 
         public int getPost_id() {
             return post_id;
@@ -36,11 +45,11 @@ public class Post
             this.post_id = post_id;
         }
 
-        public int getAuthor() {
+        public String getAuthor() {
             return author;
         }
 
-        public void setAuthor(int author) {
+        public void setAuthor(String author) {
             this.author = author;
         }
 
@@ -52,11 +61,11 @@ public class Post
             this.title = title;
         }
 
-        public int getCreate_time() {
+        public String getCreate_time() {
             return create_time;
         }
 
-        public void setCreate_time(int create_time) {
+        public void setCreate_time(String create_time) {
             this.create_time = create_time;
         }
     }

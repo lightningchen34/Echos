@@ -13,9 +13,9 @@ public class DefaultListItemInfo extends ListItemInfo {
     private String subtitle;
     private String imageUrl;
 
-    public DefaultListItemInfo(String title, String subtitle, String imageUrl)
+    public DefaultListItemInfo(String title, String subtitle, String imageUrl, Object content)
     {
-        super(R.layout.mylistview_item_default);
+        super(R.layout.mylistview_item_default, content);
         this.title = title;
         this.subtitle = subtitle;
         this.imageUrl = imageUrl;

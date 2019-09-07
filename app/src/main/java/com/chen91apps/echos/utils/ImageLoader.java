@@ -42,7 +42,7 @@ public class ImageLoader {
 
     public void load(String url, ImageView imageView)
     {
-        Glide.with(context).load(url).error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_refresh).into(imageView);
+        Glide.with(imageView.getContext()).load(url).error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_refresh).into(imageView);
     }
 
     public static void loadImage(String url, ImageView imageView)

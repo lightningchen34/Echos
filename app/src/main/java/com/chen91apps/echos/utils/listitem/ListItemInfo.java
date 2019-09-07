@@ -7,15 +7,22 @@ public abstract class ListItemInfo {
     private View view;
     private ViewHolder viewHolder;
 
-    public ListItemInfo(int layoutId)
+    private Object content;
+
+    public ListItemInfo(int layoutId, Object content)
     {
         this.layoutId = layoutId;
         this.view = null;
         this.viewHolder = null;
+        this.content = content;
     }
 
     public View getView() {
         return view;
+    }
+
+    public Object getContent() {
+        return content;
     }
 
     public int getLayoutId() {

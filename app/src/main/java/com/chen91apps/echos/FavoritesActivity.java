@@ -66,14 +66,14 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
     private void getRefreshData()
     {
         System.out.println("now in getrefreshdata");
-        testinfo.addFirst(new PlainListItemInfo("new refresh titile is here!","new title look at the subtitle"));
+        testinfo.addFirst(new PlainListItemInfo("new refresh titile is here!","new title look at the subtitle", null));
     }
 
     private void getUpdateData()
     {
         System.out.println("now in getUpdateData");
         for(int i=0;i<3;i++)
-            testinfo.add(new PlainListItemInfo("footer news here","this is the subtitle"));
+            testinfo.add(new PlainListItemInfo("footer news here","this is the subtitle", null));
     }
 
     public void initTestInfo()
@@ -84,7 +84,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
         mContext = FavoritesActivity.this;
         testinfo = new LinkedList<>();
         for(int i=0;i<2;i++)
-            testinfo.add(new PlainListItemInfo(" titile is here!"," look at the subtitle"));
+            testinfo.add(new PlainListItemInfo(" titile is here!"," look at the subtitle", null));
         adpter = new ListItemAdapter(testinfo,this);
         testview.setAdapter(adpter);
 

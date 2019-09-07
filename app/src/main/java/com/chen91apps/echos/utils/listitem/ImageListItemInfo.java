@@ -15,9 +15,9 @@ public class ImageListItemInfo extends ListItemInfo {
     private String imageUrl_2;
     private String imageUrl_3;
 
-    public ImageListItemInfo(String title, String imageUrl_1, String imageUrl_2, String imageUrl_3)
+    public ImageListItemInfo(String title, String imageUrl_1, String imageUrl_2, String imageUrl_3, Object content)
     {
-        super(R.layout.mylistview_item_image);
+        super(R.layout.mylistview_item_image, content);
         this.title = title;
         this.imageUrl_1 = imageUrl_1;
         this.imageUrl_2 = imageUrl_2;

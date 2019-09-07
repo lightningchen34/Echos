@@ -10,9 +10,9 @@ public class PlainListItemInfo extends ListItemInfo {
     private String title;
     private String subtitle;
 
-    public PlainListItemInfo(String title, String subtitle)
+    public PlainListItemInfo(String title, String subtitle, Object content)
     {
-        super(R.layout.mylistview_item_plain);
+        super(R.layout.mylistview_item_plain, content);
         this.title = title;
         this.subtitle = subtitle;
     }

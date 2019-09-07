@@ -189,7 +189,7 @@ public class PageFragment extends Fragment {
             newsFrames = new ArrayList<>();
             for (int i = 0; i < ChannelInfo.size(); ++i)
             {
-                newsFrames.add(ListFragment.newInstance(ChannelInfo.getString(i), ListInfoPair.TYPE_NEWS));
+                newsFrames.add(ListFragment.newInstance(ChannelInfo.getString(i), "", ListInfoPair.TYPE_NEWS));
             }
         }
 
@@ -229,7 +229,7 @@ public class PageFragment extends Fragment {
         listFrames.clear();
         for (ListInfoPair info : listTexts)
         {
-            listFrames.add(ListFragment.newInstance(info.url, info.type));
+            listFrames.add(ListFragment.newInstance(info.url, "", info.type));
         }
     }
 

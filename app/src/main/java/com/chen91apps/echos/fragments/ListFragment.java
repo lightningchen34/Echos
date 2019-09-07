@@ -60,10 +60,12 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM_URL = "param_url";
+    private static final String ARG_PARAM_TEXT = "param_text";
     private static final String ARG_PARAM_TYPE = "param_type";
 
     // TODO: Rename and change types of parameters
     private String param_URL;
+    private String param_Text;
     private int param_TYPE;// = ListInfoPair.TYPE_NEWS;
 
     private int savedPosition;
@@ -93,10 +95,11 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
      * @return A new instance of fragment ListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListFragment newInstance(String paramUrl, int paramType) {
+    public static ListFragment newInstance(String paramUrl, String paramText, int paramType) {
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM_URL, paramUrl);
+        args.putString(ARG_PARAM_TEXT, paramText);
         args.putInt(ARG_PARAM_TYPE, paramType);
         fragment.setArguments(args);
         return fragment;
@@ -107,6 +110,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             param_URL = getArguments().getString(ARG_PARAM_URL);
+            param_Text = getArguments().getString(ARG_PARAM_TEXT);
             param_TYPE = getArguments().getInt(ARG_PARAM_TYPE);
         }
 
@@ -123,8 +127,9 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         {
             if(param_TYPE == ListInfoPair.TYPE_NEWS) {
                 SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                currentTime = dp.format(new Date());                             //current time get from here
-                Call<News> call = MainActivity.newsService.getNews(20, "2019-07-01", currentTime, "", param_URL);
+                currentTime = dp.format(new Date());
+                System.out.println(currentTime);
+                Call<News> call = MainActivity.newsService.getNews(20, "", currentTime, param_Text, param_URL);
                 call.enqueue(new Callback<News>() {
                     @Override
                     public void onResponse(Call<News> call, Response<News> response) {
@@ -178,18 +183,17 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     void getinfo(List<News.DataBean> stream)
     {
         String image, video;
-        data.add(new PlainListItemInfo("调试" + param_URL, ""));
         for (int i = 0; i < stream.size(); i++) {
             image = stream.get(i).getImage();
             image = image.substring(1, image.length() - 1);
             if (image.length() == 0)
-                data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime()));
+                data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime(), stream.get(i)));
             else {
                 String imgurl[] = image.split(", ");
                 if (imgurl.length <= 2)
-                    data.add(new DefaultListItemInfo(stream.get(i).getTitle(), stream.get(i).getPublishTime(), imgurl[0]));
+                    data.add(new DefaultListItemInfo(stream.get(i).getTitle(), stream.get(i).getPublishTime(), imgurl[0], stream.get(i)));
                 else
-                    data.add(new ImageListItemInfo(stream.get(i).getTitle(), imgurl[0], imgurl[1], imgurl[2]));
+                    data.add(new ImageListItemInfo(stream.get(i).getTitle(), imgurl[0], imgurl[1], imgurl[2], stream.get(i)));
 
             }
             endTime = stream.get(stream.size() - 1).getPublishTime();
@@ -200,7 +204,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     void getPostInfo(List<Post.DataBean> stream)
     {
         for(int i=0;i<stream.size()&&i<20;i++)
-            data.add(new PlainListItemInfo(stream.get(i).getTitle(),"time : "+stream.get(i).getCreate_time()));
+            data.add(new PlainListItemInfo(stream.get(i).getTitle(),"time : "+stream.get(i).getCreate_time(), stream.get(i)));
         lastPost_id = stream.get(0).getPost_id()-20;
         adapter.notifyDataSetChanged();
     }
@@ -217,6 +221,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         listview.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             Intent intent = new Intent();
             intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
+            intent.putExtra("type", param_TYPE);
+            intent.putExtra("content", new Gson().toJson(data.get(i - 1).getContent()));
             startActivity(intent);
         });
 
@@ -277,7 +283,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 c.setTime(sDate);
                 c.add(Calendar.DAY_OF_MONTH, 1);
                 currentTime = dp.format(c.getTime());
-                Call<News> call = MainActivity.newsService.getNews(20, "2019-07-01", currentTime, "", param_URL);
+                Call<News> call = MainActivity.newsService.getNews(20, "", currentTime, param_Text, param_URL);
                 call.enqueue(new Callback<News>() {
                     @Override
                     public void onResponse(Call<News> call, Response<News> response) {
@@ -340,7 +346,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             endTime = dp.format(c.getTime());
             System.out.println(endTime);
 
-            Call<News> call = MainActivity.newsService.getNews(10, "2019-07-01", endTime, "", param_URL);
+            Call<News> call = MainActivity.newsService.getNews(10, "", endTime, param_Text, param_URL);
             call.enqueue(new Callback<News>() {
                 @Override
                 public void onResponse(Call<News> call, Response<News> response) {
