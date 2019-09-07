@@ -22,15 +22,24 @@ import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
+import com.chen91apps.echos.utils.retrofit.RetrofitService;
 import com.chen91apps.echos.views.MyListView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -60,6 +69,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     private LinkedList<ListItemInfo> data;
     private ListItemAdapter adapter;
     private MyListView listview;
+    private String currentTime;
+    private String endTime;
 
     public ListFragment() {
         // Required empty public constructor
@@ -99,11 +110,32 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             Type type = new TypeToken<LinkedList<ListItemInfo>>(){}.getType();
             Gson gson = new Gson();
             data = gson.fromJson(saved, type);
-        } else {
-            Random random = new Random();
+        }
+        else
+        {
+            SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //currentTime = dp.format(new Date());                             //current time get from here
+            currentTime = "2019-08-01";
 
-            for (int i = 0; i < 10; ++i)
-                data.add(getinfo(random));
+            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"","");
+            call.enqueue(new Callback<News>() {
+                @Override
+                public void onResponse(Call<News> call, Response<News> response) {
+                    if(response.body().getPageSize() > 0)
+                    {
+                        getinfo(response.body().getData());
+                    }
+                    else
+                    {
+                        System.out.println("没有新闻");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<News> call, Throwable t) {
+                    System.out.println("访问失败");
+                }
+            });
         }
 
         adapter = new ListItemAdapter(data, getContext());
@@ -141,19 +173,15 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     };
 
-    ListItemInfo getinfo(Random random)
+    void getinfo(List<News.DataBean> stream)
     {
-        int type = random.nextInt(3);
-        if (type == 0)
+        for(int i=0;i<stream.size();i++)
         {
-            return new PlainListItemInfo(strings[random.nextInt(strings.length)], "更新时间：1970-1-1");
-        } else if (type == 1)
-        {
-            return new DefaultListItemInfo(strings[random.nextInt(strings.length)], "更新时间：2019-8-12", getUrl(random));
-        } else
-        {
-            return new ImageListItemInfo(strings[random.nextInt(strings.length)], getUrl(random), getUrl(random), getUrl(random));
+            String title = stream.get(i).getTitle();
+            String subtitle = stream.get(i).getPublishTime();
+            data.add(new PlainListItemInfo(title,subtitle));
         }
+        endTime = stream.get(stream.size()-1).getPublishTime();
     }
 
     @Override
@@ -221,12 +249,77 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     @Override
     public void toRefreshListView() {
-        // TODO
+        try {
+            SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd");
+            Date sDate = dp.parse(currentTime);
+            Calendar c = Calendar.getInstance();
+            c.setTime(sDate);
+            c.add(Calendar.DAY_OF_MONTH,1);
+            currentTime = dp.format(c.getTime());
+            Call<News> call = MainActivity.newsService.getNews(20,"2019-07-01",currentTime,"","");
+            call.enqueue(new Callback<News>() {
+                @Override
+                public void onResponse(Call<News> call, Response<News> response) {
+                    if(response.body().getPageSize() > 0)
+                    {
+                        data.clear();
+                        getinfo(response.body().getData());
+                        listview.refreshFinish();
+                        adapter.notifyDataSetChanged();
+                    }
+                    else
+                    {
+                        System.out.println("没有新闻");
+                    }
+                }
+                @Override
+                public void onFailure(Call<News> call, Throwable t) {
+                    System.out.println("访问失败");
+                }
+            });
+
+        }
+        catch (ParseException e)
+        {
+            System.out.println(e);
+        }
     }
 
     @Override
-    public void toUpdateListView() {
-        // TODO
+    public void toUpdateListView()
+    {
+        System.out.println(endTime);
+        SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date sDate = new Date();
+        try{
+            sDate = dp.parse(endTime);
+        } catch (ParseException e) {}
+        Calendar c = Calendar.getInstance();
+        c.setTime(sDate);
+        c.add(Calendar.SECOND,-1);
+        endTime = dp.format(c.getTime());
+        System.out.println(endTime);
+
+        Call<News> call = MainActivity.newsService.getNews(10,"2019-07-01",endTime,"","");
+        call.enqueue(new Callback<News>() {
+            @Override
+            public void onResponse(Call<News> call, Response<News> response) {
+                if(response.body().getPageSize() > 0)
+                {
+                    getinfo(response.body().getData());
+                    listview.refreshFinish();
+                    adapter.notifyDataSetChanged();
+                }
+                else
+                {
+                    System.out.println("没有新闻");
+                }
+            }
+            @Override
+            public void onFailure(Call<News> call, Throwable t) {
+                System.out.println("访问失败");
+            }
+        });
     }
 
     /**

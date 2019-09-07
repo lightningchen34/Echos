@@ -74,7 +74,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
         System.out.println("now in getUpdateData");
         for(int i=0;i<3;i++)
             testinfo.add(new PlainListItemInfo("footer news here","this is the subtitle"));
-        testview.setSelection(testview.getCount()-1);
     }
 
     public void initTestInfo()
