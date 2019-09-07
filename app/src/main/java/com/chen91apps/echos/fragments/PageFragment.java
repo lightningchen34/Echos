@@ -30,7 +30,9 @@ import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
 
+import java.nio.channels.Channel;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -54,7 +56,9 @@ public class PageFragment extends Fragment {
 
     private ArrayList<ListInfoPair> listTexts;
     private ArrayList<Fragment> listFrames;
-    private FragmentStatePagerAdapter adapter;
+    private FragmentPagerAdapter adapter;
+
+    private ArrayList<Fragment> newsFrames;
 
     private OnFragmentInteractionListener mListener;
 
@@ -111,12 +115,13 @@ public class PageFragment extends Fragment {
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_community))
         {
             listTexts.add(new ListInfoPair("社区", "13", ListInfoPair.TYPE_COMMUNITY));
+            init_fragments();
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss))
         {
             listTexts.add(new ListInfoPair("推荐", "14", ListInfoPair.TYPE_RSS));
+            init_fragments();
         }
 
-        init_fragments();
     }
 
     @Override
@@ -172,12 +177,26 @@ public class PageFragment extends Fragment {
 
     private void init_news_tabs()
     {
+        if (newsFrames == null)
+        {
+            newsFrames = new ArrayList<>();
+            for (int i = 0; i < ChannelInfo.size(); ++i)
+            {
+                newsFrames.add(ListFragment.newInstance(ChannelInfo.getString(i), ListInfoPair.TYPE_NEWS));
+            }
+        }
+
         listTexts.clear();
         List<Integer> indexes = ChannelInfo.getIndexes();
         System.out.println("init" + indexes.size());
         for (Integer index : indexes)
         {
             listTexts.add(new ListInfoPair(ChannelInfo.getTitle(index), ChannelInfo.getString(index), ListInfoPair.TYPE_NEWS));
+        }
+        listFrames.clear();
+        for (Integer index : indexes)
+        {
+            listFrames.add(newsFrames.get(index));
         }
     }
 
@@ -188,9 +207,7 @@ public class PageFragment extends Fragment {
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
             int position = tabLayout.getSelectedTabPosition();
-
             init_news_tabs();
-            init_fragments();
             adapter.notifyDataSetChanged();
 
             if (position > listTexts.size())
@@ -211,10 +228,16 @@ public class PageFragment extends Fragment {
 
     public void initPages()
     {
-        adapter = new FragmentStatePagerAdapter(getChildFragmentManager()) {
+        adapter = new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return listFrames.get(position);
+            }
+
+            @NonNull
+            @Override
+            public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                return super.instantiateItem(container, position);
             }
 
             @Override
