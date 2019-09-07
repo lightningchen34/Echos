@@ -12,7 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Mytheme">
-        <activity android:name=".NewPostActivity"
+        <activity
+            android:name=".ViewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.chen91apps.echos.MainActivity" />
+        </activity>
+        <activity
+            android:name=".NewPostActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data

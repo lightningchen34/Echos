@@ -58,11 +58,14 @@ public class PageFragment extends Fragment {
 
     private TabLayout tabLayout;
     private HorizontalScrollView scrollView;
+    private ViewPager viewpager;
+    private TextView tv;
 
     private int scrollViewPos;
 
     private Runnable scrollRunnable = new Runnable() {
         public void run() {
+            System.out.println("to" + (scrollViewPos - 75));
             scrollView.smoothScrollTo(scrollViewPos - 75, 0);
         }
     };
@@ -133,25 +136,28 @@ public class PageFragment extends Fragment {
 
         super.onActivityCreated(savedInstanceState);
 
-        return inflater.inflate(R.layout.fragment_page, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_page, container, false);
 
-    @Override
-    public void onStart()
-    {
-        tabLayout = (TabLayout) getView().findViewById(R.id.subtablayout);
-        scrollView = (HorizontalScrollView) getView().findViewById(R.id.page_scrollview);
+        tabLayout = (TabLayout) view.findViewById(R.id.subtablayout);
+        scrollView = (HorizontalScrollView) view.findViewById(R.id.page_scrollview);
+        viewpager = (ViewPager) view.findViewById(R.id.page_viewpager);
+        tv = (TextView) view.findViewById(R.id.channel_manager_label);
 
         initPages();
         initTabs();
         initChannelManager();
 
+        return view;
+    }
+
+    @Override
+    public void onStart()
+    {
         super.onStart();
     }
 
     public void initChannelManager()
     {
-        TextView tv = (TextView) getView().findViewById(R.id.channel_manager_label);
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
             // TODO
@@ -176,7 +182,6 @@ public class PageFragment extends Fragment {
 
     public void initPages()
     {
-        ViewPager viewpager = getView().findViewById(R.id.page_viewpager);
         viewpager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -204,7 +209,6 @@ public class PageFragment extends Fragment {
 
     public void initTabs()
     {
-
         for (int i = 0; i < tabLayout.getTabCount(); ++i)
         {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
@@ -229,6 +233,7 @@ public class PageFragment extends Fragment {
 
                 Handler handler = new Handler();
                 handler.post(scrollRunnable);
+                System.out.println("scroll" + tab.getPosition());
             }
 
             @Override
@@ -280,13 +285,6 @@ public class PageFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void reselectPage()
-    {
-        if (this.isAdded()) {
-            tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).select();
-        }
     }
 
     /**

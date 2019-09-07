@@ -23,6 +23,11 @@ public class ListItemAdapter extends BaseAdapter {
     }
 
     @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
+    @Override
     public int getCount() {
         return data.size();
     }
@@ -39,12 +44,12 @@ public class ListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
+        if (data.get(i).getView() == null) {
             view = LayoutInflater.from(context).inflate(data.get(i).getLayoutId(), viewGroup, false);
             data.get(i).setup(view);
         }
-        ((ListItemInfo.ViewHolder) view.getTag()).show();
-        return view;
+        data.get(i).getViewHolder().show();
+        return data.get(i).getView();
     }
 
     Bitmap getBitmap()

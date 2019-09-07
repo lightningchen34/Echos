@@ -1,6 +1,8 @@
 package com.chen91apps.echos.fragments;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,8 +11,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.ViewActivity;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
@@ -40,10 +44,17 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     private String param_URL;
     private int param_TYPE;
 
+    private int savedPosition;
+    private int savedTop;
+
     private OnFragmentInteractionListener mListener;
+
+    private ListItemAdapter adapter;
+    private MyListView listview;
 
     public ListFragment() {
         // Required empty public constructor
+        savedPosition = 0;
     }
 
     /**
@@ -70,6 +81,18 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             param_URL = getArguments().getString(ARG_PARAM_URL);
             param_TYPE = getArguments().getInt(ARG_PARAM_TYPE);
         }
+
+        LinkedList<ListItemInfo> data = new LinkedList<>();
+
+        Random random = new Random();
+
+        for (int i = 0; i < 10; ++i)
+            data.add(getinfo(random));
+
+        adapter = new ListItemAdapter(data, getContext());
+
+        savedPosition = savedTop = 0;
+        System.out.println("OnCreate");
     }
 
     @Override
@@ -120,18 +143,18 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     public void onStart() {
         super.onStart();
 
-        MyListView lv = (MyListView) getView().findViewById(R.id.mylistview);
-        lv.setPullListener(this);
+        listview = (MyListView) getView().findViewById(R.id.mylistview);
+        listview.setPullListener(this);
 
-        LinkedList<ListItemInfo> data = new LinkedList<>();
+        listview.setAdapter(adapter);
 
-        Random random = new Random();
+        listview.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
+            startActivity(intent);
+        });
 
-        for (int i = 0; i < 10; ++i)
-            data.add(getinfo(random));
-
-        ListItemAdapter adapter = new ListItemAdapter(data, getContext());
-        lv.setAdapter(adapter);
+        listview.setSelectionFromTop(savedPosition, savedTop);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -139,6 +162,14 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         if (mListener != null) {
             mListener.onListFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        savedPosition = listview.getFirstVisiblePosition();
+        savedTop = (listview.getChildAt(0)).getTop();
+        System.out.println("Pause" + param_URL + " " + savedPosition);
     }
 
     @Override

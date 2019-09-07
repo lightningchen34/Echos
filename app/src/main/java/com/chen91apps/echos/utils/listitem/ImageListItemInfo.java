@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.utils.ImageLoader;
 
 public class ImageListItemInfo extends ListItemInfo {
 
@@ -46,9 +47,9 @@ public class ImageListItemInfo extends ListItemInfo {
         @Override
         public void show() {
             titleView.setText(title);
-            com.chen91apps.echos.utils.ImageLoader.load(imageView_1, "thumbnail", imageUrl_1);
-            com.chen91apps.echos.utils.ImageLoader.load(imageView_2, "thumbnail", imageUrl_2);
-            com.chen91apps.echos.utils.ImageLoader.load(imageView_3, "thumbnail", imageUrl_3);
+            ImageLoader.imageLoader.load(imageUrl_1, imageView_1);
+            ImageLoader.imageLoader.load(imageUrl_2, imageView_2);
+            ImageLoader.imageLoader.load(imageUrl_3, imageView_3);
         }
     }
 }

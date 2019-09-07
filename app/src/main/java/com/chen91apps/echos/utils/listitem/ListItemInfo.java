@@ -4,11 +4,18 @@ import android.view.View;
 
 public abstract class ListItemInfo {
     private int layoutId;
+    private View view;
     private ViewHolder viewHolder;
 
     public ListItemInfo(int layoutId)
     {
         this.layoutId = layoutId;
+        this.view = null;
+        this.viewHolder = null;
+    }
+
+    public View getView() {
+        return view;
     }
 
     public int getLayoutId() {
@@ -19,6 +26,7 @@ public abstract class ListItemInfo {
 
     public void setup(View view)
     {
+        this.view = view;
         this.viewHolder = getViewHolder(view);
     }
 

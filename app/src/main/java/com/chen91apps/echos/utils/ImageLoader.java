@@ -1,11 +1,13 @@
 package com.chen91apps.echos.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.R;
 
@@ -19,79 +21,32 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ImageLoader extends AsyncTask<Object, Void, Bitmap> {
+public class ImageLoader {
+    public static ImageLoader imageLoader = new ImageLoader();
+
     private ImageView imageView;
     private String type;
     private String url;
 
-    public static void load(ImageView imageView, String type, String url)
+    private Context context;
+
+    private ImageLoader()
     {
-        Bitmap bitmap = MainActivity.acache.getAsBitmap(type + ":::" + url);
-        if (bitmap == null)
-        {
-            imageView.setImageResource(R.drawable.ic_broken_image);
-
-            ImageLoader loader = new ImageLoader();
-            loader.execute(imageView, type, url);
-        } else
-        {
-            imageView.setImageBitmap(bitmap);
-        }
+        // TODO
     }
 
-    @Override
-    protected void onPostExecute(Bitmap bitmap) {
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-        }
-    }
-
-    @Override
-    protected Bitmap doInBackground(Object... objects) {
-        imageView = (ImageView)  objects[0];
-        type = (String) objects[1];
-        url = (String) objects[2];
-        Bitmap bitmap = Loader.loadImage(url);
-        if (type == "thumbnail")
-        {
-            int height = bitmap.getHeight();
-            int width = bitmap.getWidth();
-            float scale;
-            if (height > width)
-                scale = 500.0f / width;
-            else
-                scale = 500.0f / height;
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);// 使用后乘
-            bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-        }
-        MainActivity.acache.put(type + ":::" + url, bitmap);
-        return bitmap;
-    }
-
-    static class Loader
+    public void setContext(Context context)
     {
-        public static Bitmap loadImage(String url)
-        {
-            Bitmap bitmap = null;
-            HttpClient client = new DefaultHttpClient();
-            HttpResponse response = null;
-            InputStream inputStream = null;
-            try
-            {
-                response = client.execute(new HttpGet(url));
-                HttpEntity entity = response.getEntity();
-                inputStream = entity.getContent();
-                bitmap = BitmapFactory.decodeStream(inputStream);
-            } catch (ClientProtocolException e)
-            {
-                e.printStackTrace();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
+        this.context = context;
     }
 
+    public void load(String url, ImageView imageView)
+    {
+        Glide.with(context).load(url).error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_refresh).into(imageView);
+    }
+
+    public static void loadImage(String url, ImageView imageView)
+    {
+        imageLoader.load(url, imageView);
+    }
 }
