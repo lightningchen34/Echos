@@ -58,6 +58,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -101,6 +102,9 @@ public class MainActivity extends AppCompatActivity
         ClearableCookieJar cookie = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(cookie)
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
+                .writeTimeout(2, TimeUnit.SECONDS)
                 .build();
 
         Gson gson = new GsonBuilder()
@@ -116,7 +120,14 @@ public class MainActivity extends AppCompatActivity
                 .build();
         echosService = retrofit.create(EchosService.class);
 
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
+                .writeTimeout(2, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofitNews = new Retrofit.Builder()
+                .client(client)
                 .baseUrl("https://api2.newsminer.net/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -286,36 +297,18 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (i == 4)
             {
-                if (user.checkLogin())
-                {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(this, HistoryActivity.class));
-                    startActivity(intent);
-                    drawer.closeDrawer(GravityCompat.START);
-                } else
-                {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(this, LoginActivity.class));
-                    intent.putExtra("action", "history");
-                    startActivity(intent);
-                    drawer.closeDrawer(GravityCompat.START);
-                }
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, LoginActivity.class));
+                intent.putExtra("action", "history");
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
             } else if (i == 5)
             {
-                if (user.checkLogin())
-                {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(this, FeedbackActivity.class));
-                    startActivity(intent);
-                    drawer.closeDrawer(GravityCompat.START);
-                } else
-                {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(this, LoginActivity.class));
-                    intent.putExtra("action", "feedback");
-                    startActivity(intent);
-                    drawer.closeDrawer(GravityCompat.START);
-                }
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, LoginActivity.class));
+                intent.putExtra("action", "feedback");
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
             } else
             {
                 //

@@ -51,12 +51,12 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
                     getFavoriteInfo(response.body().getData());
                 }
                 else
-                    System.out.println("ç¨æ·æ²¡æç»é");
+                    System.out.println("to login");
                 listView.refreshFinish();
             }
             @Override
             public void onFailure(Call<Favourite> call, Throwable t) {
-                System.out.println("è«åå¶å¦çå¤±è´¥äº");
+                System.out.println("failed");
             }
         });
     }
@@ -72,12 +72,12 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
                     getFavoriteInfo(response.body().getData());
                 }
                 else
-                    System.out.println("ç¨æ·æ²¡æç»é");
+                    System.out.println("to login");
                 listView.refreshFinish();
             }
             @Override
             public void onFailure(Call<Favourite> call, Throwable t) {
-                System.out.println("è«åå¶å¦çå¤±è´¥äº");
+                System.out.println("failed");
             }
         });
     }
@@ -111,13 +111,13 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
 
     private void getFavoriteInfo(List<Favourite.DataBean> stream)
     {
-        for(int i=0;i<stream.size()&&i<20;i++) {
+        for(int i=0;i<stream.size();i++) {
             System.out.println(stream.get(i).getNote()+" this is the Note");
             data.add(new PlainListItemInfo(""+stream.get(i).getNote(), "" + stream.get(i).getCreate_time(), stream.get(i)));
         }
         System.out.println("init is over");
         if(stream.size()>0)
-            lastFavourite_id = stream.get(0).getFollow_id()-20;
+            lastFavourite_id = stream.get(stream.size() - 1).getFollow_id();
         else
             lastFavourite_id = -1;
         adpter.notifyDataSetChanged();

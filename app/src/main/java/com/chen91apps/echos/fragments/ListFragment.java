@@ -17,8 +17,10 @@ import android.widget.TextView;
 import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.ViewActivity;
+import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.history.HistoryManager;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
@@ -73,7 +75,6 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     private OnFragmentInteractionListener mListener;
 
-    private LinkedList<News.DataBean> dataBeans;
     private LinkedList<ListItemInfo> data;
     private ListItemAdapter adapter;
     private MyListView listview;
@@ -114,20 +115,40 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             param_TYPE = getArguments().getInt(ARG_PARAM_TYPE);
         }
 
+
+
+        SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = dp.format(new Date());
+
         data = new LinkedList<>();
 
-        String saved = MainActivity.acache.getAsString("data_cache:" + param_URL);
-        if (saved != null)
+        String saved = MainActivity.acache.getAsString("list_cache_" + param_TYPE + ":::" + param_Text + ":::" + param_URL);
+        System.out.println("cache" + saved);
+        if (saved != null && saved.length() > 10)
         {
-            Type type = new TypeToken<LinkedList<ListItemInfo>>(){}.getType();
+            Type type = new TypeToken<LinkedList<ArticlePack>>(){}.getType();
             Gson gson = new Gson();
-            data = gson.fromJson(saved, type);
-        }
-        else
+            LinkedList<ArticlePack> dataBeans = gson.fromJson(saved, type);
+            if(param_TYPE == ListInfoPair.TYPE_NEWS) {
+                LinkedList<News.DataBean> d = new LinkedList<>();
+                for (ArticlePack obj : dataBeans)
+                {
+                    d.add(obj.news);
+                }
+                getinfo(d);
+            } else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
+            {
+                LinkedList<Post.DataBean> d = new LinkedList<>();
+                for (ArticlePack obj : dataBeans)
+                {
+                    d.add(obj.post);
+                }
+                getPostInfo(d);
+            }
+            System.out.println("load");
+        } else
         {
             if(param_TYPE == ListInfoPair.TYPE_NEWS) {
-                SimpleDateFormat dp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                currentTime = dp.format(new Date());
                 System.out.println(currentTime);
                 Call<News> call = MainActivity.newsService.getNews(20, "", currentTime, param_Text, param_URL);
                 call.enqueue(new Callback<News>() {
@@ -145,7 +166,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                     }
                 });
             }
-            else
+            else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
             {
                 Call<Post> call = MainActivity.echosService.getPost(0);
                 call.enqueue(new Callback<Post>() {
@@ -197,7 +218,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
             }
             endTime = stream.get(stream.size() - 1).getPublishTime();
-            adapter.notifyDataSetChanged();
+            if (adapter != null)
+                adapter.notifyDataSetChanged();
         }
     }
 
@@ -205,8 +227,9 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     {
         for(int i=0;i<stream.size()&&i<20;i++)
             data.add(new PlainListItemInfo(stream.get(i).getTitle(),"time : "+stream.get(i).getCreate_time(), stream.get(i)));
-        lastPost_id = stream.get(0).getPost_id()-20;
-        adapter.notifyDataSetChanged();
+        lastPost_id = stream.get(stream.size() - 1).getPost_id();
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -244,8 +267,11 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             savedTop = (listview.getChildAt(0)).getTop();
         else
             savedTop = 0;
-        System.out.println("Pause" + param_URL + " " + savedPosition);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
         List<ListItemInfo> tmpdata;
         if (data.size() > 20)
         {
@@ -254,6 +280,18 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         {
             tmpdata = data;
         }
+        LinkedList<ArticlePack> dataBeans = new LinkedList<>();
+        for (ListItemInfo info : tmpdata)
+        {
+            ArticlePack ap = new ArticlePack();
+            if (param_TYPE == ListInfoPair.TYPE_NEWS)
+                ap.news = (News.DataBean) info.getContent();
+            else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
+                ap.post = (Post.DataBean) info.getContent();
+            dataBeans.add(ap);
+        }
+        String str = new Gson().toJson(dataBeans);
+        MainActivity.acache.put("list_cache_" + param_TYPE + ":::" + param_Text + ":::" + param_URL, str);
     }
 
     @Override
@@ -305,8 +343,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 System.out.println(e);
             }
         }
-
-        else
+        else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
         {
             Call<Post> call = MainActivity.echosService.getPost(0);
             call.enqueue(new Callback<Post>() {
@@ -363,7 +400,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 }
             });
         }
-        else
+        else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
         {
             System.out.println(lastPost_id+" this is the lastPostID");
             Call<Post> call = MainActivity.echosService.getPost(lastPost_id);
