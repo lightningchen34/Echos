@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.WindowManager;
 
 import com.chen91apps.echos.channel.ChannelAdapter;
@@ -18,42 +19,25 @@ import com.chen91apps.echos.channel.ChannelBean;
 import com.chen91apps.echos.channel.ChannelInfo;
 import com.chen91apps.echos.channel.GridSpacingItemDecoration;
 import com.chen91apps.echos.channel.ItemDragCallback;
+import com.chen91apps.echos.channel.RSSChannelAdapter;
+import com.chen91apps.echos.channel.RSSChannelBean;
+import com.chen91apps.echos.channel.RSSChannelInfo;
+import com.chen91apps.echos.channel.RSSItemDragCallback;
 import com.chen91apps.echos.utils.Configure;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class ChannelActivity extends AppCompatActivity implements ChannelAdapter.onItemRangeChangeListener {
+public class RSSChannelActivity extends AppCompatActivity implements RSSChannelAdapter.onItemRangeChangeListener {
 
     private RecyclerView mRecyclerView;
-    private List<ChannelBean> mList;
-    private ChannelAdapter mAdapter;
-
-    private List<String> select = new ArrayList<>();
-    private List<String> recommend = new ArrayList<>();
+    private List<RSSChannelBean> mList;
+    private RSSChannelAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        List<Integer> ids = ChannelInfo.getIndexes();
-
-        boolean[] visited = new boolean[ChannelInfo.size()];
-        select.add(ChannelInfo.getTitle(0));
-        for (int i = 0; i < ids.size(); ++i)
-        {
-            int id = ids.get(i);
-            if (id != 0)
-            {
-                select.add(ChannelInfo.getTitle(id));
-                visited[id] = true;
-            }
-        }
-        for (int i = 1; i < ChannelInfo.size(); ++i)
-        {
-            if (!visited[i])
-            {
-                recommend.add(ChannelInfo.getTitle(i));
-            }
-        }
+        RSSChannelInfo.load();
 
         setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
         super.onCreate(savedInstanceState);
@@ -73,32 +57,27 @@ public class ChannelActivity extends AppCompatActivity implements ChannelAdapter
         animator.setMoveDuration(300);     //设置动画时间
         animator.setRemoveDuration(0);
         mRecyclerView.setItemAnimator(animator);
-        ChannelBean title = new ChannelBean();
+        RSSChannelBean title = new RSSChannelBean();
         title.setLayoutId(R.layout.adapter_title);
         title.setSpanSize(4);
         mList.add(title);
-        for (String bean : select) {
-            mList.add(new ChannelBean(bean, 1, R.layout.adapter_channel));
+        for (Pair<String, String> bean : RSSChannelInfo.get()) {
+            mList.add(new RSSChannelBean(bean.first, bean.second, 1, R.layout.adapter_channel));
         }
-        ChannelBean tabBean = new ChannelBean();
-        tabBean.setLayoutId(R.layout.adapter_tab);
-        tabBean.setSpanSize(4);
-        mList.add(tabBean);
+        RSSChannelBean buttonBean = new RSSChannelBean();
+        buttonBean.setLayoutId(R.layout.adapter_button);
+        buttonBean.setSpanSize(4);
+        mList.add(buttonBean);
         List<ChannelBean> recommendList = new ArrayList<>();
-        for (String bean : recommend) {
-            recommendList.add(new ChannelBean(bean, 1, R.layout.adapter_channel));
-        }
-        mList.addAll(recommendList);
-        mAdapter = new ChannelAdapter(this, mList, recommendList);
+        mAdapter = new RSSChannelAdapter(this, mList);
         mAdapter.setFixSize(1);
-        mAdapter.setSelectedSize(select.size());
-        mAdapter.setRecommend(true);
+        mAdapter.setSelectedSize(RSSChannelInfo.size());
         mAdapter.setOnItemRangeChangeListener(this);
         mRecyclerView.setAdapter(mAdapter);
         WindowManager m = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         int spacing = (m.getDefaultDisplay().getWidth() - dip2px(this, 70) * 4) / 5;
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(4,spacing,true));
-        ItemDragCallback callback=new ItemDragCallback(mAdapter,2, this);
+        RSSItemDragCallback callback=new RSSItemDragCallback(mAdapter,2, this);
         ItemTouchHelper helper=new ItemTouchHelper(callback);
         helper.attachToRecyclerView(mRecyclerView);
     }
@@ -116,8 +95,13 @@ public class ChannelActivity extends AppCompatActivity implements ChannelAdapter
     @Override
     protected void onPause() {
         super.onPause();
-        List<Integer> list = ChannelInfo.getIntList(mList, mAdapter.getSelectedSize());
-        ChannelInfo.putIndexes(list);
+        LinkedList<Pair<String, String>> list = new LinkedList<>();
+        for (int i = 1; i <= mAdapter.getSelectedSize(); ++i)
+        {
+            list.add(new Pair<>(mList.get(i).getName(), mList.get(i).getUrl()));
+        }
+        RSSChannelInfo.set(list);
+        RSSChannelInfo.save();
     }
 
     public void initToolBar()

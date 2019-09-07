@@ -16,14 +16,15 @@ import com.chen91apps.echos.utils.ThemeColors;
 
 import static androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG;
 
-public class ItemDragCallback extends ItemTouchHelper.Callback {
+public class RSSItemDragCallback extends ItemTouchHelper.Callback {
     private static final String TAG = "ItemDragCallback";
-    private ChannelAdapter mAdapter;
+    private RSSChannelAdapter mAdapter;
     private Paint mPaint;    //虚线画笔
     private int mPadding;   //虚线框框跟按钮间的距离
+
     private Context context;
 
-    public ItemDragCallback(ChannelAdapter mAdapter, int mPadding, Context context) {
+    public RSSItemDragCallback(RSSChannelAdapter mAdapter, int mPadding, Context context) {
         this.mAdapter = mAdapter;
         this.mPadding = mPadding;
         mPaint = new Paint();
@@ -32,8 +33,8 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
         mPaint.setStrokeWidth(1);
         mPaint.setStyle(Paint.Style.STROKE);
         PathEffect pathEffect = new DashPathEffect(new float[]{5f, 5f}, 5f);    //虚线
-        this.context = context;
         mPaint.setPathEffect(pathEffect);
+        this.context = context;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
         super.onSelectedChanged(viewHolder, actionState);
         if(actionState==ACTION_STATE_DRAG){
             //长按时调用
-            ChannelAdapter.ChannelHolder holder= (ChannelAdapter.ChannelHolder) viewHolder;
+            RSSChannelAdapter.ChannelHolder holder= (RSSChannelAdapter.ChannelHolder) viewHolder;
             holder.name.setBackgroundColor(ThemeColors.getColor(context, R.attr.background_color));
             holder.delete.setVisibility(View.GONE);
             holder.name.setElevation(5f);
@@ -88,7 +89,7 @@ public class ItemDragCallback extends ItemTouchHelper.Callback {
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-        ChannelAdapter.ChannelHolder holder= (ChannelAdapter.ChannelHolder) viewHolder;
+        RSSChannelAdapter.ChannelHolder holder= (RSSChannelAdapter.ChannelHolder) viewHolder;
         holder.name.setBackgroundColor(ThemeColors.getColor(context, R.attr.background2_color));
         holder.name.setElevation(0f);
         holder.delete.setVisibility(View.VISIBLE);

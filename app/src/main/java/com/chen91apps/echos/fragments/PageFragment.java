@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import com.chen91apps.echos.ChannelActivity;
 import com.chen91apps.echos.NewPostActivity;
 import com.chen91apps.echos.R;
+import com.chen91apps.echos.RSSChannelActivity;
 import com.chen91apps.echos.channel.ChannelInfo;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
@@ -61,6 +63,8 @@ public class PageFragment extends Fragment {
     private ArrayList<Fragment> newsFrames;
 
     private OnFragmentInteractionListener mListener;
+
+    private List<Integer> indexes;
 
     private TabLayout tabLayout;
     private HorizontalScrollView scrollView;
@@ -155,7 +159,6 @@ public class PageFragment extends Fragment {
     {
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
-            // TODO
             tv.setOnClickListener((View v) -> {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(this.getContext(), ChannelActivity.class));
@@ -171,7 +174,11 @@ public class PageFragment extends Fragment {
             });
 
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss)) {
-            // TODO
+            tv.setOnClickListener((View v) -> {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this.getContext(), RSSChannelActivity.class));
+                startActivityForResult(intent, 303);
+            });
         }
     }
 
@@ -182,12 +189,13 @@ public class PageFragment extends Fragment {
             newsFrames = new ArrayList<>();
             for (int i = 0; i < ChannelInfo.size(); ++i)
             {
-                newsFrames.add(ListFragment.newInstance(ChannelInfo.getString(i), ListInfoPair.TYPE_NEWS));
+                Fragment fragment = ListFragment.newInstance(ChannelInfo.getString(i), ListInfoPair.TYPE_NEWS);
+                newsFrames.add(fragment);
             }
         }
 
         listTexts.clear();
-        List<Integer> indexes = ChannelInfo.getIndexes();
+        indexes = ChannelInfo.getIndexes();
         System.out.println("init" + indexes.size());
         for (Integer index : indexes)
         {
@@ -203,9 +211,9 @@ public class PageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("resume");
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
+            System.out.println("resume");
             int position = tabLayout.getSelectedTabPosition();
             init_news_tabs();
             adapter.notifyDataSetChanged();
@@ -234,17 +242,6 @@ public class PageFragment extends Fragment {
                 return listFrames.get(position);
             }
 
-            @NonNull
-            @Override
-            public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                ListFragment fragment = (ListFragment) super.instantiateItem(container, position);
-                System.out.println(position);
-                if (fragment.hashCode() == listFrames.get(position).hashCode())
-                    return fragment;
-                else
-                    return listFrames.get(position);
-            }
-
             @Override
             public int getCount() {
                 return listFrames.size();
@@ -263,10 +260,17 @@ public class PageFragment extends Fragment {
 
             @Override
             public int getItemPosition(@NonNull Object object) {
-                return POSITION_NONE;
+                return PagerAdapter.POSITION_NONE;
             }
 
-
+            @Override
+            public long getItemId(int position) {
+                if (indexes != null)
+                {
+                    return indexes.get(position);
+                }
+                return super.getItemId(position);
+            }
         };
         viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);
