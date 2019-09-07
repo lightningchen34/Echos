@@ -1,6 +1,7 @@
 package com.chen91apps.echos.utils.history;
 
 import com.chen91apps.echos.MainActivity;
+import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,7 +44,7 @@ public class HistoryManager {
         }
     }
 
-    public static void addHistory(int type, Object content)
+    public static void addHistory(int type, ArticlePack content)
     {
         addHistory(new HistoryBean(type, content));
     }
@@ -81,9 +82,9 @@ public class HistoryManager {
     public static class HistoryBean
     {
         private int type;
-        private Object content;
+        private ArticlePack content;
 
-        public HistoryBean(int type, Object content) {
+        public HistoryBean(int type, ArticlePack content) {
             this.type = type;
             this.content = content;
         }
@@ -92,7 +93,7 @@ public class HistoryManager {
             return type;
         }
 
-        public Object getContent() {
+        public ArticlePack getContent() {
             return content;
         }
     }
