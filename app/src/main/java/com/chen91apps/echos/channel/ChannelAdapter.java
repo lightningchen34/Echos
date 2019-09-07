@@ -1,7 +1,6 @@
 package com.chen91apps.echos.channel;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +25,6 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context mContext;
     private List<ChannelBean> mList;
     private List<ChannelBean> recommendList;  //推荐频道
-    private List<ChannelBean> cityList;    //地方新闻
     private int selectedSize;
     private int fixSize;           //已选频道中固定频道大小
     private boolean isRecommend;   //当前是否显示推荐频道
@@ -36,11 +33,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private int mTabY;            //Tab距离parent的Y的距离
 
 
-    public ChannelAdapter(Context mContext, List<ChannelBean> mList, List<ChannelBean> recommendList, List<ChannelBean> cityList) {
+    public ChannelAdapter(Context mContext, List<ChannelBean> mList, List<ChannelBean> recommendList) {
         this.mContext = mContext;
         this.mList = mList;
         this.recommendList = recommendList;
-        this.cityList = cityList;
         mLeft = -1;
         mRight = -1;
     }
@@ -137,51 +133,23 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void setTab(final TabHolder holder) {
-        final LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.indicator.getLayoutParams();
-        //测量蓝色线条距离
         if (mLeft == -1) {
             holder.recommend.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
                     Layout layout = holder.recommend.getLayout();
                     mLeft = (int) (holder.recommend.getLeft() + layout.getPrimaryHorizontal(0)) - ChannelActivity.dip2px(mContext, 10);   //textView左边距离+第一个文字绘制的距离 设置了padding 所以要减掉
-                    params.leftMargin = mLeft;
-                    holder.indicator.setLayoutParams(params);
                     holder.recommend.getViewTreeObserver().removeOnPreDrawListener(this);
                     return true;
                 }
             });
         }
-        holder.city.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isRecommend) {
-                    holder.city.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                    holder.recommend.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-                    if (mRight == -1) {
-                        mRight = mLeft + holder.city.getLeft() - ChannelActivity.dip2px(mContext, 10);
-                    }
-                    params.leftMargin = mRight;
-                    isRecommend = false;
-                    recommendList.clear();
-                    recommendList.addAll(mList.subList(selectedSize + 2, mList.size()));
-                    mList.removeAll(recommendList);
-                    mList.addAll(cityList);
-                    notifyDataSetChanged();
-                }
-            }
-        });
         holder.recommend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isRecommend) {
-                    holder.city.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
                     holder.recommend.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                    params.leftMargin = mLeft;
                     isRecommend = true;
-                    cityList.clear();
-                    cityList.addAll(mList.subList(selectedSize + 2, mList.size()));
-                    mList.removeAll(cityList);
                     mList.addAll(recommendList);
                     notifyDataSetChanged();
                 }
@@ -235,11 +203,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (isRecommend) {
-                    cityList.add(0, mList.get(position));
-                } else {
-                    recommendList.add(0, mList.get(position));
-                }
+                recommendList.add(0, mList.get(position));
                 mList.remove(position);
                 notifyItemRemoved(position);
                 onItemRangeChangeListener.refreshItemDecoration();
@@ -313,14 +277,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     class TabHolder extends RecyclerView.ViewHolder {
         TextView recommend;
-        TextView city;
-        View indicator;
 
         public TabHolder(View itemView) {
             super(itemView);
             recommend = itemView.findViewById(R.id.recommend_channel);
-            city = itemView.findViewById(R.id.city_channel);
-            indicator = itemView.findViewById(R.id.indicator);
         }
     }
 

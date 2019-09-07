@@ -23,21 +23,7 @@
             android:gravity="center"
             android:text="推荐频道" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/city_channel"
-            android:textColor="?attr/text_color"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="地方新闻" />
     </LinearLayout>
-
-    <View
-        android:layout_width="75dp"
-        android:layout_height="2dp"
-        android:id="@+id/indicator"
-        android:background="#237ecb" />
 
     <View
         android:layout_width="match_parent"
