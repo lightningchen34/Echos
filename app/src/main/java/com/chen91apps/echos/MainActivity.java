@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity
 
     public static ACache acache;
     public static User user;
+    public static RetrofitService newsService;
+
 
     private boolean show = true;
 
@@ -144,6 +146,12 @@ public class MainActivity extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         EchosService echosService = retrofit.create(EchosService.class);
+
+        Retrofit retrofitNews = new Retrofit.Builder()
+                .baseUrl("https://api2.newsminer.net/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        newsService = retrofitNews.create(RetrofitService.class);
 
         // RequestNews();
 
