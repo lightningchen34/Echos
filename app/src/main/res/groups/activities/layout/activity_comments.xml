@@ -28,10 +28,10 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.chen91apps.echos.views.MyListView
-        android:id="@+id/list_mycomments"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </com.chen91apps.echos.views.MyListView>
+        android:layout_height="match_parent"
+        android:text="回帖功能暂未开放"
+        android:gravity="center"
+        android:textSize="22dp"/>
 </LinearLayout>

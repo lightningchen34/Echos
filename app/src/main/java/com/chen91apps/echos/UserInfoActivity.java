@@ -1,16 +1,23 @@
 package com.chen91apps.echos;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.User;
+
+import java.lang.reflect.Field;
 
 public class UserInfoActivity extends AppCompatActivity implements User.LogoutResponder {
 
@@ -28,6 +35,42 @@ public class UserInfoActivity extends AppCompatActivity implements User.LogoutRe
 
         TextView username = (TextView) findViewById(R.id.username_textview);
         username.setText(MainActivity.user.getInfo().getNickname());
+        username.setOnClickListener((View v)->{
+            final EditText inputServer = new EditText(this);
+            inputServer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    inputServer.selectAll();
+                }
+            });
+            inputServer.setText("请输入昵称");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("更换昵称");
+            builder.setNegativeButton("Cancel",null);
+            builder.setView(inputServer,50,0,50,-20);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String input;
+                    input = inputServer.getText().toString();
+                    System.out.println("gettext = "+input);
+                }
+            });
+            AlertDialog dialog = builder.create();
+//            try {
+////                Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+////                mAlert.setAccessible(true);
+////                Object mAlertController = mAlert.get(dialog);
+////                Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+////                mMessage.setAccessible(true);
+////                TextView mMessageView = (TextView) mMessage.get(mAlertController);
+////                mMessageView.setTextColor(Color.blue());
+//            }
+//            catch (Exception e) {}
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
+        });
     }
 
     public void initToolBar()
@@ -41,7 +84,8 @@ public class UserInfoActivity extends AppCompatActivity implements User.LogoutRe
     }
 
     @Override
-    public void LogoutResponder(boolean state) {
+    public void LogoutResponder(boolean state)
+    {
         if (state)
         {
             finish();
