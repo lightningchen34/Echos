@@ -129,6 +129,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                     {
                         System.out.println("没有新闻");
                     }
+
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -177,14 +179,16 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
     {
         for(int i=0;i<stream.size();i++)
         {
-            return new PlainListItemInfo(strings[random.nextInt(strings.length)], "更新时间：1970-1-1");
-        } else if (type == 1)
+            data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime()));
+        }
+        /*else if (type == 1)
         {
             return new DefaultListItemInfo(strings[random.nextInt(strings.length)], "更新时间：2019-8-12", getUrl(random));
         } else
         {
             return new ImageListItemInfo(strings[random.nextInt(strings.length)], getUrl(random), getUrl(random), getUrl(random));
         }
+        */
         endTime = stream.get(stream.size()-1).getPublishTime();
     }
 
