@@ -1,5 +1,6 @@
 package com.chen91apps.echos.utils.retrofit;
 
+import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.Post;
 import com.chen91apps.echos.utils.userinfos.LoginLog;
 import com.chen91apps.echos.utils.userinfos.UserInfo;
@@ -24,4 +25,7 @@ public interface EchosService
 
     @GET("post.php")
     Call<Post> getPost(@Query("begin") int begin);
+
+    @GET("follow.php")
+    Call<Favourite> getFavorite(@Query("begin") int begin);
 }
