@@ -4,15 +4,24 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
+import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +65,8 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
             }
             @Override
             public void onFailure(Call<Favourite> call, Throwable t) {
-                System.out.println("failed");
+                onFailed();
+                listView.refreshFinish();
             }
         });
     }
@@ -77,7 +87,8 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
             }
             @Override
             public void onFailure(Call<Favourite> call, Throwable t) {
-                System.out.println("failed");
+                onFailed();
+                listView.refreshFinish();
             }
         });
     }
@@ -104,7 +115,35 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
             }
             @Override
             public void onFailure(Call<Favourite> call, Throwable t) {
-                System.out.println("failed");
+                onFailed();
+                listView.refreshFinish();
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i <= 0) return;
+                if (i > data.size()) return;
+                Favourite.DataBean favourite = (Favourite.DataBean) data.get(i - 1).getContent();
+                ArticlePack ap = new Gson().fromJson(favourite.getContent(), new TypeToken<ArticlePack>(){}.getType());
+
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
+
+                if (ap.news != null)
+                {
+                    intent.putExtra("type", ListInfoPair.TYPE_NEWS);
+                    intent.putExtra("content", new Gson().toJson(ap.news));
+                } else if (ap.post != null)
+                {
+                    intent.putExtra("type", ListInfoPair.TYPE_COMMUNITY);
+                    intent.putExtra("content", new Gson().toJson(ap.post));
+                } else
+                {
+                    //
+                }
+                startActivity(intent);
             }
         });
     }
@@ -113,7 +152,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
     {
         for(int i=0;i<stream.size();i++) {
             System.out.println(stream.get(i).getNote()+" this is the Note");
-            data.add(new PlainListItemInfo(""+stream.get(i).getNote(), "" + stream.get(i).getCreate_time(), stream.get(i)));
+            data.add(new PlainListItemInfo(""+stream.get(i).getNote(), "收藏时间：" + stream.get(i).getCreate_time(), stream.get(i)));
         }
         System.out.println("init is over");
         if(stream.size()>0)
@@ -121,6 +160,11 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
         else
             lastFavourite_id = -1;
         adpter.notifyDataSetChanged();
+    }
+
+    public void onFailed()
+    {
+        Toast.makeText(this, "加载失败，请检查网络连接是否正常。", Toast.LENGTH_LONG).show();
     }
 
     public void initToolBar()

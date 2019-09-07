@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chen91apps.echos.MainActivity;
 import com.chen91apps.echos.R;
@@ -162,7 +163,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
                     @Override
                     public void onFailure(Call<News> call, Throwable t) {
-                        System.out.println("访问失败");
+                        onFailed();
+                        listview.refreshFinish();
                     }
                 });
             }
@@ -178,7 +180,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
                     @Override
                     public void onFailure(Call<Post> call, Throwable t) {
-
+                        onFailed();
+                        listview.refreshFinish();
                     }
                 });
             }
@@ -242,6 +245,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            if (i <= 0) return;
+            if (i > data.size()) return;
             Intent intent = new Intent();
             intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
             intent.putExtra("type", param_TYPE);
@@ -335,7 +340,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
                     @Override
                     public void onFailure(Call<News> call, Throwable t) {
-                        System.out.println("访问失败");
+                        onFailed();
+                        listview.refreshFinish();
                     }
                 });
 
@@ -360,7 +366,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
                 @Override
                 public void onFailure(Call<Post> call, Throwable t) {
-                    System.out.println("加载帖子失败");
+                    onFailed();
+                    listview.refreshFinish();
                 }
             });
         }
@@ -396,7 +403,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
                 @Override
                 public void onFailure(Call<News> call, Throwable t) {
-                    System.out.println("访问失败");
+                    onFailed();
+                    listview.refreshFinish();
                 }
             });
         }
@@ -419,10 +427,16 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 }
                 @Override
                 public void onFailure(Call<Post> call, Throwable t) {
-
+                    onFailed();
+                    listview.refreshFinish();
                 }
             });
         }
+    }
+
+    public void onFailed()
+    {
+        Toast.makeText(getContext(), "加载失败，请检查网络连接是否正常。", Toast.LENGTH_LONG).show();
     }
 
     /**

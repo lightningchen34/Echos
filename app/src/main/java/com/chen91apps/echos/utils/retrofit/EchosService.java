@@ -2,11 +2,13 @@ package com.chen91apps.echos.utils.retrofit;
 
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.articles.RSSData;
 import com.chen91apps.echos.utils.userinfos.LoginLog;
 import com.chen91apps.echos.utils.userinfos.UserInfo;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface EchosService
@@ -34,4 +36,13 @@ public interface EchosService
 
     @GET("check_follow.php")
     Call<Favourite> checkFavrite(@Query("key") String key);
+
+    @GET("addfollow.php")
+    Call<Favourite> addFavorite(@Query("note") String title, @Query("key") String key, @Query("content") String content);
+
+    @GET("delfollow.php")
+    Call<Favourite> delFavorite(@Query("key") String key);
+
+    @GET("rss.php")
+    Call<RSSData> rss(@Query("url") String url);
 }

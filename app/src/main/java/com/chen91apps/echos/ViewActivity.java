@@ -178,7 +178,7 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             key = type + ":" + post.getPost_id();
             saveContent = new Gson().toJson(ap);
             title = post.getTitle();
-            shareContent = "这篇文章在 Echos 上引起热议。";
+            shareContent = title + " 这篇文章在 Echos 上引起热议。";
         }
     }
 
@@ -215,7 +215,60 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_follow)
         {
-            //
+            if (!followed)
+            {
+                Call<Favourite> call = MainActivity.echosService.addFavorite(title, key, saveContent);
+                System.out.println(saveContent.length());
+                call.enqueue(new Callback<Favourite>() {
+                    @Override
+                    public void onResponse(Call<Favourite> call, Response<Favourite> response) {
+                        System.out.println(response.message());
+                        Favourite f = response.body();
+                        if (f == null) return;
+                        System.out.println("add"+f.getState());
+                        if (f.getData() != null && f.getData().size() > 0)
+                        {
+                            followed = true;
+                            followItem.setTitle("取消收藏");
+                        } else
+                        {
+                            followed = false;
+                            followItem.setTitle("收藏");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Favourite> call, Throwable t) {
+                        followed = false;
+                    }
+                });
+            } else
+            {
+                Call<Favourite> call = MainActivity.echosService.delFavorite(key);
+                System.out.println(saveContent.length());
+                call.enqueue(new Callback<Favourite>() {
+                    @Override
+                    public void onResponse(Call<Favourite> call, Response<Favourite> response) {
+                        System.out.println(response.message());
+                        Favourite f = response.body();
+                        if (f == null) return;
+                        if (f.getState() == 1)
+                        {
+                            followed = false;
+                            followItem.setTitle("收藏");
+                        } else
+                        {
+                            followed = true;
+                            followItem.setTitle("取消收藏");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Favourite> call, Throwable t) {
+                        followed = false;
+                    }
+                });
+            }
         } else if (item.getItemId() == R.id.menu_share)
         {
             Intent share_intent = new Intent();

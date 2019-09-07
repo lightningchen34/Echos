@@ -4,15 +4,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.articles.Post;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
+import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
+import com.google.gson.Gson;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +65,21 @@ public class PostActivity extends AppCompatActivity implements MyListView.MyList
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
                 System.out.println("访问失败");
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i <= 0) return;
+                if (i > data.size()) return;
+                Post.DataBean post = (Post.DataBean) data.get(i - 1).getContent();
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(view.getContext(), ViewActivity.class));
+
+                intent.putExtra("type", ListInfoPair.TYPE_COMMUNITY);
+                intent.putExtra("content", new Gson().toJson(post));
+                startActivity(intent);
             }
         });
     }
