@@ -26,14 +26,15 @@ public class HistoryManager {
         return count;
     }
 
-    public static void setHistoryCount(int count)
+    public static void setHistoryCount(int _count)
     {
+        count = _count;
         MainActivity.acache.put("history_count", Integer.valueOf(count));
     }
 
     public static HistoryBean getHistory(int index)
     {
-        if (index <= 0 || index > count)
+        if (index <= 0 || index > getHistoryCount())
         {
             return null;
         } else
@@ -51,8 +52,9 @@ public class HistoryManager {
 
     public static void addHistory(HistoryBean bean)
     {
-        String str = new Gson().toJson(bean);
         setHistoryCount(getHistoryCount() + 1);
+        bean.setId(getHistoryCount());
+        String str = new Gson().toJson(bean);
         MainActivity.acache.put("history_" + getHistoryCount(), str);
     }
 
@@ -64,7 +66,7 @@ public class HistoryManager {
     public static List<HistoryBean> getHistoryList(int begin)
     {
         List<HistoryBean> ret = new LinkedList<>();
-        if (begin <= 0 || begin > count)
+        if (begin <= 0 || begin > getHistoryCount())
             begin = count;
         for (int i = 0; i < 20; ++i)
         {
@@ -81,6 +83,7 @@ public class HistoryManager {
 
     public static class HistoryBean
     {
+        private int id;
         private int type;
         private ArticlePack content;
 
@@ -95,6 +98,14 @@ public class HistoryManager {
 
         public ArticlePack getContent() {
             return content;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
         }
     }
 }

@@ -7,8 +7,10 @@ import android.os.Bundle;
 import com.chen91apps.echos.fragments.ImageFragment;
 import com.chen91apps.echos.fragments.VideoFragment;
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.history.HistoryManager;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -120,6 +122,10 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             {
                 viewTip.setVisibility(View.GONE);
             }
+
+            ArticlePack ap = new ArticlePack();
+            ap.news = news;
+            HistoryManager.addHistory(type, ap);
         } else if (type == ListInfoPair.TYPE_COMMUNITY)
         {
             String str = intent.getStringExtra("content");
@@ -133,6 +139,10 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             viewCategory.setText("社区");
             viewTime.setText(post.getCreate_time());
             viewUrl.setText("None");
+
+            ArticlePack ap = new ArticlePack();
+            ap.post = post;
+            HistoryManager.addHistory(type, ap);
         }
     }
 
