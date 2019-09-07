@@ -76,7 +76,6 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         int space = tempY - startY;
         int topdding = space - headerHeight;
         paddingTop(topdding);
-        System.out.println("this is the space at touchMovwe "+space);
         if(space>headerHeight && space<headerHeight+100 && scrollStates == SCROLL_STATE_TOUCH_SCROLL)
         {
             curState = PULL;

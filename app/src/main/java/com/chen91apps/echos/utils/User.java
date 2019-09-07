@@ -28,7 +28,8 @@ public class User {
 
     private User()
     {
-        info = null;
+        info = new UserInfo();
+        info.nickname = "...";
         cookie = null;
     }
 
