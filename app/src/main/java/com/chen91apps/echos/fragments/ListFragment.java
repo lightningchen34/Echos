@@ -177,6 +177,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
     void getinfo(List<News.DataBean> stream)
     {
+        data.add(new PlainListItemInfo("调试" + param_URL, ""));
         for(int i=0;i<stream.size();i++)
         {
             data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime()));
