@@ -164,10 +164,10 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
                 if(response.body().getData().size()>0) {
                     data.clear();
                     getCommentsInfo(response.body().getData());
-                    listView.refreshFinish();
                 }
                 else
                     ToastShow("当前没有评论");
+                listView.refreshFinish();
             }
 
             @Override
@@ -185,10 +185,10 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
             public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
                 if(response.body().getData().size()>0) {
                     getCommentsInfo(response.body().getData());
-                    listView.refreshFinish();
                 }
                 else
-                    ToastShow("当前没有评论");
+                    ToastShow("已经没有评论了");
+                listView.refreshFinish();
             }
 
             @Override
