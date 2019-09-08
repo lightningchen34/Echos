@@ -13,6 +13,11 @@ public class CommentListItemInfo extends ListItemInfo {
 
     private Post_Comments.DataBean data;
 
+    public int getId()
+    {
+        return data.getComment_id();
+    }
+
     public CommentListItemInfo(Post_Comments.DataBean data)
     {
         super(R.layout.comment_item, data);

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.articles.Post_Comments;
+import com.chen91apps.echos.utils.listitem.CommentListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
@@ -56,6 +58,14 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
         data = new LinkedList<>();
         adapter = new ListItemAdapter(data,CommentAreaActivity.this);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i <= 0 || i > data.size()) return;
+                setQuote(((CommentListItemInfo) data.get(i - 1)).getId());
+            }
+        });
 
         quoteview = (TextView) findViewById(R.id.comment_area_quote);
         setQuote(0);
@@ -131,7 +141,8 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
     public void getCommentsInfo(List<Post_Comments.DataBean> stream)
     {
         for(int i=0;i<stream.size();i++)
-            data.add(new PlainListItemInfo(stream.get(i).getContent(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(),stream.get(i)));
+            data.add(new CommentListItemInfo(stream.get(i)));
+            // data.add(new PlainListItemInfo(stream.get(i).getContent(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(),stream.get(i)));
 
         if(stream.size()>0)
             lastComment_id = stream.get(stream.size() - 1).getComment_id();

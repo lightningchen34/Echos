@@ -62,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:cursorVisible="true"
+                android:imeOptions="actionNone"
                 android:textCursorDrawable="@drawable/textedit_cursor"/>
 
             <Button

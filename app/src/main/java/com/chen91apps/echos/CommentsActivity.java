@@ -22,6 +22,7 @@ import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.Post;
 import com.chen91apps.echos.utils.articles.Post_Comments;
 import com.chen91apps.echos.utils.history.HistoryManager;
+import com.chen91apps.echos.utils.listitem.CommentListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
@@ -78,7 +79,8 @@ public class CommentsActivity extends AppCompatActivity implements MyListView.My
     void getCommentsInfo(List<Post_Comments.DataBean> stream)
     {
         for(int i=0;i<stream.size();i++)
-            data.add(new PlainListItemInfo(stream.get(i).getContent(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(),stream.get(i)));
+            data.add(new CommentListItemInfo(stream.get(i)));
+            //data.add(new PlainListItemInfo(stream.get(i).getContent(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(),stream.get(i)));
         adapter.notifyDataSetChanged();
 
         if(stream.size()>0)
