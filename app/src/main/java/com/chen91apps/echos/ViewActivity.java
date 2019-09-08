@@ -1,5 +1,6 @@
 package com.chen91apps.echos;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +56,8 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
     private boolean followed;
 
     private MenuItem followItem;
+
+    private int postid = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +172,7 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
         {
             String str = intent.getStringExtra("content");
             Post.DataBean post = new Gson().fromJson(str, new TypeToken<Post.DataBean>(){}.getType());
+            postid = post.getPost_id();
             viewTitle.setText(post.getTitle());
             viewAuthor.setText(post.getAuthor());
             viewPager.setVisibility(View.GONE);
@@ -218,7 +222,10 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_menu, menu);
-        followItem = menu.getItem(0);
+        if (type != ListInfoPair.TYPE_COMMUNITY || postid < 0)
+            menu.getItem(0).setVisible(false);
+        followItem = menu.getItem(1);
+
 
         Call<Favourite> call = MainActivity.echosService.checkFavrite(key);
         call.enqueue(new Callback<Favourite>() {
@@ -246,7 +253,13 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_follow)
+        if (item.getItemId() == R.id.menu_comment)
+        {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(this, CommentAreaActivity.class));
+            intent.putExtra("post", postid);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.menu_follow)
         {
             if (!followed)
             {

@@ -46,11 +46,23 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/comment_area_quote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="引用"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="?attr/highlight_color"
+                android:layout_gravity="center"/>
+
             <EditText
                 android:id="@+id/comment_area_mycomment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@drawable/textedit_cursor"/>
 
             <Button
                 android:id="@+id/comment_area_submit"

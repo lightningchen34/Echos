@@ -12,7 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Mytheme">
-        <activity android:name=".CommentAreaActivity"></activity>
+        <activity android:name=".CommentAreaActivity"
+            android:parentActivityName=".ViewActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.chen91apps.echos.MainActivity" />
+        </activity>
         <activity
             android:name=".RSSChannelActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -33,7 +39,8 @@
             android:name=".ViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".SearchResultActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.chen91apps.echos.MainActivity" />

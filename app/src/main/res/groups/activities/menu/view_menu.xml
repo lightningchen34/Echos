@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_comment"
+        android:orderInCategory="80"
+        android:title="评论"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_follow"
         android:orderInCategory="80"
         android:title="收藏"
