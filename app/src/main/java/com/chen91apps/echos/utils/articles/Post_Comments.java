@@ -159,7 +159,7 @@ public class Post_Comments {
 
             private String author;
             private String content;
-            private int create_time;
+            private String create_time;
 
             public String getAuthor() {
                 return author;
@@ -177,11 +177,11 @@ public class Post_Comments {
                 this.content = content;
             }
 
-            public int getCreate_time() {
+            public String getCreate_time() {
                 return create_time;
             }
 
-            public void setCreate_time(int create_time) {
+            public void setCreate_time(String create_time) {
                 this.create_time = create_time;
             }
         }
