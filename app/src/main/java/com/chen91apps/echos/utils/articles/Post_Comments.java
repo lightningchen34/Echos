@@ -44,7 +44,7 @@ public class Post_Comments {
         private String author;
         private String content;
         private QuoteBean quote;
-        private int create_time;
+        private String create_time;
 
         public int getComment_id() {
             return comment_id;
@@ -86,11 +86,11 @@ public class Post_Comments {
             this.quote = quote;
         }
 
-        public int getCreate_time() {
+        public String getCreate_time() {
             return create_time;
         }
 
-        public void setCreate_time(int create_time) {
+        public void setCreate_time(String create_time) {
             this.create_time = create_time;
         }
 
