@@ -168,7 +168,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
 
     public void toUpdateListView()
     {
-        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,0);
+        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,lastComment_id);
         call.enqueue(new Callback<Post_Comments>() {
             @Override
             public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {

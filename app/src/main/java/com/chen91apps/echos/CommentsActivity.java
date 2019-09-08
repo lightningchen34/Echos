@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.chen91apps.echos.utils.Configure;
@@ -58,14 +59,20 @@ public class CommentsActivity extends AppCompatActivity implements MyListView.My
                 if(response.body().getData().size()>0)
                     getCommentsInfo(response.body().getData());
                 else
-                    onFailed();
+                    onNull();
             }
 
             @Override
             public void onFailure(Call<Post_Comments> call, Throwable t) {
+                t.printStackTrace();
                 onFailed();
             }
         });
+    }
+
+    public void onNull()
+    {
+        Toast.makeText(this,"这里没有评论", Toast.LENGTH_LONG).show();
     }
 
     void getCommentsInfo(List<Post_Comments.DataBean> stream)
@@ -99,7 +106,7 @@ public class CommentsActivity extends AppCompatActivity implements MyListView.My
                     getCommentsInfo(response.body().getData());
                 }
                 else
-                    onFailed();
+                    onNull();
                 listView.refreshFinish();
             }
 
