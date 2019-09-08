@@ -12,15 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Mytheme">
-        <activity android:name=".RSSChannelActivity"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+        <activity android:name=".CommentAreaActivity"></activity>
+        <activity
+            android:name=".RSSChannelActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.chen91apps.echos.MainActivity" />
         </activity>
-        <activity android:name=".SignupActivity"
+        <activity
+            android:name=".SignupActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
