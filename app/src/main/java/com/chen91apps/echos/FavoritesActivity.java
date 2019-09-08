@@ -151,7 +151,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
     private void getFavoriteInfo(List<Favourite.DataBean> stream)
     {
         for(int i=0;i<stream.size();i++) {
-            System.out.println(stream.get(i).getNote()+" this is the Note");
             data.add(new PlainListItemInfo(""+stream.get(i).getNote(), "收藏时间：" + stream.get(i).getCreate_time(), stream.get(i)));
         }
         System.out.println("init is over");

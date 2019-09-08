@@ -21,6 +21,7 @@ import com.chen91apps.echos.ViewActivity;
 import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.articles.RSSData;
 import com.chen91apps.echos.utils.history.HistoryManager;
 import com.chen91apps.echos.utils.listitem.DefaultListItemInfo;
 import com.chen91apps.echos.utils.listitem.ImageListItemInfo;
@@ -164,7 +165,6 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                     @Override
                     public void onFailure(Call<News> call, Throwable t) {
                         onFailed();
-                        listview.refreshFinish();
                     }
                 });
             }
@@ -181,6 +181,27 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                     @Override
                     public void onFailure(Call<Post> call, Throwable t) {
                         onFailed();
+                    }
+                });
+            }
+            else  if (param_TYPE == ListInfoPair.TYPE_RSS)
+            {
+                Call<RSSData> call = echosService.rss("https://www.zhihu.com/rss");
+                call.enqueue(new Callback<RSSData>() {
+                    @Override
+                    public void onResponse(Call<RSSData> call, Response<RSSData> response) {
+                        if(response.body().getItem().size() > 0) {
+                            getRSSDataInfo(response.body().getItem());
+                        }
+                        else
+                            Toast.makeText(getContext(),"这里面没有信息",Toast.LENGTH_LONG).show();
+                        System.out.println("rss data load is over");
+                        listview.refreshFinish();
+                    }
+
+                    @Override
+                    public void onFailure(Call<RSSData> call, Throwable t) {
+                        onFailed();
                         listview.refreshFinish();
                     }
                 });
@@ -191,6 +212,14 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
 
         savedPosition = savedTop = 0;
         // System.out.println("OnCreate");
+    }
+
+    public void getRSSDataInfo(List<RSSData.ItemBean> stream)
+    {
+        for(int i=0;i<stream.size();i++)
+            data.add(new PlainListItemInfo(stream.get(i).getTitle().getValue(),stream.get(i).getPubDate().getValue(),stream.get(i)));
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -371,6 +400,28 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 }
             });
         }
+        else if(param_TYPE == ListInfoPair.TYPE_RSS)
+        {
+            Call<RSSData> call = echosService.rss("https://www.zhihu.com/rss");
+            call.enqueue(new Callback<RSSData>() {
+                @Override
+                public void onResponse(Call<RSSData> call, Response<RSSData> response) {
+                    if(response.body().getItem().size() > 0)
+                    {
+                        data.clear();
+                        getRSSDataInfo(response.body().getItem());
+                    }
+                    listview.refreshFinish();
+                }
+
+                @Override
+                public void onFailure(Call<RSSData> call, Throwable t) {
+                    onFailed();
+                    t.printStackTrace();
+                    listview.refreshFinish();
+                }
+            });
+        }
     }
 
     @Override
@@ -431,6 +482,12 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                     listview.refreshFinish();
                 }
             });
+
+        }
+        else if (param_TYPE == ListInfoPair.TYPE_RSS)
+        {
+            listview.refreshFinish();
+            Toast.makeText(getContext(),"已经加载完成",Toast.LENGTH_LONG);
         }
     }
 
