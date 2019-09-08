@@ -194,7 +194,7 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             viewAuthor.setText(rss.getAuthor() == null ? "None" : rss.getAuthor().getValue());
             viewPager.setVisibility(View.GONE);
             viewTip.setVisibility(View.GONE);
-            viewContent.setText(rss.getDescription().getValue() + "\n\n\n——> 点击页面底部链接阅读全文");
+            viewContent.setText((rss.getDescription() == null ? "" : rss.getDescription().getValue()) + "\n\n\n——> 点击页面底部链接阅读全文");
             viewSrc.setText("");
             viewCategory.setText(rss.getCategory() == null ? "None" : rss.getCategory().getValue());
             viewTime.setText(rss.getPubDate().getValue());

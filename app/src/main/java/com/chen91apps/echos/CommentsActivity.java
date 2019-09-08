@@ -5,11 +5,33 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.articles.ArticlePack;
+import com.chen91apps.echos.utils.articles.Favourite;
+import com.chen91apps.echos.utils.listitem.ListItemAdapter;
+import com.chen91apps.echos.utils.listitem.ListItemInfo;
+import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
+import com.chen91apps.echos.utils.pairs.ListInfoPair;
+import com.chen91apps.echos.views.MyListView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CommentsActivity extends AppCompatActivity {
 
@@ -18,23 +40,12 @@ public class CommentsActivity extends AppCompatActivity {
         setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
-        showWarning();
         initToolBar();
     }
 
-    public void showWarning()
+    public void onFailed()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Warning:");
-        builder.setMessage("评论功能没有开放");
-
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                return;
-            }
-        });
-        builder.show();
+        Toast.makeText(this, "加载失败，请检查网络连接是否正常。", Toast.LENGTH_LONG).show();
     }
 
     public void initToolBar()

@@ -44,6 +44,9 @@ public class RSSChannelInfo {
         {
             info.categories = new LinkedList<>();
             info.categories.add(new Pair<>("推荐", "https://feedx.co/feed"));
+            info.categories.add(new Pair<>("体育", "http://www.people.com.cn/rss/sports.xml"));
+            info.categories.add(new Pair<>("游戏", "http://www.people.com.cn/rss/game.xml"));
+            info.categories.add(new Pair<>("教育", "http://www.people.com.cn/rss/edu.xml"));
         }
     }
 
