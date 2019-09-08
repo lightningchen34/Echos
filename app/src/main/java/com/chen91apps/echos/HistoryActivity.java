@@ -102,7 +102,7 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
         if(bufBeans.size() > 0)
             lastHistory_id = bufBeans.get(bufBeans.size()-1).getId();
         else
-            lastHistory_id = 0;
+            lastHistory_id = -1;
         adapter.notifyDataSetChanged();
     }
 
@@ -116,7 +116,7 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
 
     public void toUpdateListView()
     {
-        if(lastHistory_id == 1){
+        if(lastHistory_id == 1 || lastHistory_id == -1){
             listView.refreshFinish();
             return;
         }
