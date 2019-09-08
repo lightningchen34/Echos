@@ -46,7 +46,7 @@ public class TabViewHelper {
             view = tab.getCustomView();
         }
         TextView textView = (TextView) view.findViewById(R.id.texticon_item_text);
-        textView.setText(info.title);
+        textView.setText(info.title.toUpperCase());
         if (active) {
             textView.setTextColor(ThemeColors.getColor(view.getContext(), R.attr.text_color));
             textView.setTextSize(16);
