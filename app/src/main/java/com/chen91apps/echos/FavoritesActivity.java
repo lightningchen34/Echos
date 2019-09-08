@@ -81,8 +81,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
                 {
                     getFavoriteInfo(response.body().getData());
                 }
-                else
-                    System.out.println("to login");
                 listView.refreshFinish();
             }
             @Override
@@ -158,6 +156,8 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
         if(stream.size()>0)
             lastFavourite_id = stream.get(stream.size() - 1).getFollow_id();
         else
+            lastFavourite_id = -1;
+        if(lastFavourite_id == 0)
             lastFavourite_id = -1;
         adpter.notifyDataSetChanged();
     }
