@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.Favourite;
+import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.articles.Post_Comments;
+import com.chen91apps.echos.utils.history.HistoryManager;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
 import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
@@ -33,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CommentsActivity extends AppCompatActivity {
+public class CommentsActivity extends AppCompatActivity implements MyListView.MyListViewPullListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,91 @@ public class CommentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
         initToolBar();
+
+        listView = (MyListView)findViewById(R.id.list_mycomments);
+        listView.setPullListener(this);
+        data = new LinkedList<>();
+        adapter = new ListItemAdapter(data,this);
+        listView.setAdapter(adapter);
+
+        Call<Post_Comments> call = MainActivity.echosService.getMyComments(0);
+        call.enqueue(new Callback<Post_Comments>() {
+            @Override
+            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+                if(response.body().getData().size()>0)
+                    getCommentsInfo(response.body().getData());
+                else
+                    onFailed();
+            }
+
+            @Override
+            public void onFailure(Call<Post_Comments> call, Throwable t) {
+                onFailed();
+            }
+        });
+    }
+
+    void getCommentsInfo(List<Post_Comments.DataBean> stream)
+    {
+        for(int i=0;i<stream.size();i++)
+            data.add(new PlainListItemInfo(stream.get(i).getContent(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(),stream.get(i)));
+        adapter.notifyDataSetChanged();
+
+        if(stream.size()>0)
+            lastCommments_id = stream.get(stream.size() - 1).getComment_id();
+        else
+            lastCommments_id = -1;
+
+        if(lastCommments_id == 0)
+            lastCommments_id = -1;
+    }
+
+    MyListView listView;
+    LinkedList<ListItemInfo> data;
+    ListItemAdapter adapter;
+    private int lastCommments_id;
+
+    public void toRefreshListView()
+    {
+        Call<Post_Comments> call = MainActivity.echosService.getMyComments(0);
+        call.enqueue(new Callback<Post_Comments>() {
+            @Override
+            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+                if(response.body().getData().size()>0) {
+                    data.clear();
+                    getCommentsInfo(response.body().getData());
+                }
+                else
+                    onFailed();
+                listView.refreshFinish();
+            }
+
+            @Override
+            public void onFailure(Call<Post_Comments> call, Throwable t) {
+                onFailed();
+                listView.refreshFinish();
+            }
+        });
+    }
+
+    public void toUpdateListView()
+    {
+        Call<Post_Comments> call = MainActivity.echosService.getMyComments(lastCommments_id);
+        call.enqueue(new Callback<Post_Comments>() {
+            @Override
+            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+                if(response.body().getData().size()>0)
+                    getCommentsInfo(response.body().getData());
+                listView.refreshFinish();
+            }
+
+            @Override
+            public void onFailure(Call<Post_Comments> call, Throwable t) {
+                listView.refreshFinish();
+                onFailed();
+            }
+        });
+        listView.refreshFinish();
     }
 
     public void onFailed()
