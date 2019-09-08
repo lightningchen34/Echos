@@ -16,6 +16,7 @@ import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.articles.RSSData;
 import com.chen91apps.echos.utils.history.HistoryManager;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
@@ -97,6 +98,11 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
             {
                 Post.DataBean bufPost = bufBeans.get(i).getContent().post;
                 data.add(new PlainListItemInfo(bufPost.getTitle(),bufPost.getAuthor()+" 发布于 "+bufPost.getCreate_time(),bufPost));
+            }
+            else if(bufBeans.get(i).getType() == ListInfoPair.TYPE_RSS)
+            {
+                RSSData.ItemBean bufRSS = bufBeans.get(i).getContent().rss;
+                data.add(new PlainListItemInfo(bufRSS.getTitle().getValue(),bufRSS.getPubDate().getValue(),bufRSS));
             }
         }
         if(bufBeans.size() > 0)
