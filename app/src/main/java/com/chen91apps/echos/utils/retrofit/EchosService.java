@@ -2,6 +2,7 @@ package com.chen91apps.echos.utils.retrofit;
 
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.articles.Post_Comments;
 import com.chen91apps.echos.utils.articles.RSSData;
 import com.chen91apps.echos.utils.userinfos.LoginLog;
 import com.chen91apps.echos.utils.userinfos.UserInfo;
@@ -51,4 +52,7 @@ public interface EchosService
 
     @GET("rss.php")
     Call<RSSData> rss(@Query("url") String url);
+
+    @GET("post_comments.php")
+    Call<Post_Comments> getComments(@Query("postid")int postid,@Query("begin")int begin);
 }
