@@ -196,13 +196,11 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                         else
                             Toast.makeText(getContext(),"这里面没有信息",Toast.LENGTH_LONG).show();
                         System.out.println("rss data load is over");
-                        listview.refreshFinish();
                     }
 
                     @Override
                     public void onFailure(Call<RSSData> call, Throwable t) {
                         onFailed();
-                        listview.refreshFinish();
                     }
                 });
             }
