@@ -146,6 +146,14 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                     d.add(obj.post);
                 }
                 getPostInfo(d);
+            } else if (param_TYPE == ListInfoPair.TYPE_RSS)
+            {
+                LinkedList<RSSData.ItemBean> d = new LinkedList<>();
+                for (ArticlePack obj : dataBeans)
+                {
+                    d.add(obj.rss);
+                }
+                getRSSDataInfo(d);
             }
             System.out.println("load");
         } else
@@ -186,7 +194,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
             }
             else  if (param_TYPE == ListInfoPair.TYPE_RSS)
             {
-                Call<RSSData> call = echosService.rss("https://www.zhihu.com/rss");
+                Call<RSSData> call = echosService.rss(param_URL);
                 call.enqueue(new Callback<RSSData>() {
                     @Override
                     public void onResponse(Call<RSSData> call, Response<RSSData> response) {
@@ -320,6 +328,8 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
                 ap.news = (News.DataBean) info.getContent();
             else if (param_TYPE == ListInfoPair.TYPE_COMMUNITY)
                 ap.post = (Post.DataBean) info.getContent();
+            else if (param_TYPE == ListInfoPair.TYPE_RSS)
+                ap.rss = (RSSData.ItemBean) info.getContent();
             dataBeans.add(ap);
         }
         String str = new Gson().toJson(dataBeans);
@@ -400,7 +410,7 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         }
         else if(param_TYPE == ListInfoPair.TYPE_RSS)
         {
-            Call<RSSData> call = echosService.rss("https://www.zhihu.com/rss");
+            Call<RSSData> call = echosService.rss(param_URL);
             call.enqueue(new Callback<RSSData>() {
                 @Override
                 public void onResponse(Call<RSSData> call, Response<RSSData> response) {

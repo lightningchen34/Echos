@@ -191,14 +191,19 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             String str = intent.getStringExtra("content");
             RSSData.ItemBean rss = new Gson().fromJson(str, new TypeToken<RSSData.ItemBean>(){}.getType());
             viewTitle.setText(rss.getTitle().getValue());
-            viewAuthor.setText(rss.getAuthor().getValue());
+            viewAuthor.setText(rss.getAuthor() == null ? "None" : rss.getAuthor().getValue());
             viewPager.setVisibility(View.GONE);
             viewTip.setVisibility(View.GONE);
-            viewContent.setText(rss.getDescription().getValue());
+            viewContent.setText(rss.getDescription().getValue() + "\n\n\n——> 点击页面底部链接阅读全文");
             viewSrc.setText("");
-            viewCategory.setText(rss.getCategory().getValue());
+            viewCategory.setText(rss.getCategory() == null ? "None" : rss.getCategory().getValue());
             viewTime.setText(rss.getPubDate().getValue());
             viewUrl.setText(rss.getLink().getValue());
+
+            viewUrl.setOnClickListener((View v) -> {
+                Uri uri = Uri.parse(rss.getLink().getValue());
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            });
 
             ap.rss = rss;
             HistoryManager.addHistory(type, ap);

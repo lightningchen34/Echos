@@ -43,7 +43,7 @@ public class RSSChannelInfo {
         if (info.categories == null)
         {
             info.categories = new LinkedList<>();
-            info.categories.add(new Pair<>("推荐", ""));
+            info.categories.add(new Pair<>("推荐", "https://feedx.co/feed"));
         }
     }
 
