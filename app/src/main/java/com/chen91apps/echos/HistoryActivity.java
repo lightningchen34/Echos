@@ -78,7 +78,8 @@ public class HistoryActivity extends AppCompatActivity implements MyListView.MyL
                     intent.putExtra("content", new Gson().toJson((Post.DataBean) obj));
                 } else
                 {
-                    //
+                    intent.putExtra("type", ListInfoPair.TYPE_RSS);
+                    intent.putExtra("content", new Gson().toJson((RSSData.ItemBean) obj));
                 }
                 startActivity(intent);
             }

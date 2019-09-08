@@ -141,7 +141,8 @@ public class FavoritesActivity extends AppCompatActivity implements MyListView.M
                     intent.putExtra("content", new Gson().toJson(ap.post));
                 } else
                 {
-                    //
+                    intent.putExtra("type", ListInfoPair.TYPE_RSS);
+                    intent.putExtra("content", new Gson().toJson(ap.rss));
                 }
                 startActivity(intent);
             }
