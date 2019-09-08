@@ -20,9 +20,12 @@ import com.chen91apps.echos.utils.Configure;
 import com.chen91apps.echos.utils.articles.Post_Comments;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
+import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
+import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +39,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
     private TextView quoteview;
 
     private EditText myComment;
+    MyListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +51,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
         Intent intent = getIntent();
         postid = intent.getIntExtra("post", 0);
 
-        MyListView listView = (MyListView)findViewById(R.id.comment_area_listView);
+        listView = (MyListView)findViewById(R.id.comment_area_listView);
         listView.setPullListener(this);
         data = new LinkedList<>();
         adapter = new ListItemAdapter(data,CommentAreaActivity.this);
@@ -94,6 +98,22 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
             }
         });
 
+        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,0);
+        call.enqueue(new Callback<Post_Comments>() {
+            @Override
+            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+                if(response.body().getData().size()>0)
+                    getCommentsInfo(response.body().getData());
+                else
+                    ToastShow("当前没有评论");
+            }
+
+            @Override
+            public void onFailure(Call<Post_Comments> call, Throwable t) {
+
+            }
+        });
+
     }
 
     public void setQuote(int q)
@@ -108,19 +128,63 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
         }
     }
 
-    public void getCommentsInfo(LinkedList<Post_Comments.DataBean> stream)
+    public void getCommentsInfo(List<Post_Comments.DataBean> stream)
     {
+        for(int i=0;i<stream.size();i++)
+            data.add(new PlainListItemInfo(stream.get(i).getContent(),stream.get(i).getAuthor()+" 发布于 "+stream.get(i).getCreate_time(),stream.get(i)));
 
+        if(stream.size()>0)
+            lastComment_id = stream.get(stream.size() - 1).getComment_id();
+        else
+            lastComment_id = -1;
+
+        if(lastComment_id == 0)
+            lastComment_id = -1;
+
+        adapter.notifyDataSetChanged();
     }
 
     public void toRefreshListView()
     {
+        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,0);
+        call.enqueue(new Callback<Post_Comments>() {
+            @Override
+            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+                if(response.body().getData().size()>0) {
+                    data.clear();
+                    getCommentsInfo(response.body().getData());
+                    listView.refreshFinish();
+                }
+                else
+                    ToastShow("当前没有评论");
+            }
 
+            @Override
+            public void onFailure(Call<Post_Comments> call, Throwable t) {
+                listView.refreshFinish();
+            }
+        });
     }
 
     public void toUpdateListView()
     {
+        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,0);
+        call.enqueue(new Callback<Post_Comments>() {
+            @Override
+            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+                if(response.body().getData().size()>0) {
+                    getCommentsInfo(response.body().getData());
+                    listView.refreshFinish();
+                }
+                else
+                    ToastShow("当前没有评论");
+            }
 
+            @Override
+            public void onFailure(Call<Post_Comments> call, Throwable t) {
+                listView.refreshFinish();
+            }
+        });
     }
 
     LinkedList<ListItemInfo> data;
