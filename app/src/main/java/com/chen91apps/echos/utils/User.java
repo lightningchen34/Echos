@@ -35,6 +35,7 @@ public class User {
                 info = response.body();
                 if (info.getCreate_time() == -1)
                 {
+                    info = null;
                     loginStateChanged.OnLoginStateChanged(false);
                 } else
                 {
