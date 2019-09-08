@@ -12,6 +12,7 @@ import com.chen91apps.echos.utils.articles.ArticlePack;
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.News;
 import com.chen91apps.echos.utils.articles.Post;
+import com.chen91apps.echos.utils.articles.RSSData;
 import com.chen91apps.echos.utils.history.HistoryManager;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.google.gson.Gson;
@@ -185,6 +186,27 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
             saveContent = new Gson().toJson(ap);
             title = post.getTitle();
             shareContent = title + " 这篇文章在 Echos 上引起热议。";
+        } else if (type == ListInfoPair.TYPE_RSS)
+        {
+            String str = intent.getStringExtra("content");
+            RSSData.ItemBean rss = new Gson().fromJson(str, new TypeToken<RSSData.ItemBean>(){}.getType());
+            viewTitle.setText(rss.getTitle().getValue());
+            viewAuthor.setText(rss.getAuthor().getValue());
+            viewPager.setVisibility(View.GONE);
+            viewTip.setVisibility(View.GONE);
+            viewContent.setText(rss.getDescription().getValue());
+            viewSrc.setText("");
+            viewCategory.setText(rss.getCategory().getValue());
+            viewTime.setText(rss.getPubDate().getValue());
+            viewUrl.setText(rss.getLink().getValue());
+
+            ap.rss = rss;
+            HistoryManager.addHistory(type, ap);
+
+            key = type + ":" + rss.getLink().getValue();
+            saveContent = new Gson().toJson(ap);
+            title = rss.getTitle().getValue();
+            shareContent = rss.getLink().getValue();
         }
     }
 

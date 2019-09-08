@@ -3,6 +3,7 @@ package com.chen91apps.echos.utils.articles;
 public class ArticlePack {
     public News.DataBean news;
     public Post.DataBean post;
+    public RSSData.ItemBean rss;
 
     public String getKey()
     {
@@ -14,7 +15,7 @@ public class ArticlePack {
             return "1:" + post.getPost_id();
         } else
         {
-            return "";
+            return "2:" + rss.getLink().getValue();
         }
     }
 }

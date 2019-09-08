@@ -16,6 +16,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.chen91apps.echos.NewPostActivity;
 import com.chen91apps.echos.R;
 import com.chen91apps.echos.RSSChannelActivity;
 import com.chen91apps.echos.channel.ChannelInfo;
+import com.chen91apps.echos.channel.RSSChannelInfo;
 import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.utils.tabviews.TabViewHelper;
 import com.google.android.material.tabs.TabLayout;
@@ -122,10 +124,8 @@ public class PageFragment extends Fragment {
             init_fragments();
         } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss))
         {
-            listTexts.add(new ListInfoPair("推荐", "14", ListInfoPair.TYPE_RSS));
-            init_fragments();
+            init_rss_tabs();
         }
-
     }
 
     @Override
@@ -207,12 +207,26 @@ public class PageFragment extends Fragment {
         }
     }
 
+    private void init_rss_tabs()
+    {
+        RSSChannelInfo.load();
+        listTexts.clear();
+        for (Pair<String, String> pair : RSSChannelInfo.get())
+        {
+            listTexts.add(new ListInfoPair(pair.first, pair.second, ListInfoPair.TYPE_RSS));
+        }
+        listFrames.clear();
+        for (ListInfoPair info : listTexts)
+        {
+            listFrames.add(ListFragment.newInstance(info.url, "", info.type));
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         if (paramType == getResources().getString(R.string.mainactivaty_tag_news))
         {
-            System.out.println("resume");
             int position = tabLayout.getSelectedTabPosition();
             init_news_tabs();
             adapter.notifyDataSetChanged();
@@ -221,7 +235,17 @@ public class PageFragment extends Fragment {
             {
                 tabLayout.getTabAt(0).select();
             }
+        } else if (paramType == getResources().getString(R.string.mainactivaty_tag_rss))
+        {
+            int position = tabLayout.getSelectedTabPosition();
+            init_rss_tabs();
+            adapter.notifyDataSetChanged();
+            if (position > listTexts.size())
+            {
+                tabLayout.getTabAt(0).select();
+            }
         }
+        initTabStyle();
     }
 
     private void init_fragments()
@@ -267,21 +291,29 @@ public class PageFragment extends Fragment {
                 if (indexes != null)
                 {
                     return indexes.get(position);
+                } else
+                {
+                    return listFrames.get(position).hashCode();
                 }
-                return super.getItemId(position);
+                // return super.getItemId(position);
             }
         };
         viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);
     }
 
-    public void initTabs()
+    public void initTabStyle()
     {
         for (int i = 0; i < tabLayout.getTabCount(); ++i)
         {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             TabViewHelper.setTextTabActive(tab, listTexts.get(i), tab.isSelected());
         }
+    }
+
+    public void initTabs()
+    {
+        initTabStyle();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

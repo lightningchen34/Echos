@@ -37,7 +37,9 @@
                     app:tabMode="scrollable"
                     app:tabIndicatorColor="?attr/highlight_color"
                     app:tabPaddingStart="0dp"
-                    app:tabPaddingEnd="0dp">
+                    app:tabPaddingEnd="0dp"
+                    app:tabTextColor="?attr/undertint_color"
+                    >
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
