@@ -1,16 +1,12 @@
 package com.chen91apps.echos;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,12 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chen91apps.echos.utils.Configure;
-import com.chen91apps.echos.utils.articles.Post_Comments;
+import com.chen91apps.echos.utils.articles.PostComments;
 import com.chen91apps.echos.utils.listitem.CommentListItemInfo;
 import com.chen91apps.echos.utils.listitem.ListItemAdapter;
 import com.chen91apps.echos.utils.listitem.ListItemInfo;
-import com.chen91apps.echos.utils.listitem.PlainListItemInfo;
-import com.chen91apps.echos.utils.pairs.ListInfoPair;
 import com.chen91apps.echos.views.MyListView;
 
 import java.util.LinkedList;
@@ -83,11 +77,11 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
                 Toast.makeText(this, "评论至少 5 个字符。", Toast.LENGTH_LONG).show();
             } else
             {
-                Call<Post_Comments> call = MainActivity.echosService.addComment(postid, data, quote);
-                call.enqueue(new Callback<Post_Comments>() {
+                Call<PostComments> call = MainActivity.echosService.addComment(postid, data, quote);
+                call.enqueue(new Callback<PostComments>() {
                     @Override
-                    public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
-                        Post_Comments pc = response.body();
+                    public void onResponse(Call<PostComments> call, Response<PostComments> response) {
+                        PostComments pc = response.body();
                         if (pc.getState() == 1)
                         {
                             ToastShow("评论成功");
@@ -101,17 +95,17 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
                     }
 
                     @Override
-                    public void onFailure(Call<Post_Comments> call, Throwable t) {
+                    public void onFailure(Call<PostComments> call, Throwable t) {
                         ToastShow("Failed");
                     }
                 });
             }
         });
 
-        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,0);
-        call.enqueue(new Callback<Post_Comments>() {
+        Call<PostComments> call = MainActivity.echosService.getComments(postid,0);
+        call.enqueue(new Callback<PostComments>() {
             @Override
-            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+            public void onResponse(Call<PostComments> call, Response<PostComments> response) {
                 if(response.body().getData().size()>0)
                     getCommentsInfo(response.body().getData());
                 else
@@ -119,7 +113,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
             }
 
             @Override
-            public void onFailure(Call<Post_Comments> call, Throwable t) {
+            public void onFailure(Call<PostComments> call, Throwable t) {
 
             }
         });
@@ -138,7 +132,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
         }
     }
 
-    public void getCommentsInfo(List<Post_Comments.DataBean> stream)
+    public void getCommentsInfo(List<PostComments.DataBean> stream)
     {
         for(int i=0;i<stream.size();i++)
             data.add(new CommentListItemInfo(stream.get(i)));
@@ -157,10 +151,10 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
 
     public void toRefreshListView()
     {
-        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,0);
-        call.enqueue(new Callback<Post_Comments>() {
+        Call<PostComments> call = MainActivity.echosService.getComments(postid,0);
+        call.enqueue(new Callback<PostComments>() {
             @Override
-            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+            public void onResponse(Call<PostComments> call, Response<PostComments> response) {
                 if(response.body().getData().size()>0) {
                     data.clear();
                     getCommentsInfo(response.body().getData());
@@ -171,7 +165,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
             }
 
             @Override
-            public void onFailure(Call<Post_Comments> call, Throwable t) {
+            public void onFailure(Call<PostComments> call, Throwable t) {
                 listView.refreshFinish();
             }
         });
@@ -179,10 +173,10 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
 
     public void toUpdateListView()
     {
-        Call<Post_Comments> call = MainActivity.echosService.getComments(postid,lastComment_id);
-        call.enqueue(new Callback<Post_Comments>() {
+        Call<PostComments> call = MainActivity.echosService.getComments(postid,lastComment_id);
+        call.enqueue(new Callback<PostComments>() {
             @Override
-            public void onResponse(Call<Post_Comments> call, Response<Post_Comments> response) {
+            public void onResponse(Call<PostComments> call, Response<PostComments> response) {
                 if(response.body().getData().size()>0) {
                     getCommentsInfo(response.body().getData());
                 }
@@ -192,7 +186,7 @@ public class CommentAreaActivity extends AppCompatActivity implements MyListView
             }
 
             @Override
-            public void onFailure(Call<Post_Comments> call, Throwable t) {
+            public void onFailure(Call<PostComments> call, Throwable t) {
                 listView.refreshFinish();
             }
         });

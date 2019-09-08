@@ -1,24 +1,22 @@
 package com.chen91apps.echos.utils.listitem;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chen91apps.echos.R;
-import com.chen91apps.echos.utils.ImageLoader;
-import com.chen91apps.echos.utils.articles.Post_Comments;
+import com.chen91apps.echos.utils.articles.PostComments;
 
 public class CommentListItemInfo extends ListItemInfo {
 
-    private Post_Comments.DataBean data;
+    private PostComments.DataBean data;
 
     public int getId()
     {
         return data.getComment_id();
     }
 
-    public CommentListItemInfo(Post_Comments.DataBean data)
+    public CommentListItemInfo(PostComments.DataBean data)
     {
         super(R.layout.comment_item, data);
         this.data = data;

@@ -2,14 +2,13 @@ package com.chen91apps.echos.utils.retrofit;
 
 import com.chen91apps.echos.utils.articles.Favourite;
 import com.chen91apps.echos.utils.articles.Post;
-import com.chen91apps.echos.utils.articles.Post_Comments;
+import com.chen91apps.echos.utils.articles.PostComments;
 import com.chen91apps.echos.utils.articles.RSSData;
 import com.chen91apps.echos.utils.userinfos.LoginLog;
 import com.chen91apps.echos.utils.userinfos.UserInfo;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface EchosService
@@ -54,11 +53,11 @@ public interface EchosService
     Call<RSSData> rss(@Query("url") String url);
 
     @GET("post_comments.php")
-    Call<Post_Comments> getComments(@Query("postid")int postid, @Query("begin")int begin);
+    Call<PostComments> getComments(@Query("postid")int postid, @Query("begin")int begin);
 
     @GET("mycomments.php")
-    Call<Post_Comments> getMyComments(@Query("begin")int begin);
+    Call<PostComments> getMyComments(@Query("begin")int begin);
 
     @GET("addcomment.php")
-    Call<Post_Comments> addComment(@Query("post")int postid, @Query("content") String content, @Query("quote") int quote);
+    Call<PostComments> addComment(@Query("post")int postid, @Query("content") String content, @Query("quote") int quote);
 }

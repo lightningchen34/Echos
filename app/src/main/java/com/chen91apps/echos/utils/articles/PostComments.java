@@ -2,7 +2,7 @@ package com.chen91apps.echos.utils.articles;
 
 import java.util.List;
 
-public class Post_Comments {
+public class PostComments {
 
 
     /**
