@@ -74,13 +74,14 @@ public class HistoryManager {
         List<HistoryBean> ret = new LinkedList<>();
         if (begin <= 0 || begin > getHistoryCount())
             begin = getHistoryCount();
-        for (int i = 0; i < 20; ++i)
+        for (int i = 0; ret.size() < 20; ++i)
         {
             if (begin - i > 0)
             {
                 HistoryBean bean = getHistory(begin - i);
-                if (bean != null)
+                if (bean != null) {
                     ret.add(bean);
+                }
             } else
             {
                 break;

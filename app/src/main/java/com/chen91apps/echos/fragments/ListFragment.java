@@ -209,10 +209,10 @@ public class ListFragment extends Fragment implements MyListView.MyListViewPullL
         String image, video;
         for (int i = 0; i < stream.size(); i++) {
             image = stream.get(i).getImage();
-            image = image.substring(1, image.length() - 1);
-            if (image.length() == 0)
+            if (image.length() < 5)
                 data.add(new PlainListItemInfo(stream.get(i).getTitle(), "更新时间：" + stream.get(i).getPublishTime(), stream.get(i)));
             else {
+                image = image.substring(1, image.length() - 1);
                 String imgurl[] = image.split(", ");
                 if (imgurl.length <= 2)
                     data.add(new DefaultListItemInfo(stream.get(i).getTitle(), stream.get(i).getPublishTime(), imgurl[0], stream.get(i)));

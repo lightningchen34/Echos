@@ -124,9 +124,9 @@ public class ViewActivity extends AppCompatActivity implements ImageFragment.OnF
                 listFrames.add(VideoFragment.newInstance(news.getVideo(), ""));
             }
             String image = news.getImage();
-            image = image.substring(1, image.length() - 1);
-            if (image.length() > 0)
+            if (image.length() > 5)
             {
+                image = image.substring(1, image.length() - 1);
                 String imgurl[] = image.split(", ");
                 for (String url : imgurl)
                 {
