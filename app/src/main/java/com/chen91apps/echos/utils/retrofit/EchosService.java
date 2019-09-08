@@ -54,5 +54,11 @@ public interface EchosService
     Call<RSSData> rss(@Query("url") String url);
 
     @GET("post_comments.php")
-    Call<Post_Comments> getComments(@Query("postid")int postid,@Query("begin")int begin);
+    Call<Post_Comments> getComments(@Query("postid")int postid, @Query("begin")int begin);
+
+    @GET("mycomments.php")
+    Call<Post_Comments> getMyComments(@Query("begin")int begin);
+
+    @GET("addcomment.php")
+    Call<Post_Comments> addComment(@Query("post")int postid, @Query("content") String content, @Query("quote") int quote);
 }
