@@ -1,0 +1,159 @@
+\section{具体实现的内容}
+
+\begin{table}[H]
+
+\center
+
+\resizebox{\textwidth}{81mm}{
+\begin{tabular}{|c|c|c|}
+    \hline
+    分类                         & 类名                           & 介绍                       \\ \hline
+    \multirow{17}{*}{Activity} & MainActivity                 & 程序主界面                    \\ \cline{2-3} 
+                               & SettingsActivity             & 设置界面                     \\ \cline{2-3} 
+                               & UserInfoAcitivity            & 用户信息显示界面                 \\ \cline{2-3} 
+                               & PostActivity                 & 用户发帖记录显示界面               \\ \cline{2-3} 
+                               & CommentsActivity             & 用户评论记录显示界面               \\ \cline{2-3} 
+                               & FavoritesAcitivity           & 用户收藏显示界面                 \\ \cline{2-3} 
+                               & HistoryActivity              & 浏览记录显示界面                 \\ \cline{2-3} 
+                               & SearchActivity               & 搜索框与推荐关键词显示界面            \\ \cline{2-3} 
+                               & SearchResultActivity         & 搜索结果显示界面                 \\ \cline{2-3} 
+                               & LoginActivity                & 登录界面                     \\ \cline{2-3} 
+                               & SignupActivity               & 注册界面                     \\ \cline{2-3} 
+                               & ViewActivity                 & 新闻内容显示界面                 \\ \cline{2-3} 
+                               & NewPostActivity              & 发帖界面                     \\ \cline{2-3} 
+                               & FeedbackActivity             & 反馈界面                     \\ \cline{2-3} 
+                               & ChannelActivity              & 频道管理界面                   \\ \cline{2-3} 
+                               & RSSChannelActivity           & RSS频道管理界面                \\ \cline{2-3} 
+                               & CommentAreaActivity          & 帖子评论区界面                  \\ \hline
+    \multirow{4}{*}{Fragment}  & PageFragment                 & 新闻、社区、订阅分类下的子界面，包含于主界面   \\ \cline{2-3} 
+                               & ListFragment                 & 频道下的子界面，包含于 PageFragment \\ \cline{2-3} 
+                               & ImageFragment                & 显示图片的子界面，用于新闻内容显示界面      \\ \cline{2-3} 
+                               & VideoFragment                & 显示视频的子界面，用于新闻内容显示界面      \\ \hline
+    View                       & MyListView                   & 自定义列表框                   \\ \hline
+    Service                    & RetrofitService、EchosService & 用于发送各种网络请求               \\ \hline
+    Manager                    & User、HistoryManager 等        & 管理用户信息、历史记录等             \\ \hline
+    Data                       & News、Post 等                  & 存储各种信息                   \\ \hline
+    Helper                     & ThemeColors、TabViewHelper 等  & 帮助管理系统资源                 \\ \hline
+    ListItem                   & ListItemInfo 等               & 管理列表项的样式                 \\ \hline
+    Adapter                    & ListItemAdapter 等            & 列表内容适配器                  \\ \hline
+    Configure                  & Configure                    & 软件配置信息类                  \\ \hline
+    \end{tabular}}
+
+    \caption{类信息概览}
+
+\end{table}
+
+\subsection{Articles文字类的封装}
+
+在向服务器申请内容的时候，我们需要特定格式的类接受信息，所以我们应对不同的申请内容以及格式定义了不同的类。
+
+\subsubsection{News}
+
+最基础的新闻类，因为访问新闻api中返回的内容很多，所以我们借助了第三方工具GsonFormat生成了代码，之后的内容同样都是用了这个工具。
+
+在News类中主要的内容以及信息都在DataBean data的成员变量中，我们对api返回的json文件中的所有信息都进行了接收，以便在未来调用的时候更加方便。
+
+这里面在获得image和video的时候，我们发现不能直接用列表进行获得，虽然有的一些新闻返回的是image="[]"，而有的新闻直接返回image=""，在后续的处理中会出现问题，所以只能先存储成String之后在调用的时候再进行处理。这个问题我们在处理的时候出了一些问题，浏览一些特定的新闻时候会闪退，debug了很久才解决掉。
+
+\subsubsection{Post}
+
+这个类对应的是帖子的内容，返回的所有帖子都在一个定义的子类DataBean的列表里面，调用的时候可以通过秩访问里面的内容。
+
+\subsubsection{Favourite}
+
+这个类对应的是向服务器申请得到的favourite内容。与Post内容类似，在这里不再赘述。
+
+\subsubsection{PostComments}
+
+这个类对应的是评论，与上类似。
+
+\subsubsection{RSSData}
+
+在获得rss信息的时候，我们遇到了一些困难，在申请信息的时候我们得到并不是json格式的信息而是xml格式的信息，所以需要在服务器上进行解析变成json格式的文件，我们再在android编程中进行获取。所以造成了在获取个别rss信息的时候很慢，例如：https://www.zhihu.com/rss。在显示rss内容的时候有一些内容是html格式的信息，又因为本次大作业不能用任何形式的html解析器，所以我们只能显示rss的连接，然后知道用户点击链接获取详情。
+
+\subsubsection{ArticlePack}
+
+这个类对应的是一种特殊情况，因为我们的app有不同的内容，包括新闻和帖子和rss信息，所以我们在加载收藏和历史纪录的时候需要同时显示这三种内容，利用一个统一的 Pack 去封装这些信息，让功能的实现更加方便。
+
+\subsection{ListItemInfo的衍生类介绍}
+
+ListItemInfo的目的是为了显示文章表格而定义的类，但是又因为不同的内容需要不同的显示方式，所以在写了最基本的一些内容之后，我们将ListItemInfo衍生成了4个类。
+
+\subsubsection{PlainListItemInfo}
+
+这个容器处理的是只有文字没有内容的文章或者帖子，构造的时候需要标题和副标题以及data结构体，显示的时候只有两行文字，一行为标题，一行为副标题。
+
+\subsubsection{DefaultListItemInfo}
+
+这个容器处理的是有1张或者两张图片的新闻页，构造的时候需要标题、副标题以及图片的url，显示的时候除了两行标题之外，右侧还会有一张缩略图。
+
+\subsubsection{ImageListItemInfo}
+
+这个容器处理的是有多张图的内容，构造的时候需要一个标题以及三个图片的url，显示的时候顶上是主标题，下面是三张缩略图。
+
+\subsubsection{CommentListItemInfo}
+
+这个容器处理的是评论区的显示，构造的时候只需要PostComments里面的DataBean成员，显示的时候会显示评论内容、发布者以及发布时间。
+
+\subsection{Activity的具体实现}
+
+\subsubsection{MainActivity}
+
+这一部分是对主页面进行管理，包括了对其中的子界面（PageFragment）的管理和左侧侧滑窗口（Drawer）的管理。
+
+\subsubsection{ChannelActivity}
+
+这一部分是对频道进行管理，频道也就是新闻的种类，通过这个窗口，用户可以自由的选择和去除频道，并且可以进行长按拖拽。
+
+\subsubsection{FavouriteActivity}
+
+这一部分显示的是我的收藏，收藏的部分在登陆之后才可以加载出来，可以通过在服务器利用MainActivity中的echosServices.getFavourite放申请”follow.php”，从而得到一个json文件，解析出来就得到了收藏的内容，通过定义favourite类对于解析下来的内容进行封装。收藏的内容都用PlainListItemInfo进行封装，从而在界面中显示出来。通过实现MyListView.MyListViewPullListener接口实现下拉加载和上拉刷新。在下拉加载中，通过访问Favourite中的id进行排序，echosServices.getFourite的参数为begin，可以的到序号小于begin的所有内容，通过记录这个最后的id进行记录与更新。
+
+后面很多的实现部分与这里很相似，都是通过echosService向服务器申请信息然后通过一个特定的类进行解析得到信息，这里面写的较为详细，后面类似的Activity就不再赘述。同样的关于下拉刷新和上拉加载，实现过程基本相同，后面就不再一一进行具体描述
+
+\subsubsection{CommentsActivity}
+
+这一部分显示的是我的回帖其中的内容,同样通过MainActivity.echosService访问服务器，并且解析成PostComments类。这里面通过新的一种文字载体CommentListItemInfo将显示内容封装起来进行显示。
+
+\subsubsection{FeedbackActivity}
+这一部分显示的是意见反馈，用户可以通过输入内容发表自己的意见，开发人员可以接收到用户的意见。在这个界面中，输入的内容在一个EditText里面，通过点击提交按钮，将会调用MainActivity.echosService.addFeedback进行上传内容。
+
+\subsubsection{HistoryActivity}
+
+这一部分现实的是我的浏览记录，通过调用HistoryManger的一些静态方法进行获得缓存中存储的新闻。这里面因为浏览的可能是帖子或者新闻，所以为了方便管理，定义一个ArticlePack的类进行分类，ArticlePack中有两个成员变量分别是News.DateBean和Post.DataBeam存储数据，可以根据不同的需求进行不同类别的访问。上拉加载和下拉加载接口实现与FavouriteActivity类似，在此不再赘述。
+
+\subsubsection{LoginActivity}
+
+通过在EditText里面输入帖子的内容和标题，然后再点击提交之后将发帖的内容构造为Post.DataBean内容，上传。
+
+\subsubsection{SearchActivity}
+
+这一部分管理的是搜索窗口，在搜索的时候我们会通过对keyword进行计数并且排序，从而得到最受欢迎的内容提前加载好放在搜索的内容之中，用户若要搜索这些内容就能够更加快捷的进行搜索。同样的这些内容还会在搜索框中显示，用户可以在浏览新闻列表的界面看到，这样可以方便用户了解到当前的热点。
+
+\subsubsection{SearchResultActivity}
+
+这一部分显示的是搜索内容，可以根据关键词显示信息。
+
+\subsubsection{SettingsActivity}
+
+这一部分实现的是设置内容，因为没有想到很多关于设置的内容，所以就只实现了一个清楚缓存和一个关于我们的窗口。点击清楚缓存可以清除应用缓存的新闻或者帖子，释放空间；点击关于我们会弹出关于项目组成员的介绍。
+
+\subsubsection{SignupActivity}
+
+这一部分管理的是登陆界面
+
+\subsubsection{UserInfoActivity}
+
+这一部分显示的是我的信息界面，这一部分相对简单，显示的就是用户的昵称以及是否退出登陆。在点击昵称之后会显示一个AlerDtDialog询问是否更改昵称，可以选择在输入内容之后实现更改用户名。
+
+\subsubsection{ViewActivity}
+
+这一部分管理的是新闻以及帖子的显示内容。
+
+\subsection{关于信息存储与传递的实现}
+
+对于需要存储与传递的信息，先将其转化为 Json 的格式，传递之后再转换回原本的格式进行处理。
+
+\subsection{关于用户功能的实现}
+
+这一部分的后端是在我们的个人服务器上使用 php 搭建的，数据库使用的是 MySQL，在应用中与服务器后端进行交互以实现用户登录、论坛讨论等功能。
