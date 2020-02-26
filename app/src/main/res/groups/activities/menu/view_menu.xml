@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_comment"
+        android:orderInCategory="80"
+        android:title="评论"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_follow"
+        android:orderInCategory="80"
+        android:title="收藏"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_share"
+        android:orderInCategory="80"
+        android:title="分享"
+        app:showAsAction="never" />
+</menu>

@@ -1,151 +1,491 @@
 package com.chen91apps.echos;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.util.DisplayMetrics;
-import android.util.Pair;
-import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
-import android.view.MenuItem;
-
-import com.google.android.material.navigation.NavigationView;
+import com.chen91apps.echos.fragments.ListFragment;
+import com.chen91apps.echos.fragments.PageFragment;
+import com.chen91apps.echos.utils.ACache;
+import com.chen91apps.echos.utils.Configure;
+import com.chen91apps.echos.utils.ImageLoader;
+import com.chen91apps.echos.utils.ScoreManager;
+import com.chen91apps.echos.utils.User;
+import com.chen91apps.echos.utils.articles.News;
+import com.chen91apps.echos.utils.pairs.TabIconPair;
+import com.chen91apps.echos.utils.retrofit.EchosService;
+import com.chen91apps.echos.utils.retrofit.RetrofitService;
+import com.chen91apps.echos.utils.tabviews.TabViewHelper;
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
-import android.view.Menu;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PageFragment.OnFragmentInteractionListener {
+        implements PageFragment.OnFragmentInteractionListener, ListFragment.OnFragmentInteractionListener, User.OnLoginStateChanged {
+
+    public static MainActivity main = null;
 
     private TextView searchTextView;
     private ArrayList<PageFragment> pages;
-    private ArrayList<Pair<String, String>> tabText;
+    private ArrayList<TabIconPair> tabInfo;
+
+    private int[] drawer_list_indexes;
+
+    public static ACache acache;
+    public static User user;
+    public static RetrofitService newsService;
+    public static EchosService echosService;
+
+    private Timer timer;
+
+    private boolean show = true;
+
+    protected void setStatusBarFullTransparent() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        main = this;
+        ClearableCookieJar cookie = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(cookie)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        ImageLoader.imageLoader.setContext(this);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl("http://echos.lightning34.cn/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        echosService = retrofit.create(EchosService.class);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
+                .writeTimeout(2, TimeUnit.SECONDS)
+                .build();
+
+        Retrofit retrofitNews = new Retrofit.Builder()
+                .client(client)
+                .baseUrl("https://api2.newsminer.net/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        newsService = retrofitNews.create(RetrofitService.class);
+
+        // RequestNews();
+
         Resources resources = getResources();
         Configuration config = resources.getConfiguration();
         DisplayMetrics dm = resources.getDisplayMetrics();
         // config.locale = Locale.CHINA;
         resources.updateConfiguration(config, dm);
 
+        acache = ACache.get(this);
+
+        ScoreManager.init();
+
+        Configure.day_or_night = (Boolean) acache.getAsObject("day_or_night");
+        if (Configure.day_or_night == null)
+        {
+            Configure.day_or_night = true;
+            acache.put("day_or_night", Configure.day_or_night);
+        }
+
+        setTheme(Configure.day_or_night ? R.style.Mytheme : R.style.Mytheme_Night);
+
         super.onCreate(savedInstanceState);
-        // this.setTheme(R.style.Mytheme_Night);
         setContentView(R.layout.activity_main);
 
-        tabText = new ArrayList<Pair<String, String>>();
-        tabText.add(new Pair<String, String>(getString(R.string.mainactivaty_text_news), getString(R.string.mainactivaty_tag_news)));
-        tabText.add(new Pair<String, String>(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community)));
-        tabText.add(new Pair<String, String>(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss)));
+        setStatusBarFullTransparent();
 
-        initTabs();
-        initPages();
+        tabInfo = new ArrayList<>();
+        tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_news), getString(R.string.mainactivaty_tag_news), R.drawable.ic_home_selected, R.drawable.ic_home));
+        tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_community), getString(R.string.mainactivaty_tag_community), R.drawable.ic_community_selected, R.drawable.ic_community));
+        tabInfo.add(new TabIconPair(getString(R.string.mainactivaty_text_rss), getString(R.string.mainactivaty_tag_rss), R.drawable.ic_rss_selected, R.drawable.ic_rss));
 
-        initNavigationView();
+        if (show) {
+            initPages();
+            initTabs();
+        }
+
+        initDrawer();
         initSearchText();
+
+        user = new User(echosService, this);
+
+        // updateSearchView();
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateSearchView();
+            }
+        }, 0, 5000);
     }
 
-    private void initNavigationView()
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        System.out.println("save");
+        outState.putInt("tabPosition", tabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        System.out.println("restore");
+        int tabPosition = savedInstanceState.getInt("tabPosition");
+        tabLayout.getTabAt(tabPosition).select();
+    }
+
+    @Override
+    public void recreate() {
+        if (show) {
+            System.out.println("recreate");
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            for (Fragment fragment : pages) {
+                if (fragment.isAdded()) {
+                    fragmentTransaction.remove(fragment);
+                }
+            }
+            fragmentTransaction.commitAllowingStateLoss();
+        }
+        super.recreate();
+    }
+
+    private void initDrawer()
     {
+        ImageView background = (ImageView) findViewById(R.id.drawer_background);
+        background.setImageResource(Configure.day_or_night ? R.mipmap.back : R.mipmap.back2);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        navigationView.setNavigationItemSelectedListener(this);
+
+        ListView drawerListView = (ListView) findViewById(R.id.drawer_listview);
+
+        drawer_list_indexes = new int[] {
+                R.string.menu_profile,
+                R.string.menu_post,
+                R.string.menu_comments,
+                R.string.menu_favorites,
+                R.string.menu_history,
+                R.string.menu_feedback
+        };
+
+        String[] data = new String[drawer_list_indexes.length];
+        for (int i = 0; i < drawer_list_indexes.length; ++i)
+            data[i] = getString(drawer_list_indexes[i]);
+
+        drawerListView.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, data));
+
+        drawerListView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            if (i == 0)
+            {
+                if (user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, UserInfoActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "userinfo");
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 1)
+            {
+                if (user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, PostActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "post");
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 2)
+            {
+                if (user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, CommentsActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "comments");
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 3)
+            {
+                if (user.checkLogin())
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, FavoritesActivity.class));
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else
+                {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(this, LoginActivity.class));
+                    intent.putExtra("action", "favorites");
+                    startActivity(intent);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            } else if (i == 4)
+            {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, HistoryActivity.class));
+                intent.putExtra("action", "history");
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+            } else if (i == 5)
+            {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, FeedbackActivity.class));
+                intent.putExtra("action", "feedback");
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+            } else
+            {
+                //
+            }
+        });
+
+        final TextView dnMode = (TextView) findViewById(R.id.drawer_dnmode);
+        final TextView settings = (TextView) findViewById(R.id.drawer_settings);
+
+        dnMode.setOnClickListener((View view) -> {
+            Configure.day_or_night = !Configure.day_or_night;
+            acache.put("day_or_night", Configure.day_or_night);
+            recreate();
+        });
+        settings.setOnClickListener((View view) -> {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(this, SettingsActivity.class));
+            startActivity(intent);
+            drawer.closeDrawer(GravityCompat.START);
+        });
+        dnMode.setText(Configure.day_or_night ? R.string.menu_night_mode : R.string.menu_day_mode);
+        settings.setText(R.string.menu_settings);
+
+        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                //
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     private void initSearchText()
     {
         searchTextView = (TextView) findViewById(R.id.search_textview);
-        searchTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getId() == searchTextView.getId())
-                {
-                    Toast.makeText(view.getContext(), "Go to SearchActivity", Toast.LENGTH_SHORT).show();
-                }
+        searchTextView.setOnClickListener((View view) -> {
+            if (view.getId() == searchTextView.getId())
+            {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(this, SearchActivity.class));
+                startActivity(intent);
             }
         });
     }
 
     private void initPages()
     {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        System.out.println("Init Fragment");
 
         pages = new ArrayList<PageFragment>();
-        for (Pair<String, String> text : tabText)
+        for (TabIconPair info : tabInfo)
         {
-            pages.add(PageFragment.newInstance(text.second, ""));
+            pages.add(PageFragment.newInstance(info.getTag(), ""));
         }
 
-        fragmentTransaction.add(R.id.main_framelayout, pages.get(0), pages.get(0).getTag());
-        fragmentTransaction.commit();
+        ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return pages.get(position);
+            }
 
-        System.out.println("Set Fragment");
+            @Override
+            public int getCount() {
+                return pages.size();
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                super.destroyItem(container, position, object);
+            }
+
+            @Nullable
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return tabInfo.get(position).getText();
+            }
+        });
+
+        viewPager.setOffscreenPageLimit(3);
+
+        TabLayout tabLayout = findViewById(R.id.main_tablayout);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
+
+    private TabLayout tabLayout;
 
     private void initTabs()
     {
-
-        TabLayout tabLayout = findViewById(R.id.main_tablayout);
-        for (Pair<String, String> text : tabText)
+        tabLayout = findViewById(R.id.main_tablayout);
+        for (int i = 0; i < tabLayout.getTabCount(); ++i)
         {
-            tabLayout.addTab(tabLayout.newTab().setText(text.first).setTag(text.second));
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            TabViewHelper.setIconTabActive(tab, tabInfo.get(i), tab.isSelected());
         }
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                System.out.println(tab.getPosition());
                 int index = tab.getPosition();
-                replaceFragment(index);
+                TabViewHelper.setIconTabActive(tab, tabInfo.get(index), true);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                System.out.println("Unselect Tab");
-
+                int index = tab.getPosition();
+                TabViewHelper.setIconTabActive(tab, tabInfo.get(index), false);
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                System.out.println("Reselect Tab");
-
+                // TODO
             }
         });
     }
 
-    private void replaceFragment(int index)
+    private void updateSearchView()
     {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        fragmentTransaction.replace(R.id.main_framelayout, pages.get(index), pages.get(index).getTag());
-        fragmentTransaction.commit();
+        final Random random = new Random();
+        TextView t = (TextView) findViewById(R.id.search_textview);
+        List<String> list = ScoreManager.getList();
+        int size = list.size();
+        if (size < 3)
+        {
+            t.setText("搜索");
+        } else
+        {
+            int a = (random.nextInt() % size + size) % size;
+            int b = (random.nextInt() % size + size) % size;
+            int c = (random.nextInt() % size + size) % size;
+            int tmp;
+            while (b == a) b = (random.nextInt() % size + size) % size;
+            while (c == b || c == a) c = (random.nextInt() % size + size) % size;
+            if (a > b) {tmp = a; a = b; b = tmp;}
+            if (b > c) {tmp = b; b = c; c = tmp;}
+            if (a > b) {tmp = a; a = b; b = tmp;}
+            if (b > c) {tmp = b; b = c; c = tmp;}
+            t.setText(list.get(a) + " | " + list.get(b) + " | " + list.get(c));
+        }
     }
 
     @Override
@@ -158,33 +498,31 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("return");
     }
 
     @Override
     public void onPageFragmentInteraction(Uri uri) {
         // TODO
+    }
+
+    @Override
+    public void onListFragmentInteraction(Uri uri) {
+        // TODO
+    }
+
+    @Override
+    public void OnLoginStateChanged(boolean state) {
+        final TextView username = (TextView) findViewById(R.id.username_textview);
+        if (state)
+        {
+            username.setText(user.getInfo().getNickname());
+        } else
+        {
+            username.setText("未登录");
+        }
     }
 }

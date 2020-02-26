@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/menu_settings"
+                android:textSize="@dimen/title_text_size"
+                android:textColor="?attr/edge_color"/>
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?attr/background2_color"
+        android:paddingTop="5dp">
+        <TextView
+            android:id="@+id/setting_clearbuffer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:background="?attr/background_color"
+            android:textColor="?attr/text_color"
+            android:text="清除缓存"
+            android:textSize="30dp"
+            />
+        <TextView
+            android:id="@+id/settings_about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="5dp"
+            android:background="?attr/background_color"
+            android:textColor="?attr/text_color"
+            android:text="关于"
+            android:textSize="30dp"
+            />
+    </LinearLayout>
+</LinearLayout>

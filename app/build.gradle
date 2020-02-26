@@ -3,10 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
+    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.chen91apps.echos"
-        minSdkVersion 15
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -17,6 +18,28 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res/groups/mainactivaty',
+                            'src/main/res/groups/maindrawer',
+                            'src/main/res/groups/listitem',
+                            'src/main/res/groups/tabitem',
+                            'src/main/res/groups/fragments',
+                            'src/main/res/groups/activities',
+                            'src/main/res/groups/preference',
+                            'src/main/res/groups/channel',
+                            'src/main/res/groups',
+                            'src/main/res'
+                    ]
+        }
+    }
 }
 
 dependencies {
@@ -25,7 +48,18 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+
+    implementation 'cn.jzvd:jiaozivideoplayer:6.2.12'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
 }

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/background_color"
+    tools:context=".FeedbackActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/feedback_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/menu_feedback"
+                    android:textSize="@dimen/title_text_size"
+                    android:textColor="?attr/edge_color"/>
+
+
+
+                <TextView
+                    android:id="@+id/submit_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom"
+                    android:text="提交"
+                    android:textSize="18dp"
+                    android:layout_marginRight="15dp"
+                    android:textColor="?attr/text_color"/>
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <EditText
+        android:id="@+id/feedback_content"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top"
+        android:hint="FeedBack"
+        android:background="@android:color/transparent"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@drawable/textedit_cursor"
+        android:textColor="?attr/text_color"
+        android:textColorHint="?attr/undertint_color"/>
+
+</LinearLayout>

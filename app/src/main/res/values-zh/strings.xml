@@ -1,6 +1,27 @@
 <resources>
+
     <string name="mainactivaty_text_news">新闻</string>
     <string name="mainactivaty_text_community">社区</string>
     <string name="mainactivaty_text_rss">订阅</string>
+
+    <string name="menu_profile">我的信息</string>
+    <string name="menu_vip">我的会员</string>
+    <string name="menu_theme">个性换肤</string>
+    <string name="menu_post">我的发帖</string>
+    <string name="menu_comments">我的回帖</string>
+    <string name="menu_history">我的阅历</string>
+    <string name="menu_favorites">我的收藏</string>
+    <string name="menu_feedback">意见反馈</string>
+
+    <string name="menu_day_mode">日间模式</string>
+    <string name="menu_night_mode">夜间模式</string>
+    <string name="menu_settings">设置</string>
+
+    <string name="text_login">登录</string>
+    <string name="text_user">用户</string>
+
+    <string name="settings_category_user">账户设置</string>
+    <string name="settings_category_settings">基本设置</string>
+    <string name="settings_category_about">关于 Echos</string>
 
 </resources>
